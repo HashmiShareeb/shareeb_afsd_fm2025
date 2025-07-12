@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "workspaces": [
     "packages/*"
@@ -19,10 +20,21 @@
     "trailingComma": "all",
     "useTabs": false
   },
+  "lint-staged": {
+    "*.{vue,js,jsx,cjs,mjs,ts,tsx,cts,mts}": [
+      "npm run -w pwa linter",
+      "npm run -w pwa format"
+    ],
+    "*.md": [
+      "npm run -w pwa format"
+    ]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.6.2"
   }
 }

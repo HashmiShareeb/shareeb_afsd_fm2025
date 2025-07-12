@@ -165,3 +165,5 @@ client_secret_1078408481135-8nrldami7petip6tkuafndi65cbsudbn.apps.googleusercont
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+.npmrc
