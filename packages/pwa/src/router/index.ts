@@ -1,8 +1,26 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {
+  createRouter,
+  createWebHistory,
+  type Router,
+  type RouteRecordRaw,
+} from 'vue-router'
 
-const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [],
+// ROUTES
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/login',
+    component: () => import('../views/auth/LoginScreen.vue'),
+  },
+  {
+    path: '/register',
+    component: () => import('../views/auth/RegisterScreen.vue'),
+  },
+]
+
+// THE ROUTER ITSELF
+const router: Router = createRouter({
+  history: createWebHistory(),
+  routes,
 })
 
 export default router
