@@ -5,15 +5,12 @@
     <h1 class="bg-red-500 p-4 rounded shadow">setup done</h1>
     <RouterView />
     <div class="mt-4 flex items-center space-x-2">
-      <RouterLink
-        to="/auth/login"
-        class="text-blue-600 hover:underline font-medium"
-      >
+      <RouterLink to="/login" class="text-blue-600 hover:underline font-medium">
         Login
       </RouterLink>
       <span class="text-gray-400">|</span>
       <RouterLink
-        to="/auth/register"
+        to="/register"
         class="text-blue-600 hover:underline font-medium"
       >
         Register

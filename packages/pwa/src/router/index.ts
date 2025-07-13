@@ -15,6 +15,10 @@ const routes: RouteRecordRaw[] = [
     path: '/register',
     component: () => import('../views/auth/RegisterScreen.vue'),
   },
+  {
+    path: '/:pathMatch(.*)*',
+    component: () => import('../views/NotFound.vue'),
+  },
 ]
 
 // THE ROUTER ITSELF
