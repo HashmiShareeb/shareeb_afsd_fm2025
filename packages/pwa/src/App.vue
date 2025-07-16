@@ -1,17 +1,16 @@
 <template>
-  <!-- Sun in light mode, Moon in dark mode, from Carbon
-  <button class="i-carbon-sun dark:i-carbon-moon" /> -->
-  <main class="text-decoration-none">
-    <div class="flex max-w-screen-lg mx-auto h-screen">
-      <AppHeader />
-      <div class="flex flex-col w-full">
-        <RouterView class="grow" />
+  <div class="flex h-screen">
+    <AppHeader />
+    <main
+      class="font-sans flex-grow ml-64 min-h-screen bg-gray-50 overflow-auto"
+    >
+      <div class="max-w-5xl mx-auto p-4 sm:p-6">
+        <RouterView />
       </div>
-    </div>
-  </main>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { RouterView } from 'vue-router'
 import AppHeader from '@/components/generic/AppHeader.vue'
 </script>

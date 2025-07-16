@@ -60,7 +60,7 @@
           </RouterLink>
         </li>
       </ul>
-      <!-- <p class="text-xs text-neutral-400 mt-1">v{{ version }}</p> -->
+      <p class="text-xs text-neutral-400 mt-1 text-center">v{{ version }}</p>
     </nav>
   </aside>
 </template>
@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import useFirebase from '@/composables/useFirebase'
 import { Building2Icon, HomeIcon, User2 } from 'lucide-vue-next'
-// import { version } from '../../../package.json'
+import { version } from '../../../package.json'
 
 const { firebaseUser } = useFirebase()
 console.log(firebaseUser)
