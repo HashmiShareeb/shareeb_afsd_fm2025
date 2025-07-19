@@ -7,34 +7,37 @@
       >
     </div>
     <nav>
-      <ul class="flex flex-col p-4 list-none">
-        <li class="mb-4">
+      <ul class="flex flex-col px-4 list-none">
+        <li>
           <router-link
-            to="/"
-            class="flex items-center py-2 px-4 rounded-full hover:bg-orange-100 hover:text-orange-700"
+            :to="{ name: 'home' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
           >
-            <HomeIcon
-              class="mr-2 self-center rounded-full bg-orange-100 text-orange-500 p-1"
-              :size="20"
-            />
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-neutral-100 flex items-center justify-center bg-white"
+            >
+              <Home class="object-cover" />
+            </div>
 
-            Home
+            <span class="mx-2"> Home </span>
           </router-link>
         </li>
         <li>
           <router-link
-            to="/buildings"
-            class="flex items-center py-2 px-3 rounded-full hover:bg-orange-100 hover:text-orange-700"
+            :to="{ name: 'buildings' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
           >
-            <Building2Icon
-              class="mr-2 self-center rounded-full bg-orange-100 text-orange-500 p-1"
-              :size="20"
-            />
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-neutral-100 flex items-center justify-center bg-white"
+            >
+              <Building2 class="object-cover" />
+            </div>
 
-            Buildings</router-link
-          >
+            <span class="mx-2">Buildings</span>
+          </router-link>
         </li>
-
         <li>
           <RouterLink
             class="block rounded-full focus:outline-none focus-visible:ring-4 ring-blue-400 hover:bg-orange-100 py-2 px-3"
@@ -67,7 +70,7 @@
 
 <script setup lang="ts">
 import useFirebase from '@/composables/useFirebase'
-import { Building2Icon, HomeIcon, User2 } from 'lucide-vue-next'
+import { Building2, Home, User2 } from 'lucide-vue-next'
 import { version } from '../../../package.json'
 
 const { firebaseUser } = useFirebase()

@@ -10,15 +10,18 @@ import {
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
+    name: 'home',
     component: () => import('@/views/HomeScreen.vue'),
   },
   {
     path: '/buildings',
+    name: 'buildings',
     component: () => import('@/views/buildings/IndexView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
   {
     path: '/myaccount',
+    name: 'myaccount',
     component: () => import('@/views/MyAccountView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
@@ -26,11 +29,13 @@ const routes: RouteRecordRaw[] = [
   // AUTHENTICATION ROUTES
   {
     path: '/login',
+    name: 'login',
     component: () => import('@/views/auth/LoginScreen.vue'),
     //meta: { preventLoggedIn: true },
   },
   {
     path: '/register',
+    name: 'register',
     component: () => import('@/views/auth/RegisterScreen.vue'),
   },
   {
@@ -49,10 +54,10 @@ router.beforeEach(async (to, from, next) => {
   const { firebaseUser } = useFirebase()
 
   if (to.meta.shouldBeAuthenticated && !firebaseUser.value) {
-    next({ path: '/login' })
+    next({ name: 'login' })
   }
   if (to.meta.preventLoggedIn && firebaseUser.value) {
-    next({ path: '/' })
+    next({ name: 'home' })
   } else {
     next()
   }

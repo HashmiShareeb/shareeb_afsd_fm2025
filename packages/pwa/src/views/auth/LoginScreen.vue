@@ -1,34 +1,60 @@
 <template>
-  <form @submit.prevent="handleLogin" class="w-full">
-    {{ firebaseUser }}
-    <label for="email">
-      Email:
-      <input
-        v-model="loginCredentials.email"
-        type="email"
-        id="email"
-        class="block w-full p-2 border border-gray-300 rounded mb-4"
-        required
-      />
-    </label>
-    <label for="password">
-      Password:
-      <input
-        v-model="loginCredentials.password"
-        type="password"
-        id="password"
-        class="block w-full p-2 border border-gray-300 rounded mb-4"
-        required
-      />
-    </label>
+  <div class="flex items-center justify-center my-20">
+    <form @submit.prevent="handleLogin" class="max-w-md w-full mx-auto">
+      <h1 class="text-2xl font-bold mb-4">Welcome back! Login</h1>
+      <p class="text-neutral-500 mb-4">
+        Please enter your email and password to continue.
+      </p>
 
-    <button
-      type="submit"
-      class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors"
-    >
-      Login
-    </button>
-  </form>
+      {{ firebaseUser }}
+      <div v-if="error" class="text-red-600 mb-2">{{ error }}</div>
+      <div class="mb-4">
+        <label
+          for="email"
+          class="text-md block font-semibold tracking-wider text-gray-700 dark:text-gray-200"
+        >
+          Email
+          <input
+            v-model="loginCredentials.email"
+            type="email"
+            id="email"
+            class="mt-1 block w-full rounded-md p-2 border border-gray-300 rounded"
+            required
+          />
+        </label>
+      </div>
+      <div class="mb-4">
+        <label
+          for="password"
+          class="text-md block font-semibold tracking-wider text-gray-700 dark:text-gray-200"
+        >
+          Password
+        </label>
+        <input
+          v-model="loginCredentials.password"
+          type="password"
+          id="password"
+          class="mt-1 block w-full rounded-md p-2 border border-gray-300 rounded"
+          required
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full bg-orange-500 py-3 px-2 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none transition-colors"
+        aria-label="Login"
+      >
+        Login
+      </button>
+
+      <div class="mt-4 text-neutral-500 text-sm block text-center">
+        Don't have an account?
+        <router-link to="/register" class="text-blue-600 hover:underline">
+          Sign up
+        </router-link>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script lang="ts">
@@ -45,7 +71,7 @@ export default {
 
     // Logic
     const loginCredentials = ref({
-      email: 'christophe.laprudence@howest.be',
+      email: '',
       password: '',
     })
 

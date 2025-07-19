@@ -37,7 +37,7 @@ const handleLogout = () => {
     firebaseUser.value?.getIdToken().then(token => {
       console.log(`{"Authorization": "Bearer ${token}"}`)
     })
-    replace({ path: '/' })
+    replace({ name: 'login' })
   })
 }
 </script>
