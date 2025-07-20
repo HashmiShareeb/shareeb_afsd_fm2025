@@ -21,12 +21,16 @@
     "useTabs": false
   },
   "lint-staged": {
-    "*.{vue,js,jsx,cjs,mjs,ts,tsx,cts,mts}": [
+    "packages/pwa/**/*.{vue,js,jsx,cjs,mjs,ts,tsx,cts,mts}": [
       "npm run -w pwa linter",
       "npm run -w pwa format"
     ],
-    "*.md": [
+    "packages/pwa/**/*.md": [
       "npm run -w pwa format"
+    ],
+    "packages/api/**/*.ts": [
+      "npm run -w api lint",
+      "npm run -w api format"
     ]
   },
   "keywords": [],
