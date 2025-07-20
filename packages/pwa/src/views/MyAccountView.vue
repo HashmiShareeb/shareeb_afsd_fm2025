@@ -1,13 +1,19 @@
 <template>
   <div v-if="firebaseUser" class="block py-8">
     <div class="flex items-center space-x-4">
-      <Avatar
-        :label="firebaseUser.displayName?.charAt(0).toUpperCase()"
-        size="large"
-      />
+      <div
+        v-if="firebaseUser && !firebaseUser.photoURL"
+        class="rounded-full h-16 w-16 flex items-center justify-center bg-orange-200 text-orange-700 text-2xl font-bold mb-2"
+      >
+        {{
+          firebaseUser.displayName
+            ? firebaseUser.displayName.charAt(0).toUpperCase()
+            : 'U'
+        }}
+      </div>
       <h1 class="font-bold text-2xl">
         {{ firebaseUser.displayName }}
-        <span class="text-sm block font-light text-gray-400">{{
+        <span class="text-sm block font-light text-gray-500">{{
           firebaseUser.email
         }}</span>
       </h1>
