@@ -6,12 +6,23 @@ import { GraphQLModule } from '@nestjs/graphql'
 import { BuildingModule } from './building/building.module'
 import { RoomModule } from './room/room.module'
 import { UserModule } from './user/user.module'
+import { TypeOrmModule } from '@nestjs/typeorm'
 
 @Module({
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mongodb',
+      url: 'mongodb://localhost:27027/api',
+      entities: [__dirname + '/**/*.entity.{js,ts}'],
+      synchronize: true, // Careful with this in production
+      extra: {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      },
     }),
     BuildingModule,
     RoomModule,
