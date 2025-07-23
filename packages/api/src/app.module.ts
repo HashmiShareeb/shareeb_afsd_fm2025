@@ -7,6 +7,7 @@ import { BuildingModule } from './building/building.module'
 import { RoomModule } from './room/room.module'
 import { UserModule } from './user/user.module'
 import { TypeOrmModule } from '@nestjs/typeorm'
+import { SeedModule } from './seed/seed.module'
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
     BuildingModule,
     RoomModule,
     UserModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
