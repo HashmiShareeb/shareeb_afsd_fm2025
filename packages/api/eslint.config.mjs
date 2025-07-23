@@ -29,7 +29,7 @@ export default tseslint.config(
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
-      'prettier/prettier': ['error', { endOfLine: 'crlf' }], // prettier rule github issue is outdated
+      'prettier/prettier': ['error', { endOfLine: 'auto' }], // prettier rule github issue is outdated
     },
   },
 )
