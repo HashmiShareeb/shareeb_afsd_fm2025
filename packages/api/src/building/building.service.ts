@@ -40,6 +40,13 @@ export class BuildingService {
   //   return `This action updates a #${id} building`
   // }
 
+  saveAll(buildings: Building[]): Promise<Building[]> {
+    return this.buildingRepository.save(buildings)
+  }
+
+  truncate(): Promise<void> {
+    return this.buildingRepository.clear()
+  }
   remove(id: number) {
     return `This action removes a #${id} building`
   }

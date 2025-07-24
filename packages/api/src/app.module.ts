@@ -22,7 +22,7 @@ import { SeedModule } from './seed/seed.module'
       synchronize: true, // Careful with this in production
       extra: {
         useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useUnifiedTopology: true, --> remove the stupid deprecated message
       },
     }),
     BuildingModule,
