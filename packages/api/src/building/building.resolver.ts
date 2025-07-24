@@ -55,4 +55,32 @@ export class BuildingResolver {
   removeBuilding(@Args('id', { type: () => Int }) id: number) {
     return this.buildingService.remove(id)
   }
+
+  // Extra queries for building logic
+
+  @Query(() => Building, { name: 'buildingByName', nullable: true })
+  findByName(
+    @Args('name', { type: () => String }) name: string,
+  ): Promise<Building | null> {
+    return this.buildingService.findByName(name)
+  }
+
+  @Query(() => [Building], { name: 'buildingsByAddress' })
+  findByAddress(
+    @Args('address', { type: () => String }) address: string,
+  ): Promise<Building[]> {
+    return this.buildingService.findByAddress(address)
+  }
+
+  @Query(() => Int, { name: 'buildingCount' })
+  countBuildings(): Promise<number> {
+    return this.buildingService.countBuildings()
+  }
+
+  @Query(() => Boolean, { name: 'buildingExistsByName' })
+  existsByName(
+    @Args('name', { type: () => String }) name: string,
+  ): Promise<boolean> {
+    return this.buildingService.existsByName(name)
+  }
 }
