@@ -24,6 +24,10 @@ export class Building {
   @Column() // typeORM database link
   address: string
 
+  @Field() // graphql
+  @Column() // typeORM database link
+  type: string
+
   // @Field(() => [String]) // graphql
   // @Column('simple-array') // typeORM: stores array of strings as comma-separated values
   // floors: string[]

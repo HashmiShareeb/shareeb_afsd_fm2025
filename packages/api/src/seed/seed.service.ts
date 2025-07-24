@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable } from '@nestjs/common'
 
 import { BuildingService } from 'src/building/building.service'
@@ -16,6 +15,7 @@ export class SeedService {
       const b = new Building()
       b.name = building.name
       b.address = building.address
+      b.type = building.type
       b.description = building.description
       // Add other properties as needed
 

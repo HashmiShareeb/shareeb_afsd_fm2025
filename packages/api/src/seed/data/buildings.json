@@ -2,22 +2,19 @@
   {
     "name": "Main Office",
     "address": "123 Main St, Cityville",
-    "floors": 5,
-    "yearBuilt": 2010,
-    "type": "Office"
+    "type": "Office",
+    "description": "The main administrative building housing company headquarters."
   },
   {
     "name": "Warehouse A",
     "address": "456 Industrial Rd, Cityville",
-    "floors": 1,
-    "yearBuilt": 2015,
-    "type": "Warehouse"
+    "type": "Warehouse",
+    "description": "A large warehouse for storing goods."
   },
   {
     "name": "Research Center",
     "address": "789 Science Ave, Cityville",
-    "floors": 3,
-    "yearBuilt": 2018,
-    "type": "Laboratory"
+    "type": "Research",
+    "description": "A facility for scientific research and experimentation."
   }
 ]

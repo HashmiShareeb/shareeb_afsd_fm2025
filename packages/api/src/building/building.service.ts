@@ -23,6 +23,7 @@ export class BuildingService {
     const building = new Building()
     building.name = createBuildingInput.name
     building.address = createBuildingInput.address
+    building.type = createBuildingInput.type
     building.description = createBuildingInput.description
 
     return this.buildingRepository.save(building)
@@ -67,6 +68,11 @@ export class BuildingService {
 
   async existsByName(name: string): Promise<boolean> {
     const count = await this.buildingRepository.count({ where: { name } })
+    return count > 0
+  }
+
+  async existsByType(type: string): Promise<boolean> {
+    const count = await this.buildingRepository.count({ where: { type } })
     return count > 0
   }
 }
