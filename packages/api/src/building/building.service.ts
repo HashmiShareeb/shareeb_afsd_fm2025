@@ -40,7 +40,33 @@ export class BuildingService {
   //   return `This action updates a #${id} building`
   // }
 
+  saveAll(buildings: Building[]): Promise<Building[]> {
+    return this.buildingRepository.save(buildings)
+  }
+
+  truncate(): Promise<void> {
+    return this.buildingRepository.clear()
+  }
   remove(id: number) {
     return `This action removes a #${id} building`
+  }
+
+  // extra - logic
+
+  async findByName(name: string): Promise<Building | null> {
+    return this.buildingRepository.findOne({ where: { name } })
+  }
+
+  async findByAddress(address: string): Promise<Building[]> {
+    return this.buildingRepository.find({ where: { address } })
+  }
+
+  async countBuildings(): Promise<number> {
+    return this.buildingRepository.count()
+  }
+
+  async existsByName(name: string): Promise<boolean> {
+    const count = await this.buildingRepository.count({ where: { name } })
+    return count > 0
   }
 }
