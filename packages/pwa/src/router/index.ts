@@ -20,6 +20,12 @@ const routes: RouteRecordRaw[] = [
     meta: { shouldBeAuthenticated: true },
   },
   {
+    path: '/buildings/:slug',
+    name: 'building-details',
+    component: () => import('@/views/buildings/_slug.vue'),
+    meta: { shouldBeAuthenticated: true },
+  },
+  {
     path: '/myaccount',
     name: 'myaccount',
     component: () => import('@/views/MyAccountView.vue'),

@@ -4,10 +4,16 @@
 
     <div v-if="loading">Loading...</div>
 
-    <div v-else>
-      <div v-for="building in buildings" :key="building.buildingId">
+    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- <div v-for="building in buildings" :key="building.buildingId">
         <p>{{ building.name }}</p>
-      </div>
+      </div> -->
+
+      <BuildingCards
+        v-for="building in buildings"
+        :key="building.buildingId"
+        :myBuildings="building"
+      />
     </div>
 
     <div v-if="error">{{ error.message }}</div>
@@ -15,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import BuildingCards from '@/components/buildingCards.vue'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
 import { useQuery } from '@vue/apollo-composable'
 import { computed } from 'vue'
