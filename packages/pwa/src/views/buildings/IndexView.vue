@@ -4,7 +4,10 @@
 
     <div v-if="loading">Loading...</div>
 
-    <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div
+      v-else
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch"
+    >
       <!-- <div v-for="building in buildings" :key="building.buildingId">
         <p>{{ building.name }}</p>
       </div> -->

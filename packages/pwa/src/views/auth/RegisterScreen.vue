@@ -55,10 +55,7 @@
       </div>
 
       <div class="mb-4">
-        <button
-          type="submit"
-          class="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 transition-colors"
-        >
+        <button type="submit" class="btn-primary w-full rounded-full">
           Register
         </button>
       </div>

@@ -26,6 +26,18 @@ const routes: RouteRecordRaw[] = [
     meta: { shouldBeAuthenticated: true },
   },
   {
+    path: '/rounds',
+    name: 'rounds',
+    component: () => import('@/views/rounds/IndexView.vue'),
+    meta: { shouldBeAuthenticated: true },
+  },
+  // {
+  //   path: '/rounds/:id',
+  //   name: 'round-details',
+  //   component: () => import('@/views/rounds/_id.vue'),
+  //   meta: { shouldBeAuthenticated: true },
+  // },
+  {
     path: '/myaccount',
     name: 'myaccount',
     component: () => import('@/views/MyAccountView.vue'),

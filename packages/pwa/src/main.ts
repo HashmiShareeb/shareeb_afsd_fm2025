@@ -1,6 +1,6 @@
 import { createApp, h, provide } from 'vue'
 import router from './router/index.ts'
-//import '@unocss/reset/tailwind.css'
+import '@unocss/reset/tailwind.css'
 import 'virtual:uno.css'
 import App from './App.vue'
 import useFirebase from './composables/useFirebase'

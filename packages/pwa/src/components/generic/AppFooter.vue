@@ -8,7 +8,14 @@
         >MCT</a
       >
       -
-      {{ new Date().getFullYear() }}
+      {{ new Date().getFullYear() }} <br />
+      <span class="text-xs text-neutral-500 mt-1 text-center"
+        >v{{ version }}</span
+      >
     </p>
   </footer>
 </template>
+
+<script setup lang="ts">
+import { version } from '../../../package.json'
+</script>
