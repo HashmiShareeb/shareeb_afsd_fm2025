@@ -18,10 +18,12 @@
         <Building class="text-orange-500 w-8 h-8" />
         <div>
           <h2 class="text-lg font-semibold">Manage Buildings</h2>
-          <p class="text-gray-600 text-sm">Add, edit, or remove buildings.</p>
+          <p class="text-gray-600 text-sm">
+            Add, edit, or remove buildings. (this is for the facility manager
+            example)
+          </p>
         </div>
       </div>
-
       <!-- View Details -->
       <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
         <Eye class="text-orange-500 w-8 h-8" />
@@ -33,44 +35,50 @@
         </div>
       </div>
     </div>
-
     <!-- Rounds to do -->
     <div>
       <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
-      <!-- Example: List of rooms in the current round -->
-      <div class="mt-4 bg-white p-4 shadow-md rounded-lg">
-        <div class="inline-flex items-center gap-2 mb-4">
-          <MapPin class="text-orange-500 w-6 h-6" />
-          <span class="text-gray-600 text-md text-gray-700">Building A</span>
+      <div
+        class="flex items-start gap-4 p-4 bg-white shadow-md rounded-lg mt-4"
+      >
+        <MapPin class="text-orange-500 w-8 h-8 mt-1" />
+        <div>
+          <h2 class="text-lg font-semibold">Building A</h2>
+          <p class="text-gray-600 text-sm mb-4">ergenstraat 42</p>
+          <div class="flex flex-col gap-2">
+            <!-- room section -->
+            <div class="flex items-center gap-3 mb-4">
+              <span class="font-medium text-gray-800">Lokaal: 101</span>
+              <span
+                class="px-2 py-1 rounded text-xs bg-green-100 text-green-700"
+              >
+                Gecontroleerd
+              </span>
+              <span
+                class="ml-2 px-2 py-1 rounded bg-blue-100 text-blue-700 text-xs"
+              >
+                Checklist ingevuld
+              </span>
+            </div>
+            <div class="flex items-center gap-3 mb-4">
+              <span class="font-medium text-gray-800">Lokaal: 104</span>
+              <span
+                class="px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-700"
+              >
+                In behandeling
+              </span>
+            </div>
+            <div class="flex items-center gap-3 mb-4">
+              <span class="font-medium text-gray-800">Lokaal: 105</span>
+              <span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700">
+                Niet gestart
+              </span>
+            </div>
+          </div>
         </div>
-        <div class="flex items-center gap-3 p-4 mb-2">
-          <span class="font-medium text-gray-800">Lokaal: 101</span>
-          <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700">
-            Gecontroleerd
-          </span>
-          <span
-            class="ml-2 px-2 py-1 rounded bg-blue-100 text-blue-700 text-xs"
-          >
-            Checklist ingevuld
-          </span>
-        </div>
-        <div class="flex items-center gap-3 p-4 mb-2">
-          <span class="font-medium text-gray-800">Lokaal: 102</span>
-          <span class="px-2 py-1 rounded text-xs bg-gray-100 text-gray-500">
-            Niet gecontroleerd
-          </span>
-        </div>
-        <!-- <div
-          class="flex items-center gap-3 bg-white p-4 shadow-md rounded-lg mb-2"
-        >
-          <span class="font-medium text-gray-800">Lokaal: 103</span>
-          <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-700">
-            Gecontroleerd
-          </span>
-        </div> -->
       </div>
-
       <!-- v-else (for now not dynamic because im setting up the base UI) -->
+      <h2 class="text-xl font-semibold mt-8 text-gray-700">if no rounds</h2>
       <div class="mt-4">
         <div class="flex items-center gap-2 bg-white p-4 shadow-md rounded-lg">
           <CalendarSearch class="text-orange-500 w-6 h-6" />
