@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
 import { BuildingService } from './building.service'
 import { Building } from './entities/building.entity'
 import { CreateBuildingInput } from './dto/create-building.input'
+
 // import { UpdateBuildingInput } from './dto/update-building.input'
 
 @Resolver(() => Building)
@@ -40,6 +41,12 @@ export class BuildingResolver {
   ): Promise<Building> {
     return this.buildingService.findOne(buildingId)
   }
+
+  // @ResolveField(() => [Room], { nullable: true })
+  // rooms(@Parent() building: Building): Promise<Room[]> {
+  //   const buildingId = building._id?.toString()
+  //   return this.roomService.findByBuildingId(buildingId)
+  // }
 
   // @Mutation(() => Building)
   // updateBuilding(
