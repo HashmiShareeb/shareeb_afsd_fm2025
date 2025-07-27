@@ -1,12 +1,17 @@
 import { ObjectType, Field, Int, ID } from '@nestjs/graphql'
+//import { Building } from 'src/building/entities/building.entity'
 import { Column, Entity, ObjectIdColumn } from 'typeorm'
 
 @ObjectType()
 @Entity()
 export class Room {
-  @ObjectIdColumn() // Database link - Typeorm
+  @ObjectIdColumn()
+  _id: string // stored in MongoDB as _id
+
   @Field(() => ID)
-  roomId: string
+  get roomId(): string {
+    return this._id?.toString() // Convert ObjectId to string for GraphQL
+  }
 
   @Field(() => String)
   @Column()

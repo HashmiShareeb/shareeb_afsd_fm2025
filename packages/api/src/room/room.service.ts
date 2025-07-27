@@ -14,14 +14,36 @@ export class RoomService {
     // private readonly buildingsService: BuildingService, // Injecting BuildingService to access building-related logic
   ) {}
 
-  create(createRoomInput: CreateRoomInput) {
-    const room = new Room()
-    room.name = createRoomInput.name
-    // room.buildingId = createRoomInput.buildingId
-    room.floor = createRoomInput.floor
-    room.capacity = createRoomInput.capacity
+  // create(createRoomInput: CreateRoomInput) {
+  //   const room = new Room()
+  //   room.name = createRoomInput.name
+  //   room.buildingId = createRoomInput.buildingId
+  //   room.floor = createRoomInput.floor
+  //   room.capacity = createRoomInput.capacity
 
-    return this.roomRepository.save(room)
+  //   return this.roomRepository.save(room)
+  // }
+
+  async create(createRoomInput: CreateRoomInput): Promise<Room> {
+    const room = this.roomRepository.create({
+      ...createRoomInput,
+      buildingId: createRoomInput.buildingId,
+    })
+    console.log('Creating room with buildingId:', createRoomInput.buildingId) // check if buildingId is passed correctly
+    const savedRoom = await this.roomRepository.save(room)
+    console.log('Saved room:', savedRoom) // save room
+    return savedRoom
+  }
+
+  // async findByBuildingId(buildingId: string): Promise<Room[]> {
+  //   return this.roomRepository.find({ where: { buildingId } })
+  // }
+
+  async findByBuildingId(buildingId: string): Promise<Room[]> {
+    console.log('Querying rooms with buildingId:', buildingId) // Debug
+    const rooms = await this.roomRepository.find({ where: { buildingId } })
+    console.log('Rooms found:', rooms) // Debug
+    return rooms
   }
 
   findAll() {
@@ -30,11 +52,6 @@ export class RoomService {
 
   findOne(id: number) {
     return `This action returns a #${id} room`
-  }
-
-  findByBuildingId(buildingId: string): Promise<Room[]> {
-    // Logic to find rooms by buildingId
-    return this.roomRepository.find({ where: { buildingId } })
   }
 
   // update(id: number, updateRoomInput: UpdateRoomInput) {

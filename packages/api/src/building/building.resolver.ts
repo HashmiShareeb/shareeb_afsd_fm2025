@@ -20,25 +20,12 @@ import { RoomService } from 'src/room/room.service'
 export class BuildingResolver {
   constructor(
     private readonly buildingService: BuildingService,
-    private roomService: RoomService,
+    private readonly roomService: RoomService,
   ) {}
 
   //test query for building
   @Query(() => [Building], { name: 'buildings' })
   findAll() {
-    // return [
-    //   {
-    //     id: '1',
-    //     name: 'Building One',
-    //     address: '123 Main St',
-    //   },
-    //   {
-    //     id: '2',
-    //     name: 'Building Two',
-    //     address: '456 Elm St',
-    //   },
-    // ]
-
     return this.buildingService.findAll()
   }
 
@@ -64,9 +51,22 @@ export class BuildingResolver {
     return this.buildingService.addRoomToBuilding(buildingId, createRoomInput)
   }
 
-  @ResolveField(() => [Room], { name: 'rooms', nullable: true })
+  // @ResolveField(() => [Room], { nullable: true })
+  // async rooms(@Parent() building: Building): Promise<Room[]> {
+  //   const buildingId = building._id.toString() // Convert ObjectId to string
+  //   console.log('Fetching rooms for buildingId:', buildingId) // Debug
+  //   const rooms = await this.roomService.findByBuildingId(buildingId)
+  //   console.log('Found rooms:', rooms) // Debug
+  //   return rooms
+  // }
+
+  @ResolveField(() => [Room], { nullable: true })
   async rooms(@Parent() building: Building): Promise<Room[]> {
-    return this.roomService.findByBuildingId(building.buildingId)
+    const buildingId = building._id.toString()
+    console.log('Fetching rooms for buildingId:', buildingId) // Debug
+    const rooms = await this.roomService.findByBuildingId(buildingId)
+    console.log('Found rooms:', rooms) // Debug
+    return rooms
   }
 
   // @Mutation(() => Building)

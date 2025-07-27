@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common'
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Building } from './entities/building.entity'
 import { MongoRepository } from 'typeorm'
@@ -35,22 +40,46 @@ export class BuildingService {
     return this.buildingRepository.save(building)
   }
 
-  //add room to building
+  // async addRoomToBuilding(
+  //   buildingId: string,
+  //   createRoomInput: CreateRoomInput,
+  // ): Promise<Room> {
+  //   // Verify building exists
+  //   const building = await this.findOne(buildingId)
+  //   if (!building) {
+  //     throw new NotFoundException(`Building with ID ${buildingId} not found`)
+  //   }
+  //   // Create room with buildingId
+  //   return this.roomService.create({ ...createRoomInput, buildingId })
+  // }
+
+  // async addRoomToBuilding(
+  //   buildingId: string,
+  //   createRoomInput: CreateRoomInput,
+  // ): Promise<Room> {
+  //   const building = await this.findOne(buildingId)
+  //   if (!building) {
+  //     throw new NotFoundException(`Building with ID ${buildingId} not found`)
+  //   }
+  //   console.log('Adding room to buildingId:', buildingId) // Debug
+  //   return this.roomService.create({ ...createRoomInput, buildingId })
+  // }
   async addRoomToBuilding(
     buildingId: string,
     createRoomInput: CreateRoomInput,
   ): Promise<Room> {
-    // Check building exists
     const building = await this.findOne(buildingId)
-    if (!building) throw new Error('Building not found')
-
-    // Create room input with buildingId
-    const roomInput: CreateRoomInput = {
-      ...createRoomInput,
-      buildingId: buildingId,
+    if (!building) {
+      throw new NotFoundException(`Building with ID ${buildingId} not found`)
     }
-
-    return this.roomService.create(roomInput)
+    // Create room with buildingId
+    console.log('Adding room to buildingId:', buildingId) // Debug
+    const room = await this.roomService.create({
+      ...createRoomInput,
+      buildingId,
+    })
+    console.log('Created room:', room) // Debug
+    return room
   }
 
   findOne(buildingId: string) {
