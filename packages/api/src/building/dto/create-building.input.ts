@@ -8,6 +8,9 @@ export class CreateBuildingInput {
   @Field() // GraphQL input field
   address: string
 
+  @Field() // GraphQL input field
+  type: string
+
   @Field({ nullable: true }) // Optional field
   description?: string
 }

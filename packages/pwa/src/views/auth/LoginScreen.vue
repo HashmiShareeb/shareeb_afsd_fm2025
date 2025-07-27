@@ -41,7 +41,7 @@
 
       <button
         type="submit"
-        class="w-full bg-orange-500 py-3 px-2 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none transition-colors"
+        class="btn-primary w-full rounded-full"
         aria-label="Login"
       >
         Login
