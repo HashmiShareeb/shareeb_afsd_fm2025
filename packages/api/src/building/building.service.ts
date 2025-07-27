@@ -1,10 +1,13 @@
-import { Injectable } from '@nestjs/common'
+import { forwardRef, Inject, Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Building } from './entities/building.entity'
 import { MongoRepository } from 'typeorm'
 import { ObjectId } from 'mongodb'
 
 import { CreateBuildingInput } from './dto/create-building.input'
+import { RoomService } from 'src/room/room.service'
+import { CreateRoomInput } from 'src/room/dto/create-room.input'
+import { Room } from 'src/room/entities/room.entity'
 // import { UpdateBuildingInput } from './dto/update-building.input'
 
 @Injectable()
@@ -13,6 +16,9 @@ export class BuildingService {
     @InjectRepository(Building)
     //use mongodb repo
     private readonly buildingRepository: MongoRepository<Building>,
+
+    @Inject(forwardRef(() => RoomService)) // ✅ fix circular dependency
+    private readonly roomService: RoomService,
   ) {}
 
   findAll() {
@@ -27,6 +33,24 @@ export class BuildingService {
     building.description = createBuildingInput.description
 
     return this.buildingRepository.save(building)
+  }
+
+  //add room to building
+  async addRoomToBuilding(
+    buildingId: string,
+    createRoomInput: CreateRoomInput,
+  ): Promise<Room> {
+    // Check building exists
+    const building = await this.findOne(buildingId)
+    if (!building) throw new Error('Building not found')
+
+    // Create room input with buildingId
+    const roomInput: CreateRoomInput = {
+      ...createRoomInput,
+      buildingId: buildingId,
+    }
+
+    return this.roomService.create(roomInput)
   }
 
   findOne(buildingId: string) {

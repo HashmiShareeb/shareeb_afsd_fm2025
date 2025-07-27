@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { Room } from 'src/room/entities/room.entity'
 import { Column, Entity, ObjectIdColumn } from 'typeorm'
 
 @Entity() //? typeORM
@@ -35,4 +36,7 @@ export class Building {
   @Column() // typeORM database link
   @Field({ nullable: true }) // graphql
   description?: string
+
+  @Field(() => [Room], { nullable: true })
+  rooms?: Room[]
 }

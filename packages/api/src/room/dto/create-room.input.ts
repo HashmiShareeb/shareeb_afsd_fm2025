@@ -8,9 +8,9 @@ export class CreateRoomInput {
   @Field(() => Int)
   floor: number
 
-  @Field(() => String)
-  buildingId: string
-
   @Field(() => Int)
   capacity: number
+
+  @Field(() => String)
+  buildingId: string
 }

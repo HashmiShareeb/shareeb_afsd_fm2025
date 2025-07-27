@@ -1,13 +1,27 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { BuildingService } from './building.service'
 import { Building } from './entities/building.entity'
 import { CreateBuildingInput } from './dto/create-building.input'
+import { Room } from 'src/room/entities/room.entity'
+import { CreateRoomInput } from 'src/room/dto/create-room.input'
+import { RoomService } from 'src/room/room.service'
 
 // import { UpdateBuildingInput } from './dto/update-building.input'
 
 @Resolver(() => Building)
 export class BuildingResolver {
-  constructor(private readonly buildingService: BuildingService) {}
+  constructor(
+    private readonly buildingService: BuildingService,
+    private roomService: RoomService,
+  ) {}
 
   //test query for building
   @Query(() => [Building], { name: 'buildings' })
@@ -42,11 +56,18 @@ export class BuildingResolver {
     return this.buildingService.findOne(buildingId)
   }
 
-  // @ResolveField(() => [Room], { nullable: true })
-  // rooms(@Parent() building: Building): Promise<Room[]> {
-  //   const buildingId = building._id?.toString()
-  //   return this.roomService.findByBuildingId(buildingId)
-  // }
+  @Mutation(() => Room)
+  addRoomToBuilding(
+    @Args('buildingId') buildingId: string,
+    @Args('createRoomInput') createRoomInput: CreateRoomInput,
+  ) {
+    return this.buildingService.addRoomToBuilding(buildingId, createRoomInput)
+  }
+
+  @ResolveField(() => [Room], { name: 'rooms', nullable: true })
+  async rooms(@Parent() building: Building): Promise<Room[]> {
+    return this.roomService.findByBuildingId(building.buildingId)
+  }
 
   // @Mutation(() => Building)
   // updateBuilding(
