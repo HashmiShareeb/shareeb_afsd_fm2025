@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { SeedModule } from './seed/seed.module'
 import { AuthenticationModule } from './authentication/authentication.module'
 import { ConfigModule } from '@nestjs/config'
+import { RoundsModule } from './rounds/rounds.module'
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ConfigModule } from '@nestjs/config'
     UserModule,
     SeedModule,
     AuthenticationModule,
+    RoundsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

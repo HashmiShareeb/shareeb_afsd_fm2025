@@ -28,12 +28,12 @@ export class User {
   @Field(() => String)
   email: string
 
-  // @Column()
-  // @Field({ nullable: true }) // can return null in graphql if the user has no displayName
-  // displayName?: string
+  @Column()
+  @Field({ nullable: true }) // can return null in graphql if the user has no displayName
+  displayName?: string
 
-  @Field(() => String)
-  name: string
+  // @Field(() => String)
+  // name: string
 
   @Column({ default: Role.USER })
   @Field(() => String)
