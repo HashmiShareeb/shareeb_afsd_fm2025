@@ -27,7 +27,7 @@ export class RoomService {
   async create(createRoomInput: CreateRoomInput): Promise<Room> {
     const room = this.roomRepository.create({
       ...createRoomInput,
-      buildingId: createRoomInput.buildingId,
+      buildingId: createRoomInput.buildingId.toString(), // Ensure buildingId is a string
     })
     console.log('Creating room with buildingId:', createRoomInput.buildingId) // check if buildingId is passed correctly
     const savedRoom = await this.roomRepository.save(room)
