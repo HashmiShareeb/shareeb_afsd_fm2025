@@ -43,6 +43,7 @@ export class BuildingResolver {
     return this.buildingService.findOne(buildingId)
   }
 
+  //@UseGuards(FirebaseGuard)
   @Mutation(() => Room)
   addRoomToBuilding(
     @Args('buildingId') buildingId: string,
