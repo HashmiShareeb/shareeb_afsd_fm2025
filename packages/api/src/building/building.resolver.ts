@@ -1,29 +1,31 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql'
 import { BuildingService } from './building.service'
 import { Building } from './entities/building.entity'
 import { CreateBuildingInput } from './dto/create-building.input'
+import { Room } from 'src/room/entities/room.entity'
+import { CreateRoomInput } from 'src/room/dto/create-room.input'
+import { RoomService } from 'src/room/room.service'
+
 // import { UpdateBuildingInput } from './dto/update-building.input'
 
 @Resolver(() => Building)
 export class BuildingResolver {
-  constructor(private readonly buildingService: BuildingService) {}
+  constructor(
+    private readonly buildingService: BuildingService,
+    private readonly roomService: RoomService,
+  ) {}
 
   //test query for building
   @Query(() => [Building], { name: 'buildings' })
   findAll() {
-    // return [
-    //   {
-    //     id: '1',
-    //     name: 'Building One',
-    //     address: '123 Main St',
-    //   },
-    //   {
-    //     id: '2',
-    //     name: 'Building Two',
-    //     address: '456 Elm St',
-    //   },
-    // ]
-
     return this.buildingService.findAll()
   }
 
@@ -39,6 +41,33 @@ export class BuildingResolver {
     @Args('buildingId', { type: () => String }) buildingId: string,
   ): Promise<Building> {
     return this.buildingService.findOne(buildingId)
+  }
+
+  //@UseGuards(FirebaseGuard)
+  @Mutation(() => Room)
+  addRoomToBuilding(
+    @Args('buildingId') buildingId: string,
+    @Args('createRoomInput') createRoomInput: CreateRoomInput,
+  ) {
+    return this.buildingService.addRoomToBuilding(buildingId, createRoomInput)
+  }
+
+  // @ResolveField(() => [Room], { nullable: true })
+  // async rooms(@Parent() building: Building): Promise<Room[]> {
+  //   const buildingId = building._id.toString() // Convert ObjectId to string
+  //   console.log('Fetching rooms for buildingId:', buildingId) // Debug
+  //   const rooms = await this.roomService.findByBuildingId(buildingId)
+  //   console.log('Found rooms:', rooms) // Debug
+  //   return rooms
+  // }
+
+  @ResolveField(() => [Room], { nullable: true })
+  async rooms(@Parent() building: Building): Promise<Room[]> {
+    const buildingId = building._id.toString()
+    console.log('Fetching rooms for buildingId:', buildingId) // Debug
+    const rooms = await this.roomService.findByBuildingId(buildingId)
+    console.log('Found rooms:', rooms) // Debug
+    return rooms
   }
 
   // @Mutation(() => Building)
