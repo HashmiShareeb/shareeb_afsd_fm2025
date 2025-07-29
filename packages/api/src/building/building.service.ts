@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Building } from './entities/building.entity'
 import { MongoRepository } from 'typeorm'
 import { ObjectId } from 'mongodb'
-
 import { CreateBuildingInput } from './dto/create-building.input'
 import { RoomService } from 'src/room/room.service'
 import { CreateRoomInput } from 'src/room/dto/create-room.input'

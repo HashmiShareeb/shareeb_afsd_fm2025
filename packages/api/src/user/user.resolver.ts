@@ -1,7 +1,9 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql'
 import { UserService } from './user.service'
 import { User } from './entities/user.entity'
-// import { CreateUserInput } from './dto/create-user.input'
+import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
+import { CreateUserInput } from './dto/create-user.input'
+import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator'
 // import { UpdateUserInput } from './dto/update-user.input'
 
 @Resolver(() => User)
@@ -13,14 +15,23 @@ export class UserResolver {
   //   return this.userService.create(createUserInput)
   // }
 
-  @Query(() => [User], { name: 'user' })
+  @Query(() => [User], { name: 'users' })
   findAll() {
     return this.userService.findAll()
   }
 
   @Query(() => User, { name: 'user' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
+  //changed to ID from Int to fetch user by id
+  findOne(@Args('id', { type: () => ID }) id: string) {
     return this.userService.findOne(id)
+  }
+
+  @UseGuards(FirebaseGuard)
+  @Mutation(() => User)
+  createOwnUseraccount(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+  ) {
+    return this.userService.create(createUserInput)
   }
 
   // @Mutation(() => User)

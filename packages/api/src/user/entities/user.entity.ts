@@ -39,6 +39,10 @@ export class User {
   @Field(() => String)
   role: Role
 
+  // @Column()
+  // @Field({ nullable: true }) // Can return null in GraphQL if the user has no locale
+  // locale?: string
+
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   createdAt?: Date

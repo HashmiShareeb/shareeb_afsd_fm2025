@@ -1,7 +1,18 @@
-import { InputType, Int, Field } from '@nestjs/graphql'
+import { InputType, Field } from '@nestjs/graphql'
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator'
+import { Role } from '../entities/user.entity'
 
 @InputType()
 export class CreateUserInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number
+  @IsString()
+  @IsNotEmpty()
+  @Field()
+  uid: string // Firebase UID
+
+  // @Field({ nullable: true }) --> for later use
+  // locale?: string
+
+  @IsEnum(Role)
+  @Field(() => String)
+  role: Role
 }
