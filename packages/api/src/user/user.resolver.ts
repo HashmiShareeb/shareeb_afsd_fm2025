@@ -1,9 +1,11 @@
 import { Resolver, Query, Mutation, Args, Int, ID } from '@nestjs/graphql'
 import { UserService } from './user.service'
-import { User } from './entities/user.entity'
+import { Role, User } from './entities/user.entity'
 import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { CreateUserInput } from './dto/create-user.input'
 import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator'
+import { AllowedRoles } from 'src/decorators/roles.decorator'
+
 // import { UpdateUserInput } from './dto/update-user.input'
 
 @Resolver(() => User)
@@ -32,6 +34,12 @@ export class UserResolver {
     @Args('createUserInput') createUserInput: CreateUserInput,
   ) {
     return this.userService.create(createUserInput)
+  }
+
+  @AllowedRoles(Role.ADMIN)
+  @Mutation(() => User)
+  createAdmin(@Args('createUserInput') createUserInput: CreateUserInput) {
+    return this.userService.createAdmin(createUserInput)
   }
 
   // @Mutation(() => User)

@@ -50,6 +50,22 @@ export class UserService {
     return this.userRepository.save(newCustomUser)
   }
 
+  async createAdmin(createUserInput: CreateUserInput) {
+    // If the user already exists, throw an error
+    if (await this.findOneByFirebaseUid(createUserInput.uid)) {
+      throw new Error(
+        'User not authorized to create this user. A Firebase user is already connected to an account.',
+      )
+    }
+
+    const newCustomUser = new User()
+    // newCustomUser.locale = createUserInput.locale
+    newCustomUser.role = Role.ADMIN // This is a security feature. We only allow users to create new users with the role "user"
+    newCustomUser.uid = createUserInput.uid // Firebase UID is saved in the user entity
+    //newCustomUser.displayName = createUserInput.displayName
+    return this.userRepository.save(newCustomUser)
+  }
+
   // update(id: number, updateUserInput: UpdateUserInput) {
   //   return `This action updates a #${id} user`
   // }

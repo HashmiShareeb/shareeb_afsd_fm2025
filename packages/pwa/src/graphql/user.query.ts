@@ -5,7 +5,6 @@ export const OWN_USER_ACCOUNT = gql`
     users {
       id
       uid
-      displayName
       role
       createdAt
       updatedAt

@@ -19,8 +19,7 @@
             >
               <Home class="object-cover" />
             </div>
-
-            <span class="mx-2"> Dashboard</span>
+            <span class="mx-2">Dashboard</span>
           </router-link>
         </li>
         <li>
@@ -34,7 +33,6 @@
             >
               <BuildingIcon class="object-cover" />
             </div>
-
             <span class="mx-2">Buildings</span>
           </router-link>
         </li>
@@ -49,37 +47,12 @@
             >
               <CalendarSearch class="object-cover" />
             </div>
-
             <span class="mx-2">My Rounds</span>
           </router-link>
         </li>
-        <!-- <li>
-          <RouterLink
-            class="block rounded-full focus:outline-none focus-visible:ring-4 ring-blue-400 hover:bg-orange-100 py-2 px-3"
-            :to="firebaseUser ? `/myaccount` : `/login`"
-          >
-            <div v-if="firebaseUser" class="flex items-center gap-3">
-              <img
-                v-if="firebaseUser.photoURL"
-                :src="firebaseUser.photoURL"
-                alt="Profile picture"
-              />
-              <div
-                v-else
-                class="rounded-full overflow-hidden h-10 w-10 object-fit ring-neutral-100 flex items-center justify-center bg-white"
-              >
-                <User2 class="object-cover" />
-              </div>
-              <p class="pr-1">{{ firebaseUser?.displayName || 'No name' }}</p>
-            </div>
-            <div v-else>
-              <p>Login</p>
-            </div>
-          </RouterLink>
-        </li> -->
         <router-link :to="firebaseUser ? `/myaccount` : `/login`">
           <li
-            class="mt-auto flex items-center gap-2 align-center mb-4 no-underline absolute bottom-4 left-0 right-0"
+            class="mt-auto flex items-center gap-2 align-center mb-4 no-underline absolute bottom-4 left-0 right-0 mx-5"
           >
             <div
               v-if="firebaseUser && !firebaseUser.photoURL"
@@ -99,12 +72,18 @@
                 class="rounded-full h-10 w-10 object-cover"
               />
             </div>
-            <h1 v-if="firebaseUser" class="font-bold text-lg">
-              {{ firebaseUser.displayName }}
-              <span class="text-sm block font-light text-gray-500">{{
-                firebaseUser.email
-              }}</span>
-            </h1>
+            <div v-if="firebaseUser">
+              <h1 class="font-bold text-lg">
+                {{ firebaseUser.displayName }}
+              </h1>
+              <p v-if="userRole" class="text-sm text-orange-500">
+                {{ userRole }}
+              </p>
+              <p v-else-if="loading" class="text-sm text-gray-500">
+                Loading role...
+              </p>
+              <p v-else class="text-sm text-gray-500">No role assigned</p>
+            </div>
             <h1 v-else class="font-bold text-lg">Login</h1>
           </li>
         </router-link>
@@ -114,9 +93,39 @@
 </template>
 
 <script setup lang="ts">
+import { computed, watch } from 'vue'
 import useFirebase from '@/composables/useFirebase'
+import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
 import { Home, CalendarSearch, BuildingIcon } from 'lucide-vue-next'
+import { useQuery } from '@vue/apollo-composable'
 
+// Get firebase user (ref)
 const { firebaseUser } = useFirebase()
-console.log(firebaseUser)
+
+// Compute GraphQL variables
+const variables = computed(() => {
+  return firebaseUser.value?.uid ? { uid: firebaseUser.value.uid } : null
+})
+
+// Compute whether to skip query
+const shouldSkip = computed(() => !firebaseUser.value?.uid)
+
+// Run GraphQL query
+const { result, loading, error } = useQuery(OWN_USER_ACCOUNT, variables, {
+  enabled: computed(() => !shouldSkip.value),
+})
+
+// Debug logs
+watch(result, newVal => {
+  console.log('GraphQL result:', JSON.stringify(newVal, null, 2))
+})
+watch(firebaseUser, newVal => {
+  console.log('firebaseUser:', newVal)
+})
+watch(error, newVal => {
+  if (newVal) console.error('GraphQL query error:', newVal)
+})
+
+// Compute role
+const userRole = computed(() => result.value?.users?.[0]?.role ?? null)
 </script>
