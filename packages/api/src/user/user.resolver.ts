@@ -42,6 +42,11 @@ export class UserResolver {
     return this.userService.createAdmin(createUserInput)
   }
 
+  @Query(() => User, { name: 'userByUid' })
+  userByUid(@Args('uid', { type: () => String }) uid: string) {
+    return this.userService.findOneByFirebaseUid(uid)
+  }
+
   // @Mutation(() => User)
   // updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
   //   return this.userService.update(updateUserInput.id, updateUserInput)

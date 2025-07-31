@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 
 export const OWN_USER_ACCOUNT = gql`
-  query ownUseraccount {
-    users {
+  query ownUseraccount($uid: String!) {
+    userByUid(uid: $uid) {
       id
       uid
       role
@@ -11,3 +11,14 @@ export const OWN_USER_ACCOUNT = gql`
     }
   }
 `
+// export const OWN_USER_ACCOUNT = gql`
+//   query ownUseraccount {
+//     users {
+//       id
+//       uid
+//       role
+//       createdAt
+//       updatedAt
+//     }
+//   }
+// `

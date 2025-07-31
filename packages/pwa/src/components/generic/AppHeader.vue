@@ -1,6 +1,5 @@
 <template>
   <aside class="w-64 bg-white h-full fixed inset-0 shadow z-1">
-    <!-- Sidebar Header -->
     <div class="flex items-center justify-center h-16 border-b mb-4 relative">
       <span class="text-lg font-semibold text-orange-700"
         >Bedenkt een naam</span
@@ -50,6 +49,21 @@
             <span class="mx-2">My Rounds</span>
           </router-link>
         </li>
+        <!-- ?test als rol werkt of niet -->
+        <li v-if="userRole === 'ADMIN'">
+          <router-link
+            :to="{ name: 'rounds' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
+          >
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <CalendarSearch class="object-cover" />
+            </div>
+            <span class="mx-2">Meldingen</span>
+          </router-link>
+        </li>
         <router-link :to="firebaseUser ? `/myaccount` : `/login`">
           <li
             class="mt-auto flex items-center gap-2 align-center mb-4 no-underline absolute bottom-4 left-0 right-0 mx-5"
@@ -74,7 +88,7 @@
             </div>
             <div v-if="firebaseUser">
               <h1 class="font-bold text-lg">
-                {{ firebaseUser.displayName }}
+                {{ firebaseUser.displayName || 'Unknown User' }}
               </h1>
               <p v-if="userRole" class="text-sm text-orange-500">
                 {{ userRole }}
@@ -94,12 +108,12 @@
 
 <script setup lang="ts">
 import { computed, watch } from 'vue'
+import { useQuery } from '@vue/apollo-composable'
 import useFirebase from '@/composables/useFirebase'
 import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
 import { Home, CalendarSearch, BuildingIcon } from 'lucide-vue-next'
-import { useQuery } from '@vue/apollo-composable'
 
-// Get firebase user (ref)
+// Get Firebase user
 const { firebaseUser } = useFirebase()
 
 // Compute GraphQL variables
@@ -111,21 +125,38 @@ const variables = computed(() => {
 const shouldSkip = computed(() => !firebaseUser.value?.uid)
 
 // Run GraphQL query
-const { result, loading, error } = useQuery(OWN_USER_ACCOUNT, variables, {
-  enabled: computed(() => !shouldSkip.value),
+const { result, loading, error, refetch } = useQuery(
+  OWN_USER_ACCOUNT,
+  variables,
+  {
+    enabled: computed(() => !shouldSkip.value),
+    fetchPolicy: 'network-only',
+  },
+)
+
+// Refetch user data when firebaseUser changes
+watch(firebaseUser, newVal => {
+  if (newVal?.uid) {
+    refetch()
+  }
 })
 
 // Debug logs
 watch(result, newVal => {
-  console.log('GraphQL result:', JSON.stringify(newVal, null, 2))
+  console.log('Raw result:', JSON.stringify(newVal, null, 2))
+  console.log('User by UID:', newVal?.userByUid)
 })
 watch(firebaseUser, newVal => {
-  console.log('firebaseUser:', newVal)
+  console.log('firebaseUser UID:', newVal?.uid)
 })
 watch(error, newVal => {
   if (newVal) console.error('GraphQL query error:', newVal)
 })
 
 // Compute role
-const userRole = computed(() => result.value?.users?.[0]?.role ?? null)
+const userRole = computed(() => {
+  const role = result.value?.userByUid?.role || null
+  console.log('Computed userRole:', role)
+  return role ? role.toUpperCase() : null
+})
 </script>
