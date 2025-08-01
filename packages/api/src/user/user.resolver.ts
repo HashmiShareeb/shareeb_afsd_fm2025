@@ -5,8 +5,7 @@ import { FirebaseGuard } from 'src/authentication/guards/firebase.guard'
 import { CreateUserInput } from './dto/create-user.input'
 import { UseGuards } from '@nestjs/common/decorators/core/use-guards.decorator'
 import { AllowedRoles } from 'src/decorators/roles.decorator'
-
-// import { UpdateUserInput } from './dto/update-user.input'
+import { UpdateUserInput } from './dto/update-user.input'
 
 @Resolver(() => User)
 export class UserResolver {
@@ -47,10 +46,20 @@ export class UserResolver {
     return this.userService.findOneByFirebaseUid(uid)
   }
 
-  // @Mutation(() => User)
-  // updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-  //   return this.userService.update(updateUserInput.id, updateUserInput)
-  // }
+  // @UseGuards(FirebaseGuard)
+  @Mutation(() => User)
+  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+    return this.userService.update(updateUserInput.uid, updateUserInput)
+  }
+
+  @AllowedRoles(Role.ADMIN)
+  @Mutation(() => User)
+  updateUserRole(
+    @Args('uid', { type: () => String }) uid: string,
+    @Args('role', { type: () => String }) role: Role,
+  ) {
+    return this.userService.updateRole(uid, role)
+  }
 
   @Mutation(() => User)
   removeUser(@Args('id', { type: () => Int }) id: number) {

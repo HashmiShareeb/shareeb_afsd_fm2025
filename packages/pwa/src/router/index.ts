@@ -16,13 +16,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/buildings',
     name: 'buildings',
-    component: () => import('@/views/buildings/IndexView.vue'),
+    component: () => import('@/views/admin/buildings/IndexView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
   {
     path: '/buildings/:slug',
     name: 'building-details',
-    component: () => import('@/views/buildings/_slug.vue'),
+    component: () => import('@/views/admin/buildings/_slug.vue'),
     meta: { shouldBeAuthenticated: true },
   },
   {
@@ -31,17 +31,27 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/rounds/IndexView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
+
   // {
   //   path: '/rounds/:id',
   //   name: 'round-details',
   //   component: () => import('@/views/rounds/_id.vue'),
   //   meta: { shouldBeAuthenticated: true },
   // },
+
   {
     path: '/myaccount',
     name: 'myaccount',
     component: () => import('@/views/MyAccountView.vue'),
     meta: { shouldBeAuthenticated: true },
+  },
+
+  // ADMIN ROUTES
+  {
+    path: '/admin',
+    name: 'admin',
+    component: () => import('@/views/admin/adminHomeScreen.vue'),
+    meta: { shouldBeAuthenticated: true, isAdmin: true },
   },
 
   // AUTHENTICATION ROUTES

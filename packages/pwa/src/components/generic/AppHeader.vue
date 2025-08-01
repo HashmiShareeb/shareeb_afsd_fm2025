@@ -125,14 +125,10 @@ const variables = computed(() => {
 const shouldSkip = computed(() => !firebaseUser.value?.uid)
 
 // Run GraphQL query
-const { result, loading, error, refetch } = useQuery(
-  OWN_USER_ACCOUNT,
-  variables,
-  {
-    enabled: computed(() => !shouldSkip.value),
-    fetchPolicy: 'network-only',
-  },
-)
+const { result, loading, refetch } = useQuery(OWN_USER_ACCOUNT, variables, {
+  enabled: computed(() => !shouldSkip.value),
+  fetchPolicy: 'network-only',
+})
 
 // Refetch user data when firebaseUser changes
 watch(firebaseUser, newVal => {
@@ -142,16 +138,16 @@ watch(firebaseUser, newVal => {
 })
 
 // Debug logs
-watch(result, newVal => {
-  console.log('Raw result:', JSON.stringify(newVal, null, 2))
-  console.log('User by UID:', newVal?.userByUid)
-})
-watch(firebaseUser, newVal => {
-  console.log('firebaseUser UID:', newVal?.uid)
-})
-watch(error, newVal => {
-  if (newVal) console.error('GraphQL query error:', newVal)
-})
+// watch(result, newVal => {
+//   console.log('Raw result:', JSON.stringify(newVal, null, 2))
+//   console.log('User by UID:', newVal?.userByUid)
+// })
+// watch(firebaseUser, newVal => {
+//   console.log('firebaseUser UID:', newVal?.uid)
+// })
+// watch(error, newVal => {
+//   if (newVal) console.error('GraphQL query error:', newVal)
+// })
 
 // Compute role
 const userRole = computed(() => {

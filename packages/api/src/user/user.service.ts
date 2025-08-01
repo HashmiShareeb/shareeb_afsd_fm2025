@@ -4,8 +4,7 @@ import { Role, User } from './entities/user.entity'
 import { InjectRepository } from '@nestjs/typeorm'
 import { MongoRepository } from 'typeorm/repository/MongoRepository'
 import { ObjectId } from 'mongodb'
-
-// import { UpdateUserInput } from './dto/update-user.input'
+import { UpdateUserInput } from './dto/update-user.input'
 
 @Injectable()
 export class UserService {
@@ -66,9 +65,39 @@ export class UserService {
     return this.userRepository.save(newCustomUser)
   }
 
-  // update(id: number, updateUserInput: UpdateUserInput) {
-  //   return `This action updates a #${id} user`
-  // }
+  async update(uid: string, updateUserInput: UpdateUserInput): Promise<User> {
+    const user = await this.userRepository.findOneBy({ uid })
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    const updatedUser = {
+      ...user,
+      ...updateUserInput,
+    }
+
+    await this.userRepository.update(user.id, updatedUser)
+    const updated = await this.userRepository.findOneBy({ uid })
+    if (!updated) {
+      throw new Error('User not found after update')
+    }
+
+    // Do NOT allow ROLE change --> ADMIN ONLY
+    if (updateUserInput.role) {
+      throw new Error('Not allowed')
+    }
+    return updated
+  }
+
+  async updateRole(uid: string, role: Role): Promise<User> {
+    const user = await this.userRepository.findOneBy({ uid })
+    if (!user) {
+      throw new Error('User not found')
+    }
+    user.role = role
+    await this.userRepository.save(user)
+    return user
+  }
 
   remove(id: number) {
     return `This action removes a #${id} user`

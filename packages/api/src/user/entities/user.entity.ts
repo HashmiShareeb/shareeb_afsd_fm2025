@@ -25,15 +25,12 @@ export class User {
   uid: string // Firebase UID
 
   @Column()
-  @Field(() => String)
-  email: string
+  @Field({ nullable: true }) // can return null in graphql if the user has no name
+  name?: string
 
   @Column()
-  @Field({ nullable: true }) // can return null in graphql if the user has no displayName
-  displayName?: string
-
-  // @Field(() => String)
-  // name: string
+  @Field(() => String)
+  email: string
 
   @Column({ default: Role.USER })
   @Field(() => String)
