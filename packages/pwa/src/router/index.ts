@@ -1,12 +1,14 @@
-import useFirebase from '@/composables/useFirebase'
 import {
   createRouter,
   createWebHistory,
   type Router,
   type RouteRecordRaw,
 } from 'vue-router'
+import { getAuth } from 'firebase/auth'
+import useCustomUser from '@/composables/useCustomUser'
+import { Role } from '@/interfaces/custom.user.interface'
 
-// ROUTES
+// Routes
 const routes: RouteRecordRaw[] = [
   {
     path: '/',
@@ -28,17 +30,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/rounds',
     name: 'rounds',
-    component: () => import('@/views/rounds/IndexView.vue'),
+    component: () => import('@/views/rounds/indexView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
-
-  // {
-  //   path: '/rounds/:id',
-  //   name: 'round-details',
-  //   component: () => import('@/views/rounds/_id.vue'),
-  //   meta: { shouldBeAuthenticated: true },
-  // },
-
   {
     path: '/myaccount',
     name: 'myaccount',
@@ -51,15 +45,13 @@ const routes: RouteRecordRaw[] = [
     path: '/admin',
     name: 'admin',
     component: () => import('@/views/admin/adminHomeScreen.vue'),
-    meta: { shouldBeAuthenticated: true, isAdmin: true },
+    meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
   },
-
-  // AUTHENTICATION ROUTES
+  //AUTHENTICATION ROUTES
   {
     path: '/login',
     name: 'login',
     component: () => import('@/views/auth/LoginScreen.vue'),
-    //meta: { preventLoggedIn: true },
   },
   {
     path: '/register',
@@ -72,23 +64,49 @@ const routes: RouteRecordRaw[] = [
   },
 ]
 
-// THE ROUTER ITSELF
+// Router
 const router: Router = createRouter({
   history: createWebHistory(),
   routes,
 })
 
 router.beforeEach(async (to, from, next) => {
-  const { firebaseUser } = useFirebase()
+  const auth = getAuth()
+  const firebaseUser = auth.currentUser
 
-  if (to.meta.shouldBeAuthenticated && !firebaseUser.value) {
-    next({ name: 'login' })
+  // Check authentication
+  if (to.meta.shouldBeAuthenticated && !firebaseUser) {
+    return next({ name: 'login' })
   }
-  if (to.meta.preventLoggedIn && firebaseUser.value) {
-    next({ name: 'home' })
-  } else {
-    next()
+
+  // Check role-based access
+  if (to.meta.role) {
+    if (!firebaseUser) {
+      return next({ name: 'login' })
+    }
+
+    const { userRole, restoreCustomUser } = useCustomUser()
+    try {
+      await restoreCustomUser() // Fetch user role
+      const role = userRole.value
+      if (role !== to.meta.role) {
+        console.log(
+          `Access denied: Required role ${to.meta.role}, but user has ${role}`,
+        )
+        return next({ name: 'home' })
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error)
+      return next({ name: 'home' })
+    }
   }
+
+  // Prevent logged-in users from accessing login/register
+  if (to.meta.preventLoggedIn && firebaseUser) {
+    return next({ name: 'home' })
+  }
+
+  return next()
 })
 
 export default router

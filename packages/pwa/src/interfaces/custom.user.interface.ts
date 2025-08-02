@@ -9,7 +9,7 @@ export interface CustomUser {
   uid: string
   //   locale?: string  --> disabled for now
   role: Role
-  displayName?: string
+  name?: string
   createdAt?: string
   updatedAt?: string
 }
