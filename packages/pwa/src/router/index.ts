@@ -18,13 +18,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/buildings',
     name: 'buildings',
-    component: () => import('@/views/admin/buildings/IndexView.vue'),
+    component: () => import('@/views/buildings/IndexView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
   {
     path: '/buildings/:slug',
     name: 'building-details',
-    component: () => import('@/views/admin/buildings/_slug.vue'),
+    component: () => import('@/views/buildings/_slug.vue'),
     meta: { shouldBeAuthenticated: true },
   },
   {
@@ -47,6 +47,24 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/admin/adminHomeScreen.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
   },
+  {
+    path: '/admin/buildings',
+    name: 'admin-buildings',
+    component: () => import('@/views/admin/buildings/IndexView.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
+  },
+  {
+    path: '/admin/buildings/add',
+    name: 'admin-building-add',
+    component: () => import('@/views/admin/buildings/addBuilding.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
+  },
+  // {
+  //   path: '/admin/buildings/:slug/add',
+  //   name: 'admin-building-edit',
+  //   component: () => import('@/views/admin/buildings/editBuildingView.vue'),
+  //   meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
+  // },
   //AUTHENTICATION ROUTES
   {
     path: '/login',

@@ -1,10 +1,20 @@
 <template>
-  <h2 class="text-xl font-semibold mt-8 text-gray-700">
+  <!-- HomeScreen content -->
+  <h1 class="text-2xl font-bold">
+    Welcome back,
+    <span class="text-orange-500">{{
+      firebaseUser?.displayName || 'displayName'
+    }}</span>
+  </h1>
+  <p class="text-gray-600 mt-2">
+    Here you can manage your buildings and view details.
+  </p>
+  <!-- <h2 class="text-xl font-semibold mt-8 text-gray-700">
     Manage your Buildings
   </h2>
   <p class="text-gray-500 mt-2">
     Here you can manage your buildings and view details. (visible only to ADMIN)
-  </p>
+  </p> -->
   <!-- Widget Section -->
   <div
     class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
@@ -19,6 +29,12 @@
           Add, edit, or remove buildings. (this is for the facility manager
           example) you should see this as an ADMIN
         </p>
+        <router-link
+          :to="{ name: 'admin-buildings' }"
+          class="mt-2 inline-block text-sm text-orange-600 hover:underline"
+        >
+          building list
+        </router-link>
       </div>
     </div>
     <!-- View Details -->
@@ -39,7 +55,9 @@
 
 <script setup lang="ts">
 import useCustomUser from '@/composables/useCustomUser'
+import useFirebase from '@/composables/useFirebase'
 import { Building2, Eye } from 'lucide-vue-next'
 
 const { userRole } = useCustomUser()
+const { firebaseUser } = useFirebase()
 </script>

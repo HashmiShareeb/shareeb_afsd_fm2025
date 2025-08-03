@@ -18,14 +18,17 @@
         >
           Details
         </router-link>
-        <button
-          class="btn-secondary rounded-md"
+        <!-- <router-link
           v-if="userRole === 'ADMIN'"
-          @click="testKnopje"
+          :to="{
+            name: 'admin-building-edit',
+            params: { slug: myBuildings.name },
+          }"
+          class="btn-secondary rounded-md"
         >
           Bewerk
-        </button>
-        <!-- <button class="btn">Bewerk</button> -->
+        </router-link> -->
+        <button v-if="userRole === 'ADMIN'" class="btn">Bewerk</button>
       </div>
     </div>
   </div>
@@ -41,12 +44,6 @@ import useCustomUser from '@/composables/useCustomUser'
 defineProps(['myBuildings'])
 
 const { userRole, restoreCustomUser } = useCustomUser()
-
-const testKnopje = () => {
-  alert('test knopje clicked')
-  // You can add more functionality here, like opening a modal or redirecting
-  // to an edit page.
-}
 
 restoreCustomUser()
 </script>

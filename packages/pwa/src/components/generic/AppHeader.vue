@@ -7,9 +7,23 @@
     </div>
     <nav class="h-full overflow-y-auto">
       <ul class="flex flex-col px-4 list-none no-underline">
-        <li>
+        <li v-if="userRole !== 'ADMIN'">
           <router-link
             :to="{ name: 'home' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
+          >
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <Home class="object-cover" />
+            </div>
+            <span class="mx-2">Dashboard</span>
+          </router-link>
+        </li>
+        <li v-if="userRole === 'ADMIN'">
+          <router-link
+            :to="{ name: 'admin' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
             active-class="bg-orange-100 text-orange-700"
           >
@@ -35,7 +49,7 @@
             <span class="mx-2">Buildings</span>
           </router-link>
         </li>
-        <li>
+        <li v-if="userRole === 'MANAGER'">
           <router-link
             :to="{ name: 'rounds' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -47,6 +61,20 @@
               <CalendarSearch class="object-cover" />
             </div>
             <span class="mx-2">My Rounds</span>
+          </router-link>
+        </li>
+        <li v-if="userRole === 'ADMIN'">
+          <router-link
+            :to="{ name: 'rounds' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
+          >
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <CalendarSearch class="object-cover" />
+            </div>
+            <span class="mx-2">Manage Rounds</span>
           </router-link>
         </li>
         <!-- ?test als rol werkt of niet -->
