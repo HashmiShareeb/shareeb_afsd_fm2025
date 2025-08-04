@@ -9,12 +9,6 @@
   <p class="text-gray-600 mt-2">
     Here you can manage your buildings and view details.
   </p>
-  <!-- <h2 class="text-xl font-semibold mt-8 text-gray-700">
-    Manage your Buildings
-  </h2>
-  <p class="text-gray-500 mt-2">
-    Here you can manage your buildings and view details. (visible only to ADMIN)
-  </p> -->
   <!-- Widget Section -->
   <div
     class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
@@ -25,10 +19,15 @@
       <Building2 class="text-orange-500 w-10 h-10" />
       <div>
         <h2 class="text-lg font-semibold">Manage Buildings</h2>
-        <p class="text-gray-600 text-sm">
+        <!-- <p class="text-gray-600 text-sm">
           Add, edit, or remove buildings. (this is for the facility manager
           example) you should see this as an ADMIN
+        </p> -->
+        <p class="text-gray-500 text-md mt-1">
+          Total buildings: {{ buildings.length }}
         </p>
+      </div>
+      <div class="flex justify-end mt-auto ml-auto">
         <router-link
           :to="{ name: 'admin-buildings' }"
           class="mt-2 inline-block text-sm text-orange-600 hover:underline"
@@ -57,7 +56,13 @@
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import { Building2, Eye } from 'lucide-vue-next'
+import { GET_BUILDINGS } from '@/graphql/building.entity'
+import { useQuery } from '@vue/apollo-composable'
+import { computed } from 'vue'
 
 const { userRole } = useCustomUser()
 const { firebaseUser } = useFirebase()
+
+const { result } = useQuery(GET_BUILDINGS)
+const buildings = computed(() => result.value?.buildings ?? [])
 </script>

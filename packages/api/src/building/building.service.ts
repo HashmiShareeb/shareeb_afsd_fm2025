@@ -100,8 +100,8 @@ export class BuildingService {
   truncate(): Promise<void> {
     return this.buildingRepository.clear()
   }
-  remove(id: number) {
-    return `This action removes a #${id} building`
+  remove(buildingId: string) {
+    return this.buildingRepository.delete(buildingId)
   }
 
   // extra - logic
