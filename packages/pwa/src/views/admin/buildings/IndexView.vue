@@ -12,7 +12,7 @@
       name="search"
       id="search"
       placeholder="Search buildings..."
-      class="border border-gray-300 rounded-md py-2 px-4"
+      class="w-96 border border-gray-300 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-shadow shadow-sm bg-white text-gray-700"
     />
 
     <button
@@ -39,10 +39,17 @@
       </p>
 
       <div class="mt-4">
-        <button class="inline-flex items-center text-sm text-orange-500">
+        <button
+          class="inline-flex items-center text-sm text-orange-500"
+          @click="openRoomModal(b.buildingId)"
+        >
           <PlusIcon class="w-4 h-4 mr-1" /> Add Room(s)
         </button>
       </div>
+
+      <p class="text-sm text-gray-500 mt-2">
+        {{ b.rooms?.length ?? 0 }} Room(s) available
+      </p>
 
       <div class="flex items-center justify-end gap-2 mt-4">
         <div
@@ -63,10 +70,13 @@
           <Pencil class="w-3 h-3" />
           <p class="text-sm">Edit</p>
         </div>
-        <div class="inline-flex items-center gap-1.2">
+        <router-link
+          :to="`/admin/buildings/${b.buildingId}`"
+          class="inline-flex items-center gap-1.2 hover:underline text-gray-700"
+        >
           <EyeIcon class="w-3 h-3" />
           <p class="text-sm">View</p>
-        </div>
+        </router-link>
         <div
           class="inline-flex items-center gap-1.2 cursor-pointer text-red-500"
           @click="deleteBuilding(b.buildingId)"
@@ -77,25 +87,32 @@
       </div>
     </div>
   </div>
-
+  <!-- building modal-->
   <ModalView
     v-if="showModal"
     title="Add New Building"
     @close="showModal = false"
   >
     <form @submit.prevent="addBuilding" class="grid gap-4">
+      <label for="name" class="text-gray-500 font-medium text-base"
+        >Building Name</label
+      >
       <input
         v-model="form.name"
         type="text"
         placeholder="Building name"
         class="input"
       />
+      <label for="address" class="text-gray-500 font-medium text-base"
+        >Address</label
+      >
       <input
         v-model="form.address"
         type="text"
         placeholder="Address"
         class="input"
       />
+      <label for="type" class="text-gray-500 font-medium text-base">Type</label>
       <select v-model="form.type" class="input">
         <option disabled value="">Select type</option>
         <option value="Flat">Flat</option>
@@ -105,7 +122,9 @@
         <option value="Lab">Lab</option>
         <option value="Sanitary">Sanitary</option>
       </select>
-
+      <label for="description" class="text-gray-500 font-medium text-base"
+        >Description</label
+      >
       <textarea
         v-model="form.description"
         placeholder="Description"
@@ -113,7 +132,11 @@
         class="input"
       ></textarea>
 
-      <button type="submit" class="btn-primary rounded-md" :disabled="loading">
+      <button
+        type="submit"
+        class="btn-primary rounded-full"
+        :disabled="loading"
+      >
         {{ loading ? 'Adding...' : 'Add Building' }}
       </button>
 
@@ -122,6 +145,55 @@
       </p>
       <p v-if="error" class="text-red-600 text-sm">
         Error adding building: {{ error.message }}
+      </p>
+    </form>
+  </ModalView>
+  <!-- add room  modal-->
+  <ModalView
+    v-if="showRoomModal"
+    title="Add New Room"
+    @close="showRoomModal = false"
+  >
+    <form @submit.prevent="submitRoom" class="grid gap-4">
+      <label for="name" class="text-gray-500 font-medium text-base"
+        >Room Name</label
+      >
+      <input
+        v-model="roomForm.name"
+        type="text"
+        placeholder="Room name"
+        class="input"
+      />
+      <label for="floor" class="text-gray-500 font-medium text-base"
+        >Floor</label
+      >
+      <input
+        v-model.number="roomForm.floor"
+        type="number"
+        placeholder="Floor"
+        class="input"
+      />
+      <label for="capacity" class="text-gray-500 font-medium text-base">
+        Room Capacity</label
+      >
+      <input
+        v-model.number="roomForm.capacity"
+        type="number"
+        placeholder="Capacity"
+        class="input"
+      />
+
+      <button
+        type="submit"
+        class="btn-primary rounded-full"
+        :disabled="loadingRoom"
+      >
+        {{ loadingRoom ? 'Adding...' : 'Add Room' }}
+      </button>
+
+      <p v-if="roomSuccess" class="text-green-600 text-sm">Room added!</p>
+      <p v-if="roomError" class="text-red-600 text-sm">
+        Error adding room: {{ roomError.message }}
       </p>
     </form>
   </ModalView>
@@ -138,21 +210,26 @@ import {
   PlusIcon,
 } from 'lucide-vue-next'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { GET_BUILDINGS } from '@/graphql/building.entity'
-
-import { CREATE_BUILDING, REMOVE_BUILDING } from '@/graphql/building.mutations'
+import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
+import {
+  ADD_ROOM_TO_BUILDING,
+  CREATE_BUILDING,
+  REMOVE_BUILDING,
+} from '@/graphql/building.mutations'
 import ModalView from '@/components/generic/ModalView.vue'
 
-const { result, refetch } = useQuery(GET_BUILDINGS)
+const { result, refetch } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 const buildings = computed(() => result.value?.buildings ?? [])
 
 const showModal = ref(false)
+const showRoomModal = ref(false)
 
 const openModal = () => {
   showModal.value = true
   console.log('Modal opened')
 }
 
+//*BUILDING
 const { mutate, loading, error } = useMutation(CREATE_BUILDING, {})
 const { mutate: removeBuildingMutation } = useMutation(REMOVE_BUILDING)
 
@@ -197,7 +274,51 @@ const deleteBuilding = async (buildingId: string) => {
   }
 }
 
-// Add this function to enable copying to clipboard
+//*ROOM
+const {
+  mutate: addRoomToBuilding,
+  loading: loadingRoom,
+  error: roomError,
+} = useMutation(ADD_ROOM_TO_BUILDING)
+
+const roomSuccess = ref(false)
+const currentBuildingId = ref('')
+const roomForm = ref({
+  name: '',
+  floor: 0,
+  capacity: 0,
+})
+
+const openRoomModal = (buildingId: string) => {
+  currentBuildingId.value = buildingId
+  roomForm.value = {
+    name: '',
+    floor: 0,
+    capacity: 0,
+  }
+  showRoomModal.value = true
+}
+
+const submitRoom = async () => {
+  try {
+    await addRoomToBuilding({
+      buildingId: currentBuildingId.value,
+      createRoomInput: {
+        ...roomForm.value,
+        buildingId: currentBuildingId.value, // nie vergeten eh shareeeb
+      },
+    })
+    roomSuccess.value = true
+    showRoomModal.value = false
+    alert('Room added!')
+    await refetch()
+  } catch (e) {
+    console.error('Room mutation error', e)
+  } finally {
+    roomForm.value = { name: '', floor: 0, capacity: 0 }
+  }
+}
+
 const copyToClipboard = async (text: string) => {
   try {
     await navigator.clipboard.writeText(text)
