@@ -1,6 +1,13 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { User } from 'src/user/entities/user.entity'
-import { Entity, ObjectIdColumn } from 'typeorm'
+import { Column, Entity, ObjectIdColumn } from 'typeorm'
+
+export enum RoundStatus {
+  PLANNED = 'planned',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
+}
 
 @Entity()
 @ObjectType()
@@ -13,21 +20,29 @@ export class Round {
     return this._id?.toString() // Convert ObjectId to string for GraphQL
   }
 
+  @Column()
   @Field()
-  name: string
+  roundName: string
 
+  @Column()
   @Field()
-  date: Date
+  startTime: string
+
+  @Column()
+  @Field()
+  endTime: string
+
+  @Column(() => User)
+  @Field(() => User)
+  assignedTo: User
+
+  @Column()
+  @Field()
+  buildingId: string
+  @Column()
+  @Field(() => String)
+  status: RoundStatus
 
   // @Field()
-  // startTime: string
-
-  // @Field()
-  // endTime: string
-
-  @Field()
-  assignedTo: User // name not yet decided
-
-  @Field()
-  status: 'Gepland' | 'Bezig' | 'Afgerond' | 'Geannuleerd'
+  // date: Date
 }

@@ -12,15 +12,20 @@ export class RoundsService {
     return `This action returns all rounds`
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} round`
+  findOne(roundId: string) {
+    return `This action returns a #${roundId} round`
   }
 
   // update(id: number, updateRoundInput: UpdateRoundInput) {
   //   return `This action updates a #${id} round`;
   // }
 
-  remove(id: number) {
-    return `This action removes a #${id} round`
+  remove(roundId: string) {
+    return `This action removes a #${roundId} round`
+  }
+
+  assignToUser(roundId: string, userId: string) {
+    // Logic to assign the round to a user
+    return `Round with ID ${roundId} assigned to user with ID ${userId}`
   }
 }
