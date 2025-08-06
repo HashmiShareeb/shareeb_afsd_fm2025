@@ -6,18 +6,17 @@
       />
       <h2 class="text-xl font-semibold text-gray-700">Manage your Buildings</h2>
     </div>
-
     <input
+      v-model="search"
       type="search"
       name="search"
       id="search"
       placeholder="Search buildings..."
-      class="w-96 border border-gray-300 rounded-full py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-shadow shadow-sm bg-white text-gray-700"
+      class="ml-auto w-full lg:w-96 border border-gray-300 rounded-xl py-2 px-4 focus:outline-none focus:ring-2 focus:ring-orange-200 transition-shadow shadow-sm bg-white text-gray-700"
     />
-
     <button
       @click="openModal"
-      class="mt-2 inline-block text-sm text-orange-600 bg-orange-100 rounded-md hover:bg-orange-200 p-2"
+      class="mx-2 inline-block text-sm text-orange-600 bg-orange-100 rounded-md hover:bg-orange-200 p-2"
     >
       Add +
     </button>
@@ -25,7 +24,7 @@
 
   <div v-if="buildings.length">
     <div
-      v-for="b in buildings"
+      v-for="b in filteredBuildings"
       :key="b.id"
       class="border p-4 mb-4 rounded-xl bg-white"
     >
@@ -47,9 +46,32 @@
         </button>
       </div>
 
-      <p class="text-sm text-gray-500 mt-2">
+      <button
+        class="text-sm text-gray-500 mt-2 cursor-pointer hover:underline inline-flex items-center gap-2"
+        @click="toggleExpanded(b.buildingId)"
+        :disabled="!b.rooms?.length"
+      >
         {{ b.rooms?.length ?? 0 }} Room(s) available
-      </p>
+        <span v-if="expanded.includes(b.buildingId)"
+          ><ChevronUpIcon class="w-4 h-4"
+        /></span>
+        <span v-else><ChevronDownIcon class="w-4 h-4" /></span>
+      </button>
+      <!-- rooms -->
+      <div
+        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4"
+        v-if="expanded.includes(b.buildingId) && b.rooms?.length > 0"
+      >
+        <div
+          v-for="room in b.rooms"
+          :key="room.id"
+          class="border p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+        >
+          <h3 class="font-medium text-gray-700">{{ room.name }}</h3>
+          <p class="text-sm text-gray-500">Floor: {{ room.floor }}</p>
+          <p class="text-sm text-gray-500">Capacity: {{ room.capacity }}</p>
+        </div>
+      </div>
 
       <div class="flex items-center justify-end gap-2 mt-4">
         <div
@@ -59,8 +81,8 @@
           <button
             @click="copyToClipboard(b.buildingId)"
             class="ml-1 p-1 rounded hover:bg-gray-100"
-            title="Copy ID"
             type="button"
+            :title="`Copy ${b.name} to clipboard`"
           >
             <Clipboard class="w-4 h-4" />
           </button>
@@ -208,6 +230,8 @@ import {
   TrashIcon,
   Clipboard,
   PlusIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
 } from 'lucide-vue-next'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
@@ -217,12 +241,26 @@ import {
   REMOVE_BUILDING,
 } from '@/graphql/building.mutations'
 import ModalView from '@/components/generic/ModalView.vue'
+import type { BuildingType } from '@/interfaces/building.interface'
 
 const { result, refetch } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 const buildings = computed(() => result.value?.buildings ?? [])
 
 const showModal = ref(false)
 const showRoomModal = ref(false)
+const expanded = ref<string[]>([])
+
+const search = ref('')
+
+const filteredBuildings = computed(() => {
+  const term = search.value.toLowerCase()
+
+  return buildings.value.filter((b: BuildingType) =>
+    [b.name, b.address, b.type]
+      .filter(Boolean)
+      .some(val => val.toLowerCase().includes(term)),
+  )
+})
 
 const openModal = () => {
   showModal.value = true
@@ -316,6 +354,14 @@ const submitRoom = async () => {
     console.error('Room mutation error', e)
   } finally {
     roomForm.value = { name: '', floor: 0, capacity: 0 }
+  }
+}
+
+const toggleExpanded = (buildingId: string) => {
+  if (expanded.value.includes(buildingId)) {
+    expanded.value = expanded.value.filter(id => id !== buildingId)
+  } else {
+    expanded.value.push(buildingId)
   }
 }
 
