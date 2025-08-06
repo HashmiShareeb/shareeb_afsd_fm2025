@@ -17,5 +17,9 @@ export default defineConfig({
       'border-orange-clean',
       'border border-orange-500 rounded-md', // Clean border with rounded corners
     ],
+    [
+      'input',
+      'border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-500',
+    ],
   ],
 })

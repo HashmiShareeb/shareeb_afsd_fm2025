@@ -1,6 +1,5 @@
 <template>
   <aside class="w-64 bg-white h-full fixed inset-0 shadow z-1">
-    <!-- Sidebar Header -->
     <div class="flex items-center justify-center h-16 border-b mb-4 relative">
       <span class="text-lg font-semibold text-orange-700"
         >Bedenkt een naam</span
@@ -8,7 +7,7 @@
     </div>
     <nav class="h-full overflow-y-auto">
       <ul class="flex flex-col px-4 list-none no-underline">
-        <li>
+        <li v-if="userRole !== 'ADMIN'">
           <router-link
             :to="{ name: 'home' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -19,8 +18,21 @@
             >
               <Home class="object-cover" />
             </div>
-
-            <span class="mx-2"> Dashboard</span>
+            <span class="mx-2">Dashboard</span>
+          </router-link>
+        </li>
+        <li v-if="userRole === 'ADMIN'">
+          <router-link
+            :to="{ name: 'admin' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
+          >
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <Home class="object-cover" />
+            </div>
+            <span class="mx-2">Dashboard</span>
           </router-link>
         </li>
         <li>
@@ -34,11 +46,10 @@
             >
               <BuildingIcon class="object-cover" />
             </div>
-
             <span class="mx-2">Buildings</span>
           </router-link>
         </li>
-        <li>
+        <li v-if="userRole === 'MANAGER'">
           <router-link
             :to="{ name: 'rounds' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -49,37 +60,41 @@
             >
               <CalendarSearch class="object-cover" />
             </div>
-
             <span class="mx-2">My Rounds</span>
           </router-link>
         </li>
-        <!-- <li>
-          <RouterLink
-            class="block rounded-full focus:outline-none focus-visible:ring-4 ring-blue-400 hover:bg-orange-100 py-2 px-3"
-            :to="firebaseUser ? `/myaccount` : `/login`"
+        <li v-if="userRole === 'ADMIN'">
+          <router-link
+            :to="{ name: 'rounds' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
           >
-            <div v-if="firebaseUser" class="flex items-center gap-3">
-              <img
-                v-if="firebaseUser.photoURL"
-                :src="firebaseUser.photoURL"
-                alt="Profile picture"
-              />
-              <div
-                v-else
-                class="rounded-full overflow-hidden h-10 w-10 object-fit ring-neutral-100 flex items-center justify-center bg-white"
-              >
-                <User2 class="object-cover" />
-              </div>
-              <p class="pr-1">{{ firebaseUser?.displayName || 'No name' }}</p>
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <CalendarSearch class="object-cover" />
             </div>
-            <div v-else>
-              <p>Login</p>
+            <span class="mx-2">Manage Rounds</span>
+          </router-link>
+        </li>
+        <!-- ?test als rol werkt of niet -->
+        <li v-if="userRole === 'ADMIN'">
+          <router-link
+            :to="{ name: 'rounds' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
+          >
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <CalendarSearch class="object-cover" />
             </div>
-          </RouterLink>
-        </li> -->
+            <span class="mx-2">Meldingen</span>
+          </router-link>
+        </li>
         <router-link :to="firebaseUser ? `/myaccount` : `/login`">
           <li
-            class="mt-auto flex items-center gap-2 align-center mb-4 no-underline absolute bottom-4 left-0 right-0"
+            class="mt-auto flex items-center gap-2 align-center mb-4 no-underline absolute bottom-4 left-0 right-0 mx-5"
           >
             <div
               v-if="firebaseUser && !firebaseUser.photoURL"
@@ -99,12 +114,18 @@
                 class="rounded-full h-10 w-10 object-cover"
               />
             </div>
-            <h1 v-if="firebaseUser" class="font-bold text-lg">
-              {{ firebaseUser.displayName }}
-              <span class="text-sm block font-light text-gray-500">{{
-                firebaseUser.email
-              }}</span>
-            </h1>
+            <div v-if="firebaseUser">
+              <h1 class="font-bold text-lg">
+                {{ firebaseUser.displayName || 'Unknown User' }}
+              </h1>
+              <p v-if="userRole" class="text-sm text-orange-500">
+                {{ userRole }}
+              </p>
+              <p v-else-if="loading" class="text-sm text-gray-500">
+                Loading role...
+              </p>
+              <p v-else class="text-sm text-gray-500">No role assigned</p>
+            </div>
             <h1 v-else class="font-bold text-lg">Login</h1>
           </li>
         </router-link>
@@ -114,9 +135,52 @@
 </template>
 
 <script setup lang="ts">
+import { computed, watch } from 'vue'
+import { useQuery } from '@vue/apollo-composable'
 import useFirebase from '@/composables/useFirebase'
+import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
 import { Home, CalendarSearch, BuildingIcon } from 'lucide-vue-next'
 
+// Get Firebase user
 const { firebaseUser } = useFirebase()
-console.log(firebaseUser)
+
+// Compute GraphQL variables
+const variables = computed(() => {
+  return firebaseUser.value?.uid ? { uid: firebaseUser.value.uid } : null
+})
+
+// Compute whether to skip query
+const shouldSkip = computed(() => !firebaseUser.value?.uid)
+
+// Run GraphQL query
+const { result, loading, refetch } = useQuery(OWN_USER_ACCOUNT, variables, {
+  enabled: computed(() => !shouldSkip.value),
+  fetchPolicy: 'network-only',
+})
+
+// Refetch user data when firebaseUser changes
+watch(firebaseUser, newVal => {
+  if (newVal?.uid) {
+    refetch()
+  }
+})
+
+// Debug logs
+// watch(result, newVal => {
+//   console.log('Raw result:', JSON.stringify(newVal, null, 2))
+//   console.log('User by UID:', newVal?.userByUid)
+// })
+// watch(firebaseUser, newVal => {
+//   console.log('firebaseUser UID:', newVal?.uid)
+// })
+// watch(error, newVal => {
+//   if (newVal) console.error('GraphQL query error:', newVal)
+// })
+
+// Compute role
+const userRole = computed(() => {
+  const role = result.value?.userByUid?.role || null
+  console.log('Computed userRole:', role)
+  return role ? role.toUpperCase() : null
+})
 </script>

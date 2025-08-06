@@ -80,9 +80,14 @@ export class BuildingResolver {
   //   )
   // }
 
-  @Mutation(() => Building)
-  removeBuilding(@Args('id', { type: () => Int }) id: number) {
-    return this.buildingService.remove(id)
+  @Mutation(() => Building, { name: 'removeBuilding' })
+  async removeBuilding(
+    @Args('buildingId', { type: () => String }) buildingId: string,
+  ): Promise<Building | null> {
+    const building = await this.buildingService.findOne(buildingId)
+    if (!building) return null
+    await this.buildingService.remove(buildingId)
+    return building
   }
 
   // Extra queries for building logic

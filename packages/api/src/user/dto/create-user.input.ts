@@ -9,6 +9,11 @@ export class CreateUserInput {
   @Field()
   uid: string // Firebase UID
 
+  @IsString()
+  @IsNotEmpty()
+  @Field({ nullable: true }) // can return null in graphql if the user has no name
+  name?: string
+
   // @Field({ nullable: true }) --> for later use
   // locale?: string
 

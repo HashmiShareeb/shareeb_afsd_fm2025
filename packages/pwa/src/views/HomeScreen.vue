@@ -12,15 +12,18 @@
     </p>
 
     <!-- Widget Section -->
-    <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <!-- Manage Buildings -->
+    <div
+      class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
+      v-if="userRole === 'ADMIN'"
+    >
+      <!-- Manage Buildings (visible only to ADMIN) -->
       <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
         <Building class="text-orange-500 w-8 h-8" />
         <div>
           <h2 class="text-lg font-semibold">Manage Buildings</h2>
           <p class="text-gray-600 text-sm">
             Add, edit, or remove buildings. (this is for the facility manager
-            example)
+            example) you should see this as an ADMIN
           </p>
         </div>
       </div>
@@ -91,7 +94,52 @@
 
 <script setup lang="ts">
 import useFirebase from '@/composables/useFirebase'
+import { GET_BUILDINGS } from '@/graphql/building.entity'
+import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
+import { useQuery } from '@vue/apollo-composable'
 import { Building, Eye, CalendarSearch, MapPin } from 'lucide-vue-next'
-
+import { computed, watch } from 'vue'
 const { firebaseUser } = useFirebase()
+
+const variables = computed(() => {
+  return firebaseUser.value?.uid ? { uid: firebaseUser.value.uid } : null
+})
+
+// Compute whether to skip query
+const shouldSkip = computed(() => !firebaseUser.value?.uid)
+
+const { result, error, refetch } = useQuery(OWN_USER_ACCOUNT, variables, {
+  fetchPolicy: 'network-only',
+  enabled: computed(() => !shouldSkip.value),
+})
+
+const getBuildings = useQuery(GET_BUILDINGS)
+const buildings = computed(() => getBuildings.result.value?.buildings ?? [])
+
+console.log('Buildings:', buildings.value)
+
+// Refetch user data when firebaseUser changes
+watch(firebaseUser, newVal => {
+  if (newVal?.uid) {
+    refetch()
+  }
+})
+
+// Debug logs
+watch(result, newVal => {
+  console.log('Raw result:', JSON.stringify(newVal, null, 2))
+  console.log('User by UID:', newVal?.userByUid)
+})
+watch(firebaseUser, newVal => {
+  console.log('firebaseUser UID:', newVal?.uid)
+})
+watch(error, newVal => {
+  if (newVal) console.error('GraphQL query error:', newVal)
+})
+// Compute role
+const userRole = computed(() => {
+  const role = result.value?.userByUid?.role || null
+  console.log('Computed userRole:', role)
+  return role ? role.toUpperCase() : null
+})
 </script>
