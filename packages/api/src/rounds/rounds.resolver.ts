@@ -4,7 +4,7 @@ import { Round } from './entities/round.entity'
 // import { AllowedRoles } from 'src/decorators/roles.decorator'
 // import { Role } from 'src/user/entities/user.entity'
 //import { UserService } from 'src/user/user.service'
-// import { CreateRoundInput } from './dto/create-round.input'
+import { CreateRoundInput } from './dto/create-round.input'
 // import { UpdateRoundInput } from './dto/update-round.input'
 
 @Resolver(() => Round)
@@ -14,10 +14,10 @@ export class RoundsResolver {
     //private readonly userService: UserService,
   ) {}
 
-  // @Mutation(() => Round)
-  // createRound(@Args('createRoundInput') createRoundInput: CreateRoundInput) {
-  //   return this.roundsService.create(createRoundInput);
-  // }
+  @Mutation(() => Round)
+  createRound(@Args('createRoundInput') createRoundInput: CreateRoundInput) {
+    return this.roundsService.create(createRoundInput)
+  }
 
   @Query(() => [Round], { name: 'rounds' })
   findAll() {

@@ -1,15 +1,29 @@
 import { Injectable } from '@nestjs/common'
-// import { CreateRoundInput } from './dto/create-round.input';
+import { InjectRepository } from '@nestjs/typeorm'
+import { Round, RoundStatus } from './entities/round.entity'
+import { Repository } from 'typeorm'
+import { CreateRoundInput } from './dto/create-round.input'
 // import { UpdateRoundInput } from './dto/update-round.input';
 
 @Injectable()
 export class RoundsService {
-  // create(createRoundInput: CreateRoundInput) {
-  //   return 'This action adds a new round';
-  // }
+  constructor(
+    @InjectRepository(Round)
+    private readonly roundRepository: Repository<Round>,
+  ) {}
 
-  findAll() {
-    return `This action returns all rounds`
+  async create(createRoundInput: CreateRoundInput): Promise<Round> {
+    const round = this.roundRepository.create({
+      ...createRoundInput,
+      startTime: new Date().toISOString(),
+      status: RoundStatus.PLANNED,
+      rooms: createRoundInput.rooms,
+    })
+    return this.roundRepository.save(round)
+  }
+
+  async findAll(): Promise<Round[]> {
+    return this.roundRepository.find()
   }
 
   findOne(roundId: string) {

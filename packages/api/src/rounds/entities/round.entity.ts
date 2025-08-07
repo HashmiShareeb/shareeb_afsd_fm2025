@@ -1,6 +1,12 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { User } from 'src/user/entities/user.entity'
-import { Column, Entity, ObjectIdColumn } from 'typeorm'
+import { RoundRoom } from 'src/round-room/entities/round-room.entity'
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ObjectIdColumn,
+  UpdateDateColumn,
+} from 'typeorm'
 
 export enum RoundStatus {
   PLANNED = 'planned',
@@ -16,7 +22,7 @@ export class Round {
   _id: string // stored in MongoDB as _id
 
   @Field(() => ID)
-  get rounId(): string {
+  get roundId(): string {
     return this._id?.toString() // Convert ObjectId to string for GraphQL
   }
 
@@ -24,25 +30,29 @@ export class Round {
   @Field()
   roundName: string
 
-  @Column()
+  @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field()
   startTime: string
 
-  @Column()
+  @UpdateDateColumn({ type: 'timestamp', nullable: true })
   @Field()
   endTime: string
 
-  @Column(() => User)
-  @Field(() => User)
-  assignedTo: User
+  @Column()
+  @Field()
+  assignedToId: string
+  // @Field(() => User, { nullable: true })
+  // assignedTo?: User
 
   @Column()
   @Field()
   buildingId: string
-  @Column()
-  @Field(() => String)
-  status: RoundStatus
 
-  // @Field()
-  // date: Date
+  @Column({ default: RoundStatus.PLANNED })
+  @Field(() => String)
+  status: RoundStatus = RoundStatus.PLANNED
+
+  @Field(() => [RoundRoom])
+  @Column({ type: 'simple-json' }) // of 'json'
+  rooms: RoundRoom[]
 }
