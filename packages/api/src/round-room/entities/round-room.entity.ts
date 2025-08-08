@@ -38,8 +38,8 @@ export class RoundRoom {
   @Column({ nullable: true })
   notes?: string // Optional notes of the room
 
-  @Column()
-  @Field(() => String, { defaultValue: RoundRoomStatus.OPEN })
+  @Field(() => String)
+  @Column({ default: RoundRoomStatus.OPEN })
   status: RoundRoomStatus
 
   @Field({ nullable: true })

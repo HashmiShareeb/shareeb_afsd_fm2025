@@ -1,5 +1,6 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
 import { RoundRoom } from 'src/round-room/entities/round-room.entity'
+//import { User } from 'src/user/entities/user.entity'
 import {
   Column,
   CreateDateColumn,
@@ -28,7 +29,7 @@ export class Round {
 
   @Column()
   @Field()
-  roundName: string
+  name: string
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field()
@@ -41,8 +42,9 @@ export class Round {
   @Column()
   @Field()
   assignedToId: string
-  // @Field(() => User, { nullable: true })
-  // assignedTo?: User
+
+  // @Field(() => User)
+  // assignedTo: User
 
   @Column()
   @Field()
@@ -53,6 +55,6 @@ export class Round {
   status: RoundStatus = RoundStatus.PLANNED
 
   @Field(() => [RoundRoom])
-  @Column({ type: 'simple-json' }) // of 'json'
+  @Column({ type: 'json' })
   rooms: RoundRoom[]
 }

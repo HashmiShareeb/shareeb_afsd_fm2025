@@ -6,7 +6,7 @@ import { CreateRoundRoomInput } from 'src/round-room/dto/create-round-room.input
 @InputType()
 export class CreateRoundInput {
   @Field()
-  roundName: string
+  name: string
 
   @Field()
   assignedToId: string // User ID to whom the round is assigned
