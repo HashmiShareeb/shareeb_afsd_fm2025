@@ -6,12 +6,12 @@ export const GET_ROUNDS = gql`
       roundId
       name
       status
-      assignedToId
       assignedTo {
+        id
+        uid
         name
         role
       }
-      buildingId
       rooms {
         roomId
         order

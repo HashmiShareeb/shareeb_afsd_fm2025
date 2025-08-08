@@ -28,13 +28,12 @@
       <label for="name" class="text-gray-500 font-medium text-base"
         >Round Name</label
       >
-      <input type="text" placeholder="Round Name" class="input" />
+      <input type="text" placeholder="Evening cleanup - 18h30" class="input" />
 
-      <label for="building" class="text-gray-500 font-medium text-base">
-        Building
-      </label>
-      <select class="input">
-        <!-- <select v-model="buildingId" class="input"> -->
+      <label class="text-gray-500 font-medium">Building</label>
+
+      <!-- show building with rooms in them otherwise no -->
+      <select class="input" required>
         <option disabled value="">Select a building</option>
         <option
           v-for="b in buildings"
@@ -44,14 +43,16 @@
           {{ b.name }} - {{ b.address }}
         </option>
       </select>
-      <label for="concierge" class="text-gray-500 font-medium text-base">
-        Concierge
-      </label>
-      <select id="concierge" class="input">
-        <option value="" disabled selected>Select Concierge</option>
-        <option value="concierge1">Concierge 1</option>
-        <option value="concierge2">Concierge 2</option>
-        <option value="concierge3">Concierge 3</option>
+      <label class="text-gray-500 font-medium">Concierge</label>
+      <select class="input" required>
+        <option disabled value="">Select Concierge</option>
+        <option
+          v-for="manager in managers"
+          :key="manager.id"
+          :value="manager.id"
+        >
+          {{ manager.name }}
+        </option>
       </select>
       <button type="submit" class="btn-primary rounded-full">Add Round</button>
     </form>
@@ -60,15 +61,21 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue'
 import { useQuery } from '@vue/apollo-composable'
-import { GET_ROUNDS } from '@/graphql/room.entity'
+import { GET_ROUNDS } from '@/graphql/round.entity'
 import ModalView from '@/components/generic/ModalView.vue'
 import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
+import { GET_MANAGERS } from '@/graphql/user.query'
 
 const { result } = useQuery(GET_ROUNDS)
 const rounds = computed(() => result.value?.rounds || [])
 
 const { result: buildingData } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 const buildings = computed(() => buildingData.value?.buildings || [])
+
+const { result: managerData } = useQuery(GET_MANAGERS)
+const managers = computed(() => managerData.value?.usersByRole || [])
+
+console.log(managers.value)
 
 const showModal = ref(false)
 

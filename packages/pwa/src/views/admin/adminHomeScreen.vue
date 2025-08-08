@@ -11,8 +11,8 @@
   </p>
   <!-- Widget Section -->
   <div
-    class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
-    v-if="userRole === 'ADMIN'"
+    class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+    v-if="userRole === Role.ADMIN"
   >
     <!-- Manage Buildings (visible only to ADMIN) -->
     <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
@@ -36,33 +36,70 @@
         </router-link>
       </div>
     </div>
-    <!-- View Details -->
+    <!-- total concierges -->
     <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
-      <Eye class="text-orange-500 w-8 h-8" />
+      <UserCog2Icon class="text-orange-500 w-8 h-8" />
       <div>
-        <h2 class="text-lg font-semibold">View Details</h2>
-        <p class="text-gray-600 text-sm">
-          Check building information and stats.
+        <h2 class="text-lg font-semibold">Concierges</h2>
+        <p class="text-gray-600 text-md mt-1 capitalize">
+          total concierges: {{ managers.length }}
         </p>
       </div>
     </div>
-  </div>
-  <div v-else>
-    <p>You do not have access to this section.</p>
+    <!-- total active rounds -->
+    <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
+      <UserRoundSearch class="text-orange-500 w-8 h-8" />
+      <div>
+        <h2 class="text-lg font-semibold">Active rounds</h2>
+        <p class="text-gray-600 text-md mt-1 capitalize">
+          total active rounds: {{ rounds.length }}
+        </p>
+      </div>
+      <div v-if="rounds.length > 3" class="flex justify-end mt-auto ml-auto">
+        <router-link
+          :to="{ name: 'admin-rounds' }"
+          class="text-sm text-orange-600 hover:underline"
+        >
+          View all rounds
+        </router-link>
+      </div>
+    </div>
+
+    <ul v-if="rounds.length" class="mt-4 space-y-2">
+      <li
+        v-for="round in rounds.slice(0, 3)"
+        :key="round.id"
+        class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded"
+      >
+        <span class="font-medium">{{ round.name || 'Unnamed Round' }}</span>
+        <span class="text-xs text-gray-500 uppercase">{{
+          round.status || ''
+        }}</span>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
-import { Building2, Eye } from 'lucide-vue-next'
+import { Building2, UserCog2Icon, UserRoundSearch } from 'lucide-vue-next'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
 import { useQuery } from '@vue/apollo-composable'
 import { computed } from 'vue'
+import { GET_MANAGERS } from '@/graphql/user.query'
+import { Role } from '@/interfaces/custom.user.interface'
+import { GET_ROUNDS } from '@/graphql/round.entity'
 
 const { userRole } = useCustomUser()
 const { firebaseUser } = useFirebase()
 
 const { result } = useQuery(GET_BUILDINGS)
 const buildings = computed(() => result.value?.buildings ?? [])
+
+const { result: managerData } = useQuery(GET_MANAGERS)
+const managers = computed(() => managerData.value?.usersByRole || [])
+
+const { result: roundData } = useQuery(GET_ROUNDS)
+const rounds = computed(() => roundData.value?.rounds || [])
 </script>

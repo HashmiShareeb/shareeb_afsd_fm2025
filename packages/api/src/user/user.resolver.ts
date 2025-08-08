@@ -65,4 +65,9 @@ export class UserResolver {
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.userService.remove(id)
   }
+
+  @Query(() => [User], { name: 'usersByRole' })
+  findByRole(@Args('role', { type: () => String }) role: Role) {
+    return this.userService.findByRole(role)
+  }
 }
