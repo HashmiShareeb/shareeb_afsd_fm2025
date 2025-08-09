@@ -34,6 +34,12 @@ const routes: RouteRecordRaw[] = [
     meta: { shouldBeAuthenticated: true },
   },
   {
+    path: '/reports',
+    name: 'reports',
+    component: () => import('@/views/reports/reportScreen.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.USER },
+  },
+  {
     path: '/myaccount',
     name: 'myaccount',
     component: () => import('@/views/MyAccountView.vue'),

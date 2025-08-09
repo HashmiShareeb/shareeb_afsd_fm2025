@@ -14,7 +14,7 @@
     <!-- Widget Section -->
     <div
       class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
-      v-if="userRole === 'ADMIN'"
+      v-if="userRole === Role.ADMIN"
     >
       <!-- Manage Buildings (visible only to ADMIN) -->
       <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
@@ -39,7 +39,7 @@
       </div>
     </div>
     <!-- Rounds to do -->
-    <div>
+    <div v-if="userRole === Role.MANAGER">
       <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
       <div
         class="flex items-start gap-4 p-4 bg-white shadow-md rounded-lg mt-4"
@@ -96,6 +96,7 @@
 import useFirebase from '@/composables/useFirebase'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
 import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
+import { Role } from '@/interfaces/custom.user.interface'
 import { useQuery } from '@vue/apollo-composable'
 import { Building, Eye, CalendarSearch, MapPin } from 'lucide-vue-next'
 import { computed, watch } from 'vue'

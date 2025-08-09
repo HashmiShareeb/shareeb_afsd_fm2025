@@ -1,7 +1,16 @@
-import { InputType, Int, Field } from '@nestjs/graphql'
+import { InputType, Field } from '@nestjs/graphql'
 
 @InputType()
 export class CreateSpecialrequestInput {
-  @Field(() => Int, { description: 'Example field (placeholder)' })
-  exampleField: number
+  @Field(() => String)
+  title: string
+
+  @Field(() => String)
+  details: string
+
+  @Field(() => String)
+  roomId: string
+
+  @Field(() => String)
+  buildingId: string
 }

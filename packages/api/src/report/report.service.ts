@@ -5,7 +5,7 @@ import { Injectable } from '@nestjs/common'
 @Injectable()
 export class ReportService {
   // create(createReportInput: CreateReportInput) {
-  //   return 'This action adds a new report';
+  //   return 'This action adds a new report'
   // }
 
   findAll() {
