@@ -11,6 +11,7 @@ import { SeedModule } from './seed/seed.module'
 import { AuthenticationModule } from './authentication/authentication.module'
 import { ConfigModule } from '@nestjs/config'
 import { RoundsModule } from './rounds/rounds.module'
+import { RoundRoomModule } from './round-room/round-room.module'
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { RoundsModule } from './rounds/rounds.module'
     SeedModule,
     AuthenticationModule,
     RoundsModule,
+    RoundRoomModule,
   ],
   controllers: [AppController],
   providers: [AppService],

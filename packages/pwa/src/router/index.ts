@@ -59,6 +59,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/admin/buildings/_slug.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
   },
+  {
+    path: '/admin/rounds',
+    name: 'admin-rounds',
+    component: () => import('@/views/admin/rounds/IndexView.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
+  },
   // {
   //   path: '/admin/buildings/:slug/add',
   //   name: 'admin-building-edit',

@@ -102,4 +102,16 @@ export class UserService {
   remove(id: number) {
     return `This action removes a #${id} user`
   }
+
+  async findByManagers(): Promise<User[]> {
+    return this.userRepository.find({
+      where: { role: Role.MANAGER },
+    })
+  }
+
+  async findByRole(role: Role): Promise<User[]> {
+    return this.userRepository.find({
+      where: { role },
+    })
+  }
 }

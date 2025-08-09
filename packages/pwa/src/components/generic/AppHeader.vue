@@ -65,7 +65,7 @@
         </li>
         <li v-if="userRole === 'ADMIN'">
           <router-link
-            :to="{ name: 'rounds' }"
+            :to="{ name: 'admin-rounds' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
             active-class="bg-orange-100 text-orange-700"
           >
@@ -78,7 +78,7 @@
           </router-link>
         </li>
         <!-- ?test als rol werkt of niet -->
-        <li v-if="userRole === 'ADMIN'">
+        <li v-if="userRole === 'USER'">
           <router-link
             :to="{ name: 'rounds' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -118,7 +118,10 @@
               <h1 class="font-bold text-lg">
                 {{ firebaseUser.displayName || 'Unknown User' }}
               </h1>
-              <p v-if="userRole" class="text-sm text-orange-500">
+              <p
+                v-if="userRole && userRole !== 'USER'"
+                class="text-sm text-orange-500"
+              >
                 {{ userRole }}
               </p>
               <p v-else-if="loading" class="text-sm text-gray-500">
