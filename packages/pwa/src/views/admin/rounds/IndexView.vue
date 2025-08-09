@@ -29,7 +29,7 @@
         </div>
         <div>
           <span class="text-gray-400 text-xs uppercase">{{
-            rounds.status
+            round.status
           }}</span>
         </div>
       </li>
