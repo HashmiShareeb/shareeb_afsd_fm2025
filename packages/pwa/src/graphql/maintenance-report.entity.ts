@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const CREATE_MAINTENANCE_REPORT = gql`
-  mutation CreateMaintenanceReport($input: CreateMaintenanceReportInput!) {
+  mutation createMaintenanceReport($input: CreateMaintenancereportInput!) {
     createMaintenanceReport(input: $input) {
       reportId
       title
