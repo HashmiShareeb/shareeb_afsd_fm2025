@@ -30,8 +30,14 @@ export class MaintenancereportService {
     return this.maintenanceReportRepository.find()
   }
 
-  // findOne(id: number) {
-  //   return this.maintenanceReportRepository.findOne(id)
+  // async findOne(reportId: string): Promise<Maintenancereport> {
+  //   const report = await this.maintenanceReportRepository.findOne({
+  //     where: { _id: reportId },
+  //   })
+  //   if (!report) {
+  //     throw new Error(`Maintenance report with id ${reportId} not found`)
+  //   }
+  //   return report
   // }
 
   // update(

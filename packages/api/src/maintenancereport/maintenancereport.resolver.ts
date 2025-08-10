@@ -63,8 +63,8 @@ export class MaintenancereportResolver {
   }
 
   // @Query(() => Maintenancereport, { name: 'maintenancereport' })
-  // findOne(@Args('id', { type: () => Int }) id: number) {
-  //   return this.maintenancereportService.findOne(id)
+  // findOne(@Args('reportId', { type: () => String }) reportId: string) {
+  //   return this.maintenancereportService.findOne(reportId)
   // }
 
   // @Mutation(() => Maintenancereport)

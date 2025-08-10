@@ -50,10 +50,14 @@ const userRole = computed(() => {
   return role ? role.toUpperCase() : null
 })
 
+// fetch user id (mongodb)
+const userId = computed(() => customUser.value?.id || null)
+
 export default () => {
   return {
     customUser,
     userRole,
+    userId,
     restoreCustomUser,
   }
 }
