@@ -12,8 +12,8 @@ import { AuthenticationModule } from './authentication/authentication.module'
 import { ConfigModule } from '@nestjs/config'
 import { RoundsModule } from './rounds/rounds.module'
 import { RoundRoomModule } from './round-room/round-room.module'
-import { ReportModule } from './report/report.module'
 import { SpecialrequestModule } from './specialrequest/specialrequest.module'
+import { MaintenancereportModule } from './maintenancereport/maintenancereport.module'
 
 @Module({
   imports: [
@@ -39,8 +39,8 @@ import { SpecialrequestModule } from './specialrequest/specialrequest.module'
     AuthenticationModule,
     RoundsModule,
     RoundRoomModule,
-    ReportModule,
     SpecialrequestModule,
+    MaintenancereportModule,
   ],
   controllers: [AppController],
   providers: [AppService],
