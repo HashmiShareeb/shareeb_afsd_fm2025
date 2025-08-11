@@ -19,4 +19,7 @@ export class CreateMaintenancereportInput {
 
   @Field()
   reportedById: string
+
+  @Field()
+  buildingId: string
 }

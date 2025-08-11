@@ -78,6 +78,79 @@
       </li>
     </ul>
   </div>
+  <div v-if="reports.length" class="bg-white shadow rounded-lg overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-white">
+          <tr>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+            >
+              Title
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+            >
+              Requested by
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+            >
+              Date
+            </th>
+            <th
+              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+            >
+              Status
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          <tr
+            v-for="report in reports"
+            :key="report.reportId"
+            class="hover:bg-gray-50"
+          >
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="font-medium text-gray-900">{{ report.title }}</div>
+              <div class="text-gray-500 text-sm mt-1">
+                {{ report.description }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <div class="text-gray-900">
+                {{ report.reportedBy?.name || 'User' }}
+              </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+              {{ new Date(report.reportedAt).toLocaleDateString() }} -
+              {{
+                new Date(report.reportedAt).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })
+              }}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+              <span
+                class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
+                :class="{
+                  'bg-orange-100 text-orange-800':
+                    report.status === ReportStatus.PENDING,
+                  'bg-blue-100 text-blue-800':
+                    report.status === ReportStatus.IN_PROGRESS,
+                  'bg-green-100 text-green-800':
+                    report.status === ReportStatus.RESOLVED,
+                }"
+              >
+                {{ report.status }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -90,6 +163,8 @@ import { computed } from 'vue'
 import { GET_MANAGERS } from '@/graphql/user.query'
 import { Role } from '@/interfaces/custom.user.interface'
 import { GET_ROUNDS } from '@/graphql/round.entity'
+import { ReportStatus } from '@/interfaces/report.interface'
+import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
 
 const { userRole } = useCustomUser()
 const { firebaseUser } = useFirebase()
@@ -102,4 +177,7 @@ const managers = computed(() => managerData.value?.usersByRole || [])
 
 const { result: roundData } = useQuery(GET_ROUNDS)
 const rounds = computed(() => roundData.value?.rounds || [])
+
+const { result: reportsData } = useQuery(GET_MAINTENANCE_REPORTS)
+const reports = computed(() => reportsData.value?.maintenancereport || [])
 </script>

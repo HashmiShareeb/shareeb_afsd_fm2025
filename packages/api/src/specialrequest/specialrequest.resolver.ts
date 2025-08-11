@@ -11,6 +11,10 @@ import { Specialrequest } from './entities/specialrequest.entity'
 import { CreateSpecialrequestInput } from './dto/create-specialrequest.input'
 import { UserService } from 'src/user/user.service'
 import { User } from 'src/user/entities/user.entity'
+import { Building } from 'src/building/entities/building.entity'
+import { Room } from 'src/room/entities/room.entity'
+import { RoomService } from 'src/room/room.service'
+import { BuildingService } from 'src/building/building.service'
 // import { UpdateSpecialrequestInput } from './dto/update-specialrequest.input';
 
 @Resolver(() => Specialrequest)
@@ -18,6 +22,8 @@ export class SpecialrequestResolver {
   constructor(
     private readonly specialrequestService: SpecialrequestService,
     private readonly userService: UserService,
+    private readonly roomService: RoomService,
+    private readonly buildingService: BuildingService,
   ) {}
 
   @Mutation(() => Specialrequest)
@@ -67,5 +73,17 @@ export class SpecialrequestResolver {
     @Args('requestId', { type: () => String }) requestId: string,
   ) {
     return this.specialrequestService.remove(requestId)
+  }
+
+  @ResolveField(() => Room, { nullable: true })
+  async room(@Parent() request: Specialrequest) {
+    if (!request.roomId) return null
+    return this.roomService.findOne(request.roomId)
+  }
+
+  @ResolveField(() => Building, { nullable: true })
+  async building(@Parent() request: Specialrequest) {
+    if (!request.buildingId) return null
+    return this.buildingService.findOne(request.buildingId)
   }
 }

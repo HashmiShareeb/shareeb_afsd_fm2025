@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-64 bg-white h-full fixed inset-0 shadow z-1">
+  <aside class="w-64 h-full fixed inset-0 shadow z-1">
     <div class="flex items-center justify-center h-16 border-b mb-4 relative">
       <span class="text-lg font-semibold text-orange-700"
         >Bedenkt een naam</span

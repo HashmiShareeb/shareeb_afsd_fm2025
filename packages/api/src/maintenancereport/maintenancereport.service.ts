@@ -6,7 +6,7 @@ import {
   Maintenancereport,
   ReportStatus,
 } from './entities/maintenancereport.entity'
-import { MongoRepository } from 'typeorm'
+import { MongoRepository, ObjectId } from 'typeorm'
 
 @Injectable()
 export class MaintenancereportService {
@@ -38,7 +38,18 @@ export class MaintenancereportService {
   //     throw new Error(`Maintenance report with id ${reportId} not found`)
   //   }
   //   return report
+
   // }
+
+  async findOne(reportId: string): Promise<Maintenancereport> {
+    const report = await this.maintenanceReportRepository.findOne({
+      where: { reportId },
+    })
+    if (!report) {
+      throw new Error(`Maintenance report with id ${reportId} not found`)
+    }
+    return report
+  }
 
   // update(
   //   id: number,
@@ -47,7 +58,10 @@ export class MaintenancereportService {
   //   return `This action updates a #${id} maintenancereport`
   // }
 
-  remove(id: number) {
-    return this.maintenanceReportRepository.delete(id)
+  async remove(reportId: string): Promise<boolean> {
+    const result = await this.maintenanceReportRepository.deleteOne({
+      _id: new ObjectId(reportId),
+    })
+    return result.deletedCount > 0
   }
 }

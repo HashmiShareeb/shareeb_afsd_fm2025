@@ -1,5 +1,4 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Building } from 'src/building/entities/building.entity'
 import { User } from 'src/user/entities/user.entity'
 import { Column, CreateDateColumn, Entity, ObjectIdColumn } from 'typeorm'
 
@@ -8,6 +7,17 @@ export enum SpecialRequestStatus {
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
 }
+
+// export enum RequestType {
+//   EXTRA_FURNITURE = 'EXTRA_FURNITURE',
+//   EARLY_ACCESS = 'EARLY_ACCESS',
+//   TEMPORARY_EQUIPMENT = 'TEMPORARY_EQUIPMENT',
+//   OTHER = 'OTHER',
+// }
+
+// registerEnumType(RequestType, {
+//   name: 'RequestType',
+// })
 
 @Entity()
 @ObjectType()
@@ -43,11 +53,15 @@ export class Specialrequest {
   @Field()
   status: SpecialRequestStatus
 
+  // @Field(() => RequestType)
+  // @Column()
+  // requestType: RequestType
+
   @Field()
   @Column()
   roomId: string
 
   @Field()
   @Column()
-  building: Building
+  buildingId: string
 }

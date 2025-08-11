@@ -3,7 +3,6 @@ import {
   Query,
   Mutation,
   Args,
-  Int,
   ResolveField,
   Parent,
 } from '@nestjs/graphql'
@@ -12,6 +11,10 @@ import { Maintenancereport } from './entities/maintenancereport.entity'
 import { CreateMaintenancereportInput } from './dto/create-maintenancereport.input'
 import { UserService } from 'src/user/user.service'
 import { User } from 'src/user/entities/user.entity'
+import { Building } from 'src/building/entities/building.entity'
+import { Room } from 'src/room/entities/room.entity'
+import { RoomService } from 'src/room/room.service'
+import { BuildingService } from 'src/building/building.service'
 // import { UpdateMaintenancereportInput } from './dto/update-maintenancereport.input';
 
 @Resolver(() => Maintenancereport)
@@ -19,6 +22,8 @@ export class MaintenancereportResolver {
   constructor(
     private readonly maintenancereportService: MaintenancereportService,
     private readonly userService: UserService,
+    private readonly buildingService: BuildingService,
+    private readonly roomService: RoomService,
   ) {}
 
   // @Mutation(() => Maintenancereport)
@@ -78,8 +83,22 @@ export class MaintenancereportResolver {
   //   )
   // }
 
-  @Mutation(() => Maintenancereport)
-  removeMaintenancereport(@Args('id', { type: () => Int }) id: number) {
-    return this.maintenancereportService.remove(id)
+  @Mutation(() => Boolean)
+  removeMaintenanceReport(
+    @Args('reportId', { type: () => String }) reportId: string,
+  ) {
+    return this.maintenancereportService.remove(reportId)
+  }
+
+  @ResolveField(() => Room, { nullable: true })
+  async room(@Parent() report: Maintenancereport) {
+    if (!report.roomId) return null
+    return this.roomService.findOne(report.roomId)
+  }
+
+  @ResolveField(() => Building, { nullable: true })
+  async building(@Parent() report: Maintenancereport) {
+    if (!report.buildingId) return null
+    return this.buildingService.findOne(report.buildingId)
   }
 }

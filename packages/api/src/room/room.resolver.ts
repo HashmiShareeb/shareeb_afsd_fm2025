@@ -19,8 +19,8 @@ export class RoomResolver {
   }
 
   @Query(() => Room, { name: 'room' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.roomService.findOne(id)
+  findOne(@Args('roomid', { type: () => String }) roomId: string) {
+    return this.roomService.findOne(roomId)
   }
 
   // @Mutation(() => Room)

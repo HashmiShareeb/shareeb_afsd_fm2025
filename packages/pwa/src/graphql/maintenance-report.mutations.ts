@@ -32,3 +32,17 @@ export const GET_MAINTENANCE_REPORT_BY_ID = gql`
     }
   }
 `
+
+export const GET_MY_SPECIAL_REQUESTS = gql`
+  query ($userId: String!) {
+    mySpecialRequests(userId: $userId) {
+      requestId
+      title
+      requestedBy {
+        uid
+        name
+      }
+      status
+    }
+  }
+`

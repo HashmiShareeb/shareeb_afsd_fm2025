@@ -61,4 +61,8 @@ export class Maintenancereport {
   @UpdateDateColumn({ type: 'timestamp', nullable: true })
   @Field({ nullable: true })
   updatedAt?: Date
+
+  @Field()
+  @Column()
+  buildingId: string
 }

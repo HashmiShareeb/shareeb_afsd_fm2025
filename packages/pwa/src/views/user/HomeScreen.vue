@@ -58,7 +58,21 @@
       </div>
     </div>
   </div>
-
+  <!-- Tabs Navigation -->
+  <div class="border-b border-gray-200 mb-6">
+    <nav class="flex space-x-8">
+      <button
+        class="py-4 px-1 font-medium text-sm border-b-2 border-blue-500 text-blue-600"
+      >
+        Recent Reports
+      </button>
+      <button
+        class="py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+      >
+        Special Requests
+      </button>
+    </nav>
+  </div>
   <div v-if="reports.length" class="bg-white shadow rounded-lg overflow-hidden">
     <div class="overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
@@ -101,7 +115,11 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="text-gray-900">
                 {{
-                  report.reportedBy?.name || firebaseUser?.displayName || 'You'
+                  report.reportedBy?.id === firebaseUser?.uid
+                    ? 'You'
+                    : report.reportedBy?.name ||
+                      firebaseUser?.displayName ||
+                      'You'
                 }}
               </div>
             </td>

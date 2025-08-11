@@ -10,4 +10,10 @@ export class CreateSpecialrequestInput {
 
   @Field()
   requestedById: string
+
+  @Field()
+  roomId: string
+
+  @Field()
+  buildingId: string
 }
