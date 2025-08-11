@@ -34,19 +34,23 @@
       >
         <h3 class="font-medium text-xl text-gray-700">{{ report.title }}</h3>
         <p class="text-gray-600 mb-2">{{ report.description }}</p>
-        <p class="text-xs text-gray-400">
-          <UserRoundIcon class="inline-block w-4 h-4 mr-1" />
-          Reported by:
-          {{ report.reportedBy?.name || firebaseUser?.displayName }}
-          on
-          <Calendar class="inline-block w-4 h-4 mr-1" />
-          {{
-            new Date(report.reportedAt).toLocaleTimeString([], {
-              hour: '2-digit',
-              minute: '2-digit',
-            })
-          }}
-          {{ new Date(report.reportedAt).toLocaleDateString() }}
+        <p class="text-xs text-gray-400 flex items-center gap-1">
+          <span class="flex items-center font-medium">
+            <UserRoundIcon class="inline-block w-4 h-4 mr-1" />
+            Reported by:
+            {{ report.reportedBy?.name || firebaseUser?.displayName }}
+          </span>
+          <span class="flex items-center ml-2">
+            <Calendar class="inline-block w-4 h-4 mx-1" />
+            {{ new Date(report.reportedAt).toLocaleDateString() }}
+            -
+            {{
+              new Date(report.reportedAt).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })
+            }}
+          </span>
         </p>
 
         <div class="text-end">
@@ -163,8 +167,6 @@ const { firebaseUser } = useFirebase()
 const { restoreCustomUser, userId } = useCustomUser()
 
 const showModal = ref(false)
-
-// Form state
 const form = ref({
   title: '',
   description: '',
@@ -172,9 +174,7 @@ const form = ref({
   reportedById: '', //fetched automatically
 })
 
-const { result: reportsData, refetch } = useQuery(GET_MAINTENANCE_REPORTS)
-const reports = computed(() => reportsData.value?.maintenancereport || [])
-
+// 🔹 Buildings ophalen (met rooms)
 const { result: buildingData } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 const buildings = computed(
   () =>
@@ -183,6 +183,11 @@ const buildings = computed(
     ) || [],
 )
 
+// 🔹 Reports ophalen
+const { result: reportsData, refetch } = useQuery(GET_MAINTENANCE_REPORTS)
+const reports = computed(() => reportsData.value?.maintenancereport || [])
+
+// 🔹 Mutation
 const {
   mutate: createReport,
   loading,
@@ -200,7 +205,7 @@ const submitReport = async () => {
     await createReport({
       input: { ...form.value },
     })
-    alert('Report submitted successfully!')
+    await refetch()
     showModal.value = false
     form.value = {
       title: '',
@@ -208,8 +213,6 @@ const submitReport = async () => {
       roomId: '',
       reportedById: userId.value || '',
     }
-
-    await refetch()
   } catch (err) {
     console.error('Error creating report:', err)
   }

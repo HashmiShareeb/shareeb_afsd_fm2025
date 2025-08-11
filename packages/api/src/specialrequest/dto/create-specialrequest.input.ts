@@ -2,15 +2,12 @@ import { InputType, Field } from '@nestjs/graphql'
 
 @InputType()
 export class CreateSpecialrequestInput {
-  @Field(() => String)
+  @Field()
   title: string
 
-  @Field(() => String)
-  details: string
+  @Field()
+  description: string
 
-  @Field(() => String)
-  roomId: string
-
-  @Field(() => String)
-  buildingId: string
+  @Field()
+  requestedById: string
 }

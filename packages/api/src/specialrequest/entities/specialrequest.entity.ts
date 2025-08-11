@@ -1,5 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
-import { Column, CreateDateColumn, ObjectIdColumn } from 'typeorm'
+import { Building } from 'src/building/entities/building.entity'
+import { User } from 'src/user/entities/user.entity'
+import { Column, CreateDateColumn, Entity, ObjectIdColumn } from 'typeorm'
 
 export enum SpecialRequestStatus {
   PENDING = 'PENDING',
@@ -7,6 +9,7 @@ export enum SpecialRequestStatus {
   REJECTED = 'REJECTED',
 }
 
+@Entity()
 @ObjectType()
 export class Specialrequest {
   @ObjectIdColumn()
@@ -17,26 +20,34 @@ export class Specialrequest {
     return this._id.toString()
   }
 
-  @Field()
   @Column()
+  @Field()
   title: string
 
+  @Column()
   @Field()
-  @Column()
-  details: string
+  description: string
 
-  @Field(() => String)
+  @CreateDateColumn()
+  @Field()
+  requestedAt: Date
+
   @Column()
+  @Field(() => String)
+  requestedById: string
+
+  @Field(() => User, { nullable: true })
+  requestedBy?: User // Alleen voor GraphQL resolven, niet in DB
+
+  @Column({ default: SpecialRequestStatus.PENDING })
+  @Field()
   status: SpecialRequestStatus
 
   @Field()
   @Column()
-  requesterId: string
+  roomId: string
 
   @Field()
   @Column()
-  buildingId: string
-
-  @CreateDateColumn()
-  createdAt: Date
+  building: Building
 }

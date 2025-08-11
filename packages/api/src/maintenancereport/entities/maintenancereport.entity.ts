@@ -52,7 +52,7 @@ export class Maintenancereport {
   reportedById: string
 
   @Field(() => User, { nullable: true })
-  reportedBy?: User
+  reportedBy: User
 
   @CreateDateColumn({ type: 'timestamp', nullable: true })
   @Field()
