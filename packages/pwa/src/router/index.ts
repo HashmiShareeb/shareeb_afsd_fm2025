@@ -16,6 +16,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/HomeScreen.vue'),
   },
   {
+    path: '/user',
+    name: 'userhome',
+    component: () => import('@/views/user/HomeScreen.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.USER },
+  },
+  {
     path: '/buildings',
     name: 'buildings',
     component: () => import('@/views/buildings/IndexView.vue'),
@@ -36,7 +42,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/reports',
     name: 'reports',
-    component: () => import('@/views/reports/reportScreen.vue'),
+    component: () => import('@/views/user/reports/reportScreen.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.USER },
   },
   {
