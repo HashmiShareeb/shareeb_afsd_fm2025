@@ -2,14 +2,14 @@ import gql from 'graphql-tag'
 
 //created by the users with USERS rol
 export const MY_SPECIAL_REQUESTS = gql`
-  query MyMaintenanceReport($userId: String!) {
-    myMaintenanceReport(userId: $userId) {
-      reportId
+  query ($userId: String!) {
+    mySpecialRequests(userId: $userId) {
+      requestId
       title
       description
-      reportedAt
+      requestedAt
       status
-      reportedBy {
+      requestedBy {
         id
         name
       }
@@ -31,6 +31,7 @@ export const GET_ALL_SPECIAL_REQUESTS = gql`
       requestId
       title
       description
+      requestedAt
       building {
         buildingId
         name

@@ -155,6 +155,96 @@
       </div>
     </div>
     <p v-else class="text-gray-500">No reports found.</p>
+    <div v-if="specialRequests.length" class="mt-8">
+      <h2 class="text-xl font-semibold text-gray-700 mb-4">Special Requests</h2>
+
+      <div
+        v-for="request in specialRequests"
+        :key="request.requestId"
+        class="bg-white rounded-xl shadow-sm p-5 mb-4 border-l-4 transition-all hover:shadow-md"
+        :class="{
+          'border-l-orange-500': request.status === 'PENDING',
+          'border-l-blue-500': request.status === 'IN_PROGRESS',
+          'border-l-green-500': request.status === 'RESOLVED',
+        }"
+      >
+        <div
+          class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3"
+        >
+          <div>
+            <div class="flex items-center gap-2">
+              <h3 class="font-semibold text-lg text-gray-800">
+                {{ request.title }}
+              </h3>
+              <span
+                class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
+                :class="{
+                  'bg-orange-100 text-orange-800': request.status === 'PENDING',
+                  'bg-blue-100 text-blue-800': request.status === 'IN_PROGRESS',
+                  'bg-green-100 text-green-800': request.status === 'RESOLVED',
+                }"
+              >
+                {{ request.status }}
+              </span>
+            </div>
+            <p class="text-gray-600 mt-2">{{ request.description }}</p>
+
+            <div class="flex flex-wrap gap-3 mt-4">
+              <div class="flex items-center text-sm text-gray-500">
+                <UserRoundIcon class="inline-block w-4 h-4 mr-1" />
+                {{
+                  request.requestedBy?.name ||
+                  firebaseUser?.displayName ||
+                  'You'
+                }}
+              </div>
+              <div class="flex items-center text-sm text-gray-500">
+                <Calendar class="inline-block w-4 h-4 mr-1" />
+                {{ new Date(request.requestedAt).toLocaleDateString() }}
+              </div>
+              <div class="flex items-center text-sm text-gray-500">
+                <Clock3Icon class="inline-block w-4 h-4 mr-1" />
+                {{
+                  new Date(request.requestedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                }}
+              </div>
+              <div class="flex items-center text-sm text-gray-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-4 w-4 mr-1"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                  />
+                </svg>
+                {{
+                  buildings.find(
+                    (b: BuildingType) => b.buildingId === request.buildingId,
+                  )?.name || 'Unknown Building'
+                }}
+              </div>
+            </div>
+          </div>
+
+          <button
+            class="text-orange-600 hover:text-orange-800 flex items-center text-sm font-medium"
+          >
+            View Details
+            <ChevronRight class="inline-block w-4 h-4 ml-1" />
+          </button>
+        </div>
+      </div>
+    </div>
+    <p v-else class="text-gray-500">No special requests found.</p>
 
     <!-- Add Report Modal -->
     <ModalView
@@ -237,6 +327,7 @@
         <p v-if="error" class="text-red-600 text-sm">{{ error.message }}</p>
       </form>
     </ModalView>
+    <!-- Special Requests List -->
     <!-- add a specialrequest Modal -->
     <ModalView
       title="Special Request"
@@ -336,6 +427,7 @@ import {
 } from 'lucide-vue-next'
 import { ReportStatus } from '@/interfaces/report.interface'
 import { CREATE_SPECIAL_REQUEST } from '@/graphql/special-resquest.mutations'
+import { GET_ALL_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
 
 const { firebaseUser } = useFirebase()
 const { restoreCustomUser, userId } = useCustomUser()
@@ -368,6 +460,12 @@ const buildings = computed(
 
 const { result: reportsData, refetch } = useQuery(GET_MAINTENANCE_REPORTS)
 const reports = computed(() => reportsData.value?.maintenancereport || [])
+
+const { result: requestData, refetch: refetchRequests } = useQuery(
+  GET_ALL_SPECIAL_REQUESTS,
+)
+
+const specialRequests = computed(() => requestData.value?.specialRequests || [])
 
 const {
   mutate: createReport,
@@ -419,7 +517,7 @@ const submitRequest = async () => {
     await createRequest({
       input: { ...requestForm.value },
     })
-    await refetch()
+    await refetchRequests()
     showModal.value = false
     requestForm.value = {
       title: '',

@@ -6,7 +6,7 @@ export enum SpecialRequestStatus {
   REJECTED = 'REJECTED',
 }
 
-export interface SpecialRequest {
+export interface SpecialRequestType {
   requestId: string
   title: string
   description: string

@@ -38,6 +38,7 @@ export const MY_MAINTENANCE_REPORT = gql`
     myMaintenanceReport(userId: $userId) {
       reportId
       title
+      description
       reportedBy {
         uid
         name
