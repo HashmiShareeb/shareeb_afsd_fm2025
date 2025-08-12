@@ -135,7 +135,11 @@
                     d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
                   />
                 </svg>
-                Room
+                {{
+                  buildings.find(
+                    (b: BuildingType) => b.buildingId === report.buildingId,
+                  )?.name || 'Unknown Building'
+                }}
               </div>
             </div>
           </div>
@@ -149,7 +153,6 @@
         </div>
       </div>
     </div>
-
     <p v-else class="text-gray-500">No reports found.</p>
 
     <!-- Add Report Modal -->
@@ -233,10 +236,11 @@
         <p v-if="error" class="text-red-600 text-sm">{{ error.message }}</p>
       </form>
     </ModalView>
+    <!-- add a specialrequest Modal -->
   </div>
 </template>
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import ModalView from '@/components/generic/ModalView.vue'
 import useCustomUser from '@/composables/useCustomUser'
 import { useMutation, useQuery } from '@vue/apollo-composable'
@@ -262,9 +266,9 @@ const form = ref({
   description: '',
   roomId: '',
   reportedById: '', //fetched automatically
+  buildingId: '',
 })
 
-// 🔹 Buildings ophalen (met rooms)
 const { result: buildingData } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 const buildings = computed(
   () =>
@@ -300,11 +304,29 @@ const submitReport = async () => {
       description: '',
       roomId: '',
       reportedById: userId.value || '',
+      buildingId: '',
     }
   } catch (err) {
     console.error('Error creating report:', err)
   }
 }
+
+watch(
+  () => form.value.roomId,
+  newRoomId => {
+    if (!newRoomId) {
+      form.value.buildingId = ''
+      return
+    }
+    // Find building that contains the selected room
+    const building = buildings.value.find((b: BuildingType) =>
+      b.rooms?.some(room => room.roomId === newRoomId),
+    )
+    if (building) {
+      form.value.buildingId = building.buildingId
+    }
+  },
+)
 
 onMounted(async () => {
   await restoreCustomUser()

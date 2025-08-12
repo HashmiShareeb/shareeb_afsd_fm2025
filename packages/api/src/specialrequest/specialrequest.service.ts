@@ -6,6 +6,7 @@ import {
 import { MongoRepository } from 'typeorm'
 import { InjectRepository } from '@nestjs/typeorm'
 import { CreateSpecialrequestInput } from './dto/create-specialrequest.input'
+import { ObjectId } from 'mongodb'
 // import { UpdateSpecialrequestInput } from './dto/update-specialrequest.input'
 
 @Injectable()
@@ -44,9 +45,17 @@ export class SpecialrequestService {
   //   return `This action updates a #${id} specialrequest`
   // }
 
-  // updateStatus(requestId: string, status: string): Promise<Specialrequest> {
-  //   return this.specialrequestRepository.save({ requestId, status })
-  // }
+  async updateStatus(
+    requestId: string,
+    status: string,
+  ): Promise<Specialrequest | null> {
+    const specialRequest = await this.specialrequestRepository.findOne({
+      where: { _id: new ObjectId(requestId) },
+    })
+    if (!specialRequest) throw new Error('Report not found')
+    specialRequest.status = status as SpecialRequestStatus
+    return this.specialrequestRepository.save(specialRequest)
+  }
 
   remove(requestId: string) {
     return this.specialrequestRepository.delete({ _id: requestId })

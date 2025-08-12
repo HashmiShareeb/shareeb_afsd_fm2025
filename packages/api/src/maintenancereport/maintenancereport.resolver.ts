@@ -67,6 +67,14 @@ export class MaintenancereportResolver {
     return this.maintenancereportService.findAll()
   }
 
+  @Mutation(() => Maintenancereport)
+  async updateMaintenanceReportStatus(
+    @Args('reportId', { type: () => String }) reportId: string,
+    @Args('status', { type: () => String }) status: string,
+  ): Promise<Maintenancereport> {
+    return this.maintenancereportService.updateStatus(reportId, status)
+  }
+
   // @Query(() => Maintenancereport, { name: 'maintenancereport' })
   // findOne(@Args('reportId', { type: () => String }) reportId: string) {
   //   return this.maintenancereportService.findOne(reportId)
@@ -82,6 +90,13 @@ export class MaintenancereportResolver {
   //     updateMaintenancereportInput,
   //   )
   // }
+
+  @Query(() => [Maintenancereport], { name: 'myMaintenanceReport' })
+  async myMaintenanceReport(
+    @Args('userId', { type: () => String }) userId: string,
+  ) {
+    return this.maintenancereportService.findByUser(userId)
+  }
 
   @Mutation(() => Boolean)
   removeMaintenanceReport(

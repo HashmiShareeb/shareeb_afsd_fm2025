@@ -75,6 +75,14 @@ export class SpecialrequestResolver {
     return this.specialrequestService.remove(requestId)
   }
 
+  @Mutation(() => Specialrequest)
+  async updateSpecialRequestStatus(
+    @Args('requestId', { type: () => String }) requestId: string,
+    @Args('status', { type: () => String }) status: string,
+  ) {
+    return this.specialrequestService.updateStatus(requestId, status)
+  }
+
   @ResolveField(() => Room, { nullable: true })
   async room(@Parent() request: Specialrequest) {
     if (!request.roomId) return null

@@ -33,16 +33,26 @@ export const GET_MAINTENANCE_REPORT_BY_ID = gql`
   }
 `
 
-export const GET_MY_SPECIAL_REQUESTS = gql`
+export const MY_MAINTENANCE_REPORT = gql`
   query ($userId: String!) {
-    mySpecialRequests(userId: $userId) {
-      requestId
+    myMaintenanceReport(userId: $userId) {
+      reportId
       title
-      requestedBy {
+      reportedBy {
         uid
         name
       }
+      building {
+        buildingId
+        name
+        address
+        rooms {
+          roomId
+          name
+        }
+      }
       status
+      reportedAt
     }
   }
 `

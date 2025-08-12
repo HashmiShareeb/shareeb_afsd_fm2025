@@ -59,7 +59,22 @@
     </div>
   </div>
   <!-- Tabs Navigation -->
+
   <div class="border-b border-gray-200 mb-6">
+    <div class="mr-auto flex items-center justify-end space-x-4">
+      <label for="statusFilter" class="text-sm text-gray-600">Filter:</label>
+      <select
+        id="statusFilter"
+        v-model="statusFilter"
+        class="input border-gray-300 rounded px-2 py-1 text-sm"
+      >
+        <option selected value="">All</option>
+        <option :value="ReportStatus.NEW">New</option>
+        <option :value="ReportStatus.PENDING">Pending</option>
+        <option :value="ReportStatus.IN_PROGRESS">In Progress</option>
+        <option :value="ReportStatus.RESOLVED">Resolved</option>
+      </select>
+    </div>
     <nav class="flex space-x-8">
       <button
         class="py-4 px-1 font-medium text-sm border-b-2 border-blue-500 text-blue-600"
@@ -158,21 +173,31 @@
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
-import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
+import { MY_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.mutations'
 import { useQuery } from '@vue/apollo-composable'
 import { CheckCircle, Clock, Check } from 'lucide-vue-next'
-import { computed, onMounted } from 'vue'
-import { ReportStatus } from '@/interfaces/report.interface'
+import { computed, onMounted, ref } from 'vue'
+import { ReportStatus, type ReportType } from '@/interfaces/report.interface'
 
 const { firebaseUser } = useFirebase()
-const { restoreCustomUser } = useCustomUser()
+const { restoreCustomUser, userId } = useCustomUser()
 
 const getBuildings = useQuery(GET_BUILDINGS)
 const buildings = computed(() => getBuildings.result.value?.buildings ?? [])
 
-// const { result: reportsData, refetch } = useQuery(GET_MAINTENANCE_REPORTS)
-const { result: reportsData } = useQuery(GET_MAINTENANCE_REPORTS)
-const reports = computed(() => reportsData.value?.maintenancereport || [])
+const { result: reportsData } = useQuery(
+  MY_MAINTENANCE_REPORT,
+  () => ({ userId: userId.value }),
+  { enabled: computed(() => !!userId.value) },
+)
+
+const reports = computed(() => reportsData.value?.myMaintenanceReport || [])
+
+// const reports = computed(() =>
+//   (reportsData.value?.maintenancereport || []).filter(
+//     (report: ReportType) => report.reportedById === userId.value,
+//   ),
+// )
 
 console.log('Buildings:', buildings.value)
 
@@ -180,4 +205,13 @@ onMounted(async () => {
   await restoreCustomUser()
   // form.value.reportedById = userId.value || ''
 })
+
+const selectedStatus = ref<ReportStatus | null>(null) // Selected status filter
+
+const statusFilter = () => {
+  return reports.value.filter((report: ReportType) => {
+    if (!selectedStatus.value) return true
+    return report.status === selectedStatus.value
+  })
+}
 </script>

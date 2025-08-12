@@ -16,3 +16,12 @@ export const CREATE_MAINTENANCE_REPORT = gql`
     }
   }
 `
+
+export const UPDATE_STATUS_MAINTENANCE = gql`
+  mutation UpdateMaintenanceReportStatus($reportId: String!, $status: String!) {
+    updateMaintenanceReportStatus(reportId: $reportId, status: $status) {
+      reportId
+      status
+    }
+  }
+`
