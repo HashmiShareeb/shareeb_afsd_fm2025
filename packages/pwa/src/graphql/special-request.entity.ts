@@ -2,22 +2,27 @@ import gql from 'graphql-tag'
 
 //created by the users with USERS rol
 export const MY_SPECIAL_REQUESTS = gql`
-  mySpecialRequests(userId: $userId) {
-    requestId
-    title
-    requestedBy{uid,name}
-     building {
-      buildingId
-      name
-      address
-      rooms {
+  query MyMaintenanceReport($userId: String!) {
+    myMaintenanceReport(userId: $userId) {
+      reportId
+      title
+      description
+      reportedAt
+      status
+      reportedBy {
+        id
+        name
+      }
+      room {
         roomId
         name
       }
+      building {
+        buildingId
+        name
+      }
     }
-    status
   }
-}
 `
 
 export const GET_ALL_SPECIAL_REQUESTS = gql`

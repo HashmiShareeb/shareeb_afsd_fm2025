@@ -58,114 +58,206 @@
       </div>
     </div>
   </div>
-  <!-- Tabs Navigation -->
 
-  <div class="border-b border-gray-200 mb-6">
-    <div class="mr-auto flex items-center justify-end space-x-4">
-      <label for="statusFilter" class="text-sm text-gray-600">Filter:</label>
-      <select
-        id="statusFilter"
-        v-model="statusFilter"
-        class="input border-gray-300 rounded px-2 py-1 text-sm"
-      >
-        <option selected value="">All</option>
-        <option :value="ReportStatus.NEW">New</option>
-        <option :value="ReportStatus.PENDING">Pending</option>
-        <option :value="ReportStatus.IN_PROGRESS">In Progress</option>
-        <option :value="ReportStatus.RESOLVED">Resolved</option>
-      </select>
+  <div>
+    <!-- Tabs Navigation -->
+    <div class="border-b border-gray-200 mb-6">
+      <div class="mr-auto flex items-center justify-end space-x-4">
+        <label for="statusFilter" class="text-sm text-gray-600">Filter:</label>
+        <select
+          id="statusFilter"
+          v-model="selectedStatus"
+          class="input border-gray-300 rounded px-2 py-1 text-sm"
+          v-if="activeTab === 'reports'"
+        >
+          <option selected value="">All</option>
+          <option :value="ReportStatus.NEW">New</option>
+          <option :value="ReportStatus.PENDING">Pending</option>
+          <option :value="ReportStatus.IN_PROGRESS">In Progress</option>
+          <option :value="ReportStatus.RESOLVED">Resolved</option>
+        </select>
+      </div>
+      <nav class="flex space-x-8">
+        <button
+          @click="activeTab = 'reports'"
+          :class="{
+            'py-4 px-1 font-medium text-sm border-b-2 border-blue-500 text-blue-600':
+              activeTab === 'reports',
+            'py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+              activeTab !== 'reports',
+          }"
+        >
+          Recent Reports
+        </button>
+        <button
+          @click="activeTab = 'requests'"
+          :class="{
+            'py-4 px-1 font-medium text-sm border-b-2 border-blue-500 text-blue-600':
+              activeTab === 'requests',
+            'py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+              activeTab !== 'requests',
+          }"
+        >
+          Special Requests
+        </button>
+      </nav>
     </div>
-    <nav class="flex space-x-8">
-      <button
-        class="py-4 px-1 font-medium text-sm border-b-2 border-blue-500 text-blue-600"
-      >
-        Recent Reports
-      </button>
-      <button
-        class="py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-      >
-        Special Requests
-      </button>
-    </nav>
-  </div>
-  <div v-if="reports.length" class="bg-white shadow rounded-lg overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200">
-        <thead class="bg-white">
-          <tr>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-            >
-              Title
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-            >
-              Requested by
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-            >
-              Date
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-            >
-              Status
-            </th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-          <tr
-            v-for="report in reports"
-            :key="report.reportId"
-            class="hover:bg-gray-50"
-          >
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="font-medium text-gray-900">{{ report.title }}</div>
-              <div class="text-gray-500 text-sm mt-1">
-                {{ report.description }}
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <div class="text-gray-900">
-                {{
-                  report.reportedBy?.id === firebaseUser?.uid
-                    ? 'You'
-                    : report.reportedBy?.name ||
-                      firebaseUser?.displayName ||
-                      'You'
-                }}
-              </div>
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-              {{ new Date(report.reportedAt).toLocaleDateString() }} -
-              {{
-                new Date(report.reportedAt).toLocaleTimeString([], {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
-              }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span
-                class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
-                :class="{
-                  'bg-orange-100 text-orange-800':
-                    report.status === ReportStatus.PENDING,
-                  'bg-blue-100 text-blue-800':
-                    report.status === ReportStatus.IN_PROGRESS,
-                  'bg-green-100 text-green-800':
-                    report.status === ReportStatus.RESOLVED,
-                }"
+
+    <!-- Reports Tab -->
+    <div
+      v-if="activeTab === 'reports'"
+      class="bg-white shadow rounded-lg overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-white">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
               >
-                {{ report.status }}
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+                Title
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Requested by
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Date
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr
+              v-for="report in filteredReports"
+              :key="report.reportId"
+              class="hover:bg-gray-50"
+            >
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="font-medium text-gray-900">{{ report.title }}</div>
+                <div class="text-gray-500 text-sm mt-1">
+                  {{ report.description }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-gray-900">
+                  {{ report.reportedBy?.name }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                {{ new Date(report.reportedAt).toLocaleDateString() }} -
+                {{
+                  new Date(report.reportedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
+                  :class="{
+                    'bg-orange-100 text-orange-800':
+                      report.status === ReportStatus.PENDING,
+                    'bg-blue-100 text-blue-800':
+                      report.status === ReportStatus.IN_PROGRESS,
+                    'bg-green-100 text-green-800':
+                      report.status === ReportStatus.RESOLVED,
+                  }"
+                >
+                  {{ report.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
+
+    <!-- Special Requests Tab -->
+    <!-- <div
+      v-if="activeTab === 'requests'"
+      class="bg-white shadow rounded-lg overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-white">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Title
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Requested by
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Date
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr
+              v-for="request in specialRequests"
+              :key="request.requestId"
+              class="hover:bg-gray-50"
+            >
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="font-medium text-gray-900">{{ request.title }}</div>
+                <div class="text-gray-500 text-sm mt-1">
+                  {{ request.description }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-gray-900">
+                  {{ request.requestedBy?.name }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                {{ new Date(request.requestedAt).toLocaleDateString() }} -
+                {{
+                  new Date(request.requestedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span
+                  class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
+                  :class="{
+                    'bg-orange-100 text-orange-800':
+                      request.status === 'PENDING',
+                    'bg-blue-100 text-blue-800':
+                      request.status === 'IN_PROGRESS',
+                    'bg-green-100 text-green-800':
+                      request.status === 'RESOLVED',
+                  }"
+                >
+                  {{ request.status }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div> -->
   </div>
 </template>
 
@@ -178,6 +270,7 @@ import { useQuery } from '@vue/apollo-composable'
 import { CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { ReportStatus, type ReportType } from '@/interfaces/report.interface'
+import { MY_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
 
 const { firebaseUser } = useFirebase()
 const { restoreCustomUser, userId } = useCustomUser()
@@ -193,6 +286,20 @@ const { result: reportsData } = useQuery(
 
 const reports = computed(() => reportsData.value?.myMaintenanceReport || [])
 
+const { result: specialRequestData } = useQuery(
+  MY_SPECIAL_REQUESTS,
+  () => ({ userId: userId.value }),
+  { enabled: computed(() => !!userId.value) },
+)
+
+const specialRequests = computed(
+  () => specialRequestData.value?.mySpecialRequests || [],
+)
+
+console.log(specialRequests)
+
+const activeTab = ref<'reports' | 'requests'>('reports') // Default to "reports"
+
 // const reports = computed(() =>
 //   (reportsData.value?.maintenancereport || []).filter(
 //     (report: ReportType) => report.reportedById === userId.value,
@@ -206,12 +313,22 @@ onMounted(async () => {
   // form.value.reportedById = userId.value || ''
 })
 
-const selectedStatus = ref<ReportStatus | null>(null) // Selected status filter
+// const selectedStatus = ref<ReportStatus | null>(null) // Selected status filter
 
-const statusFilter = () => {
-  return reports.value.filter((report: ReportType) => {
-    if (!selectedStatus.value) return true
-    return report.status === selectedStatus.value
-  })
-}
+// const statusFilter = () => {
+//   return reports.value.filter((report: ReportType) => {
+//     if (!selectedStatus.value) return true
+//     return report.status === selectedStatus.value
+//   })
+// }
+
+const selectedStatus = ref<ReportStatus | ''>('') // Default to show all statuses
+
+// Computed property to filter reports based on the selected status
+const filteredReports = computed(() => {
+  if (!selectedStatus.value) return reports.value // Show all reports if no status is selected
+  return reports.value.filter(
+    (report: ReportType) => report.status === selectedStatus.value,
+  )
+})
 </script>
