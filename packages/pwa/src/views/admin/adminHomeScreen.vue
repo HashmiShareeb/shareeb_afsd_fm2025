@@ -142,7 +142,7 @@
             <td class="px-6 py-4 whitespace-nowrap">
               <select
                 v-model="report.status"
-                @change="changeStatus"
+                @change="changeStatus(report.reportId, report.status)"
                 class="input border-gray-300 text-sm rounded"
               >
                 <option value="NEW">New</option>
@@ -158,7 +158,7 @@
   </div>
 
   <!-- Stats Cards -->
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+  <!-- <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
     <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
       <div class="flex items-center">
         <div class="p-3 rounded-lg bg-blue-50 mr-4">
@@ -230,7 +230,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
@@ -238,13 +238,15 @@ import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import { Building2, UserCog2Icon, UserRoundSearch } from 'lucide-vue-next'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
-import { useQuery } from '@vue/apollo-composable'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import { computed } from 'vue'
 import { GET_MANAGERS } from '@/graphql/user.query'
 import { Role } from '@/interfaces/custom.user.interface'
 import { GET_ROUNDS } from '@/graphql/round.entity'
 //import { ReportStatus } from '@/interfaces/report.interface'
 import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
+import { UPDATE_STATUS_MAINTENANCE } from '@/graphql/maintenance-report.entity'
+import type { ReportStatus, ReportType } from '@/interfaces/report.interface'
 
 const { userRole } = useCustomUser()
 const { firebaseUser } = useFirebase()
@@ -261,21 +263,24 @@ const rounds = computed(() => roundData.value?.rounds || [])
 const { result: reportsData } = useQuery(GET_MAINTENANCE_REPORTS)
 const reports = computed(() => reportsData.value?.maintenancereport || [])
 
-const changeStatus = () => {
-  console.log('test')
-}
-
-// const { mutate: updateStatus } = useMutation(UPDATE_MAINTENANCE_REPORT_STATUS)
-
-// const changeStatus = async (reportId, newStatus) => {
-//   try {
-//     const response = await updateStatus({
-//       requestId: reportId,
-//       status: newStatus,
-//     })
-//     console.log('Status updated:', response.data.updateSpecialRequestStatus)
-//   } catch (error) {
-//     console.error('Failed to update status:', error)
-//   }
+// const changeStatus = () => {
+//   console.log('test')
 // }
+
+const { mutate: updateStatus } = useMutation(UPDATE_STATUS_MAINTENANCE)
+
+const changeStatus = async (
+  reportId: ReportType['reportId'],
+  status: ReportStatus,
+) => {
+  try {
+    const response = await updateStatus({
+      requestId: reportId,
+      status: status,
+    })
+    console.log('Status updated:', response?.data.updateSpecialRequestStatus)
+  } catch (error) {
+    console.error('Failed to update status:', error)
+  }
+}
 </script>
