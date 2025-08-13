@@ -1,3 +1,4 @@
+import { IsEnum } from 'class-validator'
 import { ChecklistItemStatus } from '../entities/checklistitem.entity'
 import { CreateChecklistitemInput } from './create-checklistitem.input'
 import { InputType, Field, PartialType, ID } from '@nestjs/graphql'
@@ -9,7 +10,8 @@ export class UpdateChecklistitemInput extends PartialType(
   @Field(() => ID)
   itemId: string
 
-  @Field(() => ChecklistItemStatus)
+  @IsEnum(ChecklistItemStatus)
+  @Field()
   status: ChecklistItemStatus
 
   @Field({ nullable: true })

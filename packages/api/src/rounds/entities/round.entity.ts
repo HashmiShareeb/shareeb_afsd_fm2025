@@ -54,6 +54,6 @@ export class Round {
   status: RoundStatus = RoundStatus.PLANNED
 
   @Field(() => [RoundRoom])
-  @Column({ type: 'json' })
+  @Column(() => RoundRoom, { array: true })
   rooms: RoundRoom[]
 }

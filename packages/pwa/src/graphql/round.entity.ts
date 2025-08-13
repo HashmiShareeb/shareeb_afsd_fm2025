@@ -20,3 +20,22 @@ export const GET_ROUNDS = gql`
     }
   }
 `
+
+export const MY_ROUNDS = gql`
+  query MyRounds($userId: String!) {
+    myRounds(userId: $userId) {
+      roundId
+      name
+      assignedTo {
+        id
+        uid
+        name
+      }
+      rooms {
+        roomId
+        order
+      }
+      status
+    }
+  }
+`

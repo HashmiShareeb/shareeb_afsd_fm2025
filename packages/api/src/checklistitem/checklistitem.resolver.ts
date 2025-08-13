@@ -1,7 +1,7 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, ID } from '@nestjs/graphql'
 import { ChecklistitemService } from './checklistitem.service'
 import { Checklistitem } from './entities/checklistitem.entity'
-// import { CreateChecklistitemInput } from './dto/create-checklistitem.input'
+import { CreateChecklistitemInput } from './dto/create-checklistitem.input'
 // import { UpdateChecklistitemInput } from './dto/update-checklistitem.input'
 
 @Resolver(() => Checklistitem)
@@ -16,14 +16,23 @@ export class ChecklistitemResolver {
   //   return this.checklistitemService.create(createChecklistitemInput)
   // }
 
+  @Mutation(() => Checklistitem)
+  createChecklistItem(
+    @Args('roundId', { type: () => ID }) roundId: string,
+    @Args('roundRoomId', { type: () => ID }) roundRoomId: string,
+    @Args('input') input: CreateChecklistitemInput,
+  ) {
+    return this.checklistitemService.create(roundId, roundRoomId, input)
+  }
+
   @Query(() => [Checklistitem], { name: 'checklistitem' })
   findAll() {
     return this.checklistitemService.findAll()
   }
 
   @Query(() => Checklistitem, { name: 'checklistitem' })
-  findOne(@Args('id', { type: () => Int }) id: number) {
-    return this.checklistitemService.findOne(id)
+  findOne(@Args('itemId', { type: () => String }) itemId: string) {
+    return this.checklistitemService.findOne(itemId)
   }
 
   // @Mutation(() => Checklistitem)
@@ -38,7 +47,7 @@ export class ChecklistitemResolver {
   // }
 
   @Mutation(() => Checklistitem)
-  removeChecklistitem(@Args('id', { type: () => Int }) id: number) {
-    return this.checklistitemService.remove(id)
+  removeChecklistitem(@Args('itemId', { type: () => String }) itemId: string) {
+    return this.checklistitemService.remove(itemId)
   }
 }

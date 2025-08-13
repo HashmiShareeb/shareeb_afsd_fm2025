@@ -1,15 +1,15 @@
 import { InputType, Field } from '@nestjs/graphql'
 import { ChecklistItemStatus } from '../entities/checklistitem.entity'
+import { IsEnum } from 'class-validator'
 
 @InputType()
 export class CreateChecklistitemInput {
   @Field()
   label: string
 
-  @Field(() => ChecklistItemStatus, {
-    defaultValue: ChecklistItemStatus.NOT_CHECKED,
-  })
-  status?: ChecklistItemStatus
+  @IsEnum(ChecklistItemStatus)
+  @Field()
+  status: ChecklistItemStatus
 
   @Field({ nullable: true })
   notes?: string
