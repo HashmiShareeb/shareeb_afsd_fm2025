@@ -61,11 +61,14 @@
       </div> -->
     </div>
     <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
-    <div class="bg-white rounded-xl shadow overflow-hidden mt-4">
+    <div
+      class="bg-white rounded-xl shadow overflow-hidden mt-4"
+      v-if="rounds.length"
+    >
       <div
         class="p-4 border-b border-gray-200 flex justify-between items-center"
       >
-        <h2 class="font-semibold text-gray-700 text-md">Morning Round</h2>
+        <h2 class="font-semibold text-gray-700 text-md">{{ rounds.name }}</h2>
 
         <!-- <span class="text-sm text-gray-500">rondes</span> -->
         <ChevronDown class="w-5 h-5 text-gray-400 cursor-pointer ml-2" />
@@ -73,8 +76,8 @@
 
       <div class="p-4">
         <div
-          v-for="round in todaysRounds"
-          :key="round.id"
+          v-for="round in rounds"
+          :key="round.roundId"
           class="mb-4 last:mb-0"
         >
           <div class="flex justify-between items-center mb-2">
@@ -104,19 +107,24 @@
 <script setup lang="ts">
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
+import { GET_ROUNDS } from '@/graphql/round.entity'
 import { Role } from '@/interfaces/custom.user.interface'
+import { useQuery } from '@vue/apollo-composable'
 import { MapPin, ChevronDown } from 'lucide-vue-next'
 
 const { firebaseUser } = useFirebase()
 const { userRole } = useCustomUser()
 
-const todaysRounds = [
-  {
-    id: 1,
-    time: '08:00 - 09:30',
-    buildings: ['Hoofdgebouw', 'Vleugel A'],
-    checklists: '12 lokalen',
-    status: 'PLANNED',
-  },
-]
+const { result: roundsData } = useQuery(GET_ROUNDS)
+const rounds = roundsData.value || []
+
+// const todaysRounds = [
+//   {
+//     id: 1,
+//     time: '08:00 - 09:30',
+//     buildings: ['Hoofdgebouw', 'Vleugel A'],
+//     checklists: '12 lokalen',
+//     status: 'PLANNED',
+//   },
+// ]
 </script>

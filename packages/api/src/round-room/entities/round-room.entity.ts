@@ -23,9 +23,9 @@ export class RoundRoom {
   @Field(() => String)
   roomId: string // ID of the room
 
-  @Column()
-  @Field(() => String)
-  roomName: string // Name of the room
+  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  roomName?: string // Name of the room (optional)
 
   @Column()
   @Field(() => String)
@@ -47,6 +47,7 @@ export class RoundRoom {
   @Column({ nullable: true })
   completedAt?: string
 
-  @Field(() => [Checklistitem], { nullable: true })
-  checklistItems: Checklistitem[]
+  @Field(() => [Checklistitem])
+  @Column({ type: 'json', default: [] })
+  checklist: Checklistitem[]
 }

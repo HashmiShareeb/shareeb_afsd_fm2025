@@ -62,6 +62,12 @@ export class RoundsService {
     return `This action returns a #${roundId} round`
   }
 
+  findByUser(userId: string): Promise<Round[]> {
+    return this.roundRepository.find({
+      where: { assignedToId: userId },
+    })
+  }
+
   // update(id: number, updateRoundInput: UpdateRoundInput) {
   //   return `This action updates a #${id} round`;
   // }

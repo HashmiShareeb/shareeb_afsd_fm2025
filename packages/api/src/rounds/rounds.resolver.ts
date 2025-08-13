@@ -12,7 +12,9 @@ import { Round } from './entities/round.entity'
 // import { Role } from 'src/user/entities/user.entity'
 import { UserService } from 'src/user/user.service'
 import { CreateRoundInput } from './dto/create-round.input'
-import { User } from 'src/user/entities/user.entity'
+import { Role, User } from 'src/user/entities/user.entity'
+import { UseGuards } from '@nestjs/common'
+import { AllowedRoles } from 'src/decorators/roles.decorator'
 
 // import { UpdateRoundInput } from './dto/update-round.input'
 
@@ -24,14 +26,26 @@ export class RoundsResolver {
   ) {}
 
   @Mutation(() => Round)
-  createRound(@Args('createRoundInput') createRoundInput: CreateRoundInput) {
-    return this.roundsService.create(createRoundInput)
+  async createRound(
+    @Args('createRoundInput') createRoundInput: CreateRoundInput,
+  ) {
+    return await this.roundsService.create(createRoundInput)
   }
 
   @ResolveField(() => User, { nullable: true })
   async assignedTo(@Parent() round: Round): Promise<User | null> {
     if (!round.assignedToId) return null
     return this.userService.findOne(round.assignedToId)
+  }
+
+  @UseGuards()
+  @AllowedRoles(Role.MANAGER)
+  @Query(() => [Round], { name: 'myRounds' })
+  async myRounds(@Args('userId', { type: () => String }) userId: string) {
+    const user = await this.userService.findOne(userId)
+    if (!user) return []
+
+    return this.roundsService.findByUser(userId)
   }
 
   // @Mutation(() => Round)
