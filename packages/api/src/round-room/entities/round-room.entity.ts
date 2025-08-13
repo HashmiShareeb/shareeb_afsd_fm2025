@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { Checklistitem } from 'src/checklistitem/entities/checklistitem.entity'
 import { Column, ObjectIdColumn } from 'typeorm'
 
 export enum RoundRoomStatus {
@@ -45,4 +46,7 @@ export class RoundRoom {
   @Field({ nullable: true })
   @Column({ nullable: true })
   completedAt?: string
+
+  @Field(() => [Checklistitem], { nullable: true })
+  checklistItems: Checklistitem[]
 }

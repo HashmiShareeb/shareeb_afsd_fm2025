@@ -16,6 +16,7 @@ export const GET_ROUNDS = gql`
         roomId
         order
       }
+      buildingId
     }
   }
 `

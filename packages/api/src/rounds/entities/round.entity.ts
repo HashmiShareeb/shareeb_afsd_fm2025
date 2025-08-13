@@ -37,7 +37,7 @@ export class Round {
 
   @UpdateDateColumn({ type: 'timestamp', nullable: true })
   @Field()
-  endTime: string
+  endTime: string //completedAt?
 
   @Column()
   @Field()
@@ -45,7 +45,6 @@ export class Round {
 
   // @Field(() => User)
   // assignedTo: User
-
   @Column()
   @Field()
   buildingId: string

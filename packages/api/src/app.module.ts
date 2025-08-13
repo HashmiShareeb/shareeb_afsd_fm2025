@@ -14,6 +14,7 @@ import { RoundsModule } from './rounds/rounds.module'
 import { RoundRoomModule } from './round-room/round-room.module'
 import { SpecialrequestModule } from './specialrequest/specialrequest.module'
 import { MaintenancereportModule } from './maintenancereport/maintenancereport.module'
+import { ChecklistitemModule } from './checklistitem/checklistitem.module'
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { MaintenancereportModule } from './maintenancereport/maintenancereport.m
     RoundRoomModule,
     SpecialrequestModule,
     MaintenancereportModule,
+    ChecklistitemModule,
   ],
   controllers: [AppController],
   providers: [AppService],

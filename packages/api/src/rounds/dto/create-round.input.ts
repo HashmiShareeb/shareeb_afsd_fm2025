@@ -1,6 +1,6 @@
 import { InputType, Field } from '@nestjs/graphql'
-import { RoundStatus } from '../entities/round.entity'
-import { IsEnum } from 'class-validator'
+// import { RoundStatus } from '../entities/round.entity'
+// import { IsEnum } from 'class-validator'
 import { CreateRoundRoomInput } from 'src/round-room/dto/create-round-room.input'
 
 @InputType()
@@ -14,9 +14,9 @@ export class CreateRoundInput {
   @Field()
   buildingId: string
 
-  @IsEnum(RoundStatus)
-  @Field(() => String, { nullable: true })
-  status: RoundStatus
+  // @IsEnum(RoundStatus)
+  // @Field(() => String, { nullable: true })
+  // status: RoundStatus
 
   @Field(() => [CreateRoundRoomInput])
   rooms: CreateRoundRoomInput[]
