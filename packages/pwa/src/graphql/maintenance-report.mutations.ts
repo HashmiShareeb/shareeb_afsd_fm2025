@@ -57,3 +57,14 @@ export const MY_MAINTENANCE_REPORT = gql`
     }
   }
 `
+export const UPDATE_MAINTENANCE_REPORT = gql`
+  mutation UpdateMaintenanceReportStatus(
+    $requestId: String!
+    $status: String!
+  ) {
+    updateSpecialRequestStatus(requestId: $requestId, status: $status) {
+      requestId
+      status
+    }
+  }
+`
