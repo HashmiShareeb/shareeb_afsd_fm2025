@@ -13,13 +13,14 @@ export const MY_SPECIAL_REQUESTS = gql`
         id
         name
       }
-      room {
-        roomId
-        name
-      }
       building {
         buildingId
         name
+        address
+        rooms {
+          roomId
+          name
+        }
       }
     }
   }

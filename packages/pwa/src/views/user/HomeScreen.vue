@@ -81,7 +81,7 @@
         <button
           @click="activeTab = 'reports'"
           :class="{
-            'py-4 px-1 font-medium text-sm border-b-2 border-blue-500 text-blue-600':
+            'py-4 px-1 font-medium text-sm border-b-2 border-orange-500 text-orange-600':
               activeTab === 'reports',
             'py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
               activeTab !== 'reports',
@@ -92,7 +92,7 @@
         <button
           @click="activeTab = 'requests'"
           :class="{
-            'py-4 px-1 font-medium text-sm border-b-2 border-blue-500 text-blue-600':
+            'py-4 px-1 font-medium text-sm border-b-2 border-orange-500 text-orange-600':
               activeTab === 'requests',
             'py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
               activeTab !== 'requests',

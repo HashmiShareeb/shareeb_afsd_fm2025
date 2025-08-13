@@ -26,225 +26,54 @@
       </div>
     </div>
 
-    <!-- List of Reports -->
-    <div v-if="reports.length">
-      <!-- <div
-        v-for="report in reports"
-        :key="report.reportId"
-        class="border p-4 mb-4 rounded-lg bg-white shadow-sm"
+    <!-- Tab Switcher -->
+    <div class="flex border-b border-gray-200 mb-6">
+      <button
+        @click="selectedTab = 'reports'"
+        :class="[
+          'py-2 px-4 font-medium text-sm focus:outline-none',
+          selectedTab === 'reports'
+            ? 'border-b-2 border-orange-500 text-orange-600'
+            : 'text-gray-500 hover:text-gray-700',
+        ]"
       >
-        <h3 class="font-medium text-xl text-gray-700">{{ report.title }}</h3>
-        <p class="text-gray-600 mb-2">{{ report.description }}</p>
-        <p class="text-xs text-gray-400 flex items-center gap-1">
-          <span class="flex items-center font-medium">
-            <UserRoundIcon class="inline-block w-4 h-4 mr-1" />
-            Reported by:
-            {{ report.reportedBy?.name || firebaseUser?.displayName }}
-          </span>
-          <span class="flex items-center ml-2">
-            <Calendar class="inline-block w-4 h-4 mx-1" />
-            {{ new Date(report.reportedAt).toLocaleDateString() }}
-            -
-            {{
-              new Date(report.reportedAt).toLocaleTimeString([], {
-                hour: '2-digit',
-                minute: '2-digit',
-              })
-            }}
-          </span>
-        </p>
-
-        <div class="text-end">
-          <span
-            class="inline-block mt-2 px-2 py-0.5 text-xs rounded uppercase bg-blue-100 text-blue-800 text-end"
-            :class="{
-              'bg-yellow-500': report.status === 'pending',
-              'bg-green-500': report.status === 'resolved',
-            }"
-          >
-            {{ report.status }}
-          </span>
-        </div>
-      </div> -->
-
-      <div
-        v-for="report in reports"
-        :key="report.reportId"
-        class="bg-white rounded-xl shadow-sm p-5 mb-4 border-l-4 transition-all hover:shadow-md"
-        :class="{
-          'border-l-orange-500': report.status === ReportStatus.PENDING,
-          'border-l-blue-500': report.status === ReportStatus.IN_PROGRESS,
-          'border-l-green-500': report.status === ReportStatus.RESOLVED,
-        }"
+        Reports
+      </button>
+      <button
+        @click="selectedTab = 'requests'"
+        :class="[
+          'py-2 px-4 font-medium text-sm focus:outline-none',
+          selectedTab === 'requests'
+            ? 'border-b-2 border-orange-500 text-orange-600'
+            : 'text-gray-500 hover:text-gray-700',
+        ]"
       >
-        <div
-          class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3"
-        >
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="font-semibold text-lg text-gray-800">
-                {{ report.title }}
-              </h3>
-              <span
-                class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
-                :class="{
-                  'bg-orange-100 text-orange-800':
-                    report.status === ReportStatus.PENDING,
-                  'bg-blue-100 text-blue-800':
-                    report.status === ReportStatus.IN_PROGRESS,
-                  'bg-green-100 text-green-800':
-                    report.status === ReportStatus.RESOLVED,
-                }"
-              >
-                {{ report.status }}
-              </span>
-            </div>
-            <p class="text-gray-600 mt-2">{{ report.description }}</p>
+        Special Requests
+      </button>
+    </div>
 
-            <div class="flex flex-wrap gap-3 mt-4">
-              <div class="flex items-center text-sm text-gray-500">
-                <UserRoundIcon class="inline-block w-4 h-4 mr-1" />
-                {{
-                  report.reportedBy?.name || firebaseUser?.displayName || 'You'
-                }}
-              </div>
-              <div class="flex items-center text-sm text-gray-500">
-                <Calendar class="inline-block w-4 h-4 mr-1" />
-                {{ new Date(report.reportedAt).toLocaleDateString() }}
-              </div>
-              <div class="flex items-center text-sm text-gray-500">
-                <Clock3Icon class="inline-block w-4 h-4 mr-1" />
-                {{
-                  new Date(report.reportedAt).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
-                }}
-              </div>
-              <div class="flex items-center text-sm text-gray-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  />
-                </svg>
-                {{
-                  buildings.find(
-                    (b: BuildingType) => b.buildingId === report.buildingId,
-                  )?.name || 'Unknown Building'
-                }}
-              </div>
-            </div>
-          </div>
-
-          <button
-            class="text-orange-600 hover:text-orange-800 flex items-center text-sm font-medium"
-          >
-            View Details
-            <ChevronRight class="inline-block w-4 h-4 ml-1" />
-          </button>
+    <!-- Reports List -->
+    <div v-if="selectedTab === 'reports'">
+      <div v-if="reports.length">
+        <div v-for="report in reports" :key="report.reportId">
+          <ReportCard :report="report" :buildings="buildings" />
         </div>
       </div>
+      <p v-else class="text-gray-500">No reports found.</p>
     </div>
-    <p v-else class="text-gray-500">No reports found.</p>
-    <div v-if="specialRequests.length" class="mt-8">
-      <h2 class="text-xl font-semibold text-gray-700 mb-4">Special Requests</h2>
 
-      <div
-        v-for="request in specialRequests"
-        :key="request.requestId"
-        class="bg-white rounded-xl shadow-sm p-5 mb-4 border-l-4 transition-all hover:shadow-md"
-        :class="{
-          'border-l-orange-500': request.status === 'PENDING',
-          'border-l-blue-500': request.status === 'IN_PROGRESS',
-          'border-l-green-500': request.status === 'RESOLVED',
-        }"
-      >
-        <div
-          class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3"
-        >
-          <div>
-            <div class="flex items-center gap-2">
-              <h3 class="font-semibold text-lg text-gray-800">
-                {{ request.title }}
-              </h3>
-              <span
-                class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
-                :class="{
-                  'bg-orange-100 text-orange-800': request.status === 'PENDING',
-                  'bg-blue-100 text-blue-800': request.status === 'IN_PROGRESS',
-                  'bg-green-100 text-green-800': request.status === 'RESOLVED',
-                }"
-              >
-                {{ request.status }}
-              </span>
-            </div>
-            <p class="text-gray-600 mt-2">{{ request.description }}</p>
-
-            <div class="flex flex-wrap gap-3 mt-4">
-              <div class="flex items-center text-sm text-gray-500">
-                <UserRoundIcon class="inline-block w-4 h-4 mr-1" />
-                {{
-                  request.requestedBy?.name ||
-                  firebaseUser?.displayName ||
-                  'You'
-                }}
-              </div>
-              <div class="flex items-center text-sm text-gray-500">
-                <Calendar class="inline-block w-4 h-4 mr-1" />
-                {{ new Date(request.requestedAt).toLocaleDateString() }}
-              </div>
-              <div class="flex items-center text-sm text-gray-500">
-                <Clock3Icon class="inline-block w-4 h-4 mr-1" />
-                {{
-                  new Date(request.requestedAt).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })
-                }}
-              </div>
-              <div class="flex items-center text-sm text-gray-500">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="h-4 w-4 mr-1"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-                  />
-                </svg>
-                {{
-                  buildings.find(
-                    (b: BuildingType) => b.buildingId === request.buildingId,
-                  )?.name || 'Unknown Building'
-                }}
-              </div>
-            </div>
-          </div>
-
-          <button
-            class="text-orange-600 hover:text-orange-800 flex items-center text-sm font-medium"
-          >
-            View Details
-            <ChevronRight class="inline-block w-4 h-4 ml-1" />
-          </button>
-        </div>
+    <!-- Special Requests List -->
+    <div v-if="selectedTab === 'requests'" class="mt-4">
+      <div v-if="specialRequests.length">
+        <RequestCard
+          v-for="request in specialRequests"
+          :key="request.requestId"
+          :specialRequest="request"
+          :buildings="buildings"
+        />
       </div>
+      <p v-else class="text-gray-500">No special requests found.</p>
     </div>
-    <p v-else class="text-gray-500">No special requests found.</p>
 
     <!-- Add Report Modal -->
     <ModalView
@@ -327,7 +156,6 @@
         <p v-if="error" class="text-red-600 text-sm">{{ error.message }}</p>
       </form>
     </ModalView>
-    <!-- Special Requests List -->
     <!-- add a specialrequest Modal -->
     <ModalView
       title="Special Request"
@@ -355,7 +183,7 @@
         ></textarea>
 
         <label class="text-gray-500 font-medium">Select Room</label>
-        <select v-model="form.roomId" class="input" required>
+        <select v-model="requestForm.roomId" class="input" required>
           <option disabled value="">Select room</option>
           <optgroup v-for="b in buildings" :key="b.buildingId" :label="b.name">
             <option
@@ -410,6 +238,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import ReportCard from '@/components/ReportCard.vue'
+import RequestCard from '@/components/RequestCard.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import ModalView from '@/components/generic/ModalView.vue'
 import useCustomUser from '@/composables/useCustomUser'
@@ -418,19 +248,11 @@ import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
 import type { BuildingType } from '@/interfaces/building.interface'
 import { CREATE_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.entity'
 import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
-import useFirebase from '@/composables/useFirebase'
-import {
-  Calendar,
-  Clock3Icon,
-  ChevronRight,
-  UserRoundIcon,
-} from 'lucide-vue-next'
-import { ReportStatus } from '@/interfaces/report.interface'
 import { CREATE_SPECIAL_REQUEST } from '@/graphql/special-resquest.mutations'
-import { GET_ALL_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
+import { MY_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
 
-const { firebaseUser } = useFirebase()
 const { restoreCustomUser, userId } = useCustomUser()
+const selectedTab = ref<'reports' | 'requests'>('reports')
 
 const showModal = ref(false)
 const form = ref({
@@ -461,11 +283,14 @@ const buildings = computed(
 const { result: reportsData, refetch } = useQuery(GET_MAINTENANCE_REPORTS)
 const reports = computed(() => reportsData.value?.maintenancereport || [])
 
-const { result: requestData, refetch: refetchRequests } = useQuery(
-  GET_ALL_SPECIAL_REQUESTS,
+const { result: specialRequestData, refetch: refetchRequests } = useQuery(
+  MY_SPECIAL_REQUESTS,
+  () => ({ userId: userId.value }),
+  { enabled: computed(() => !!userId.value) },
 )
-
-const specialRequests = computed(() => requestData.value?.specialRequests || [])
+const specialRequests = computed(
+  () => specialRequestData.value?.mySpecialRequests || [],
+)
 
 const {
   mutate: createReport,
@@ -570,4 +395,6 @@ onMounted(async () => {
   form.value.reportedById = userId.value || ''
   requestForm.value.requestedById = userId.value || ''
 })
+
+console.log('Special Requests:', specialRequests.value)
 </script>

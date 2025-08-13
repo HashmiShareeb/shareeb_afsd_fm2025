@@ -1,6 +1,7 @@
 import type { CustomUser } from './custom.user.interface'
 
 export interface ReportType {
+  buildingId: string
   reportId: string
   title: string
   description: string
