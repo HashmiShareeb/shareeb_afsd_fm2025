@@ -50,8 +50,8 @@ export class RoomService {
     return `This action returns all room`
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} room`
+  findOne(roomId: string) {
+    return this.roomRepository.findOne({ where: { _id: roomId } })
   }
 
   // update(id: number, updateRoomInput: UpdateRoomInput) {

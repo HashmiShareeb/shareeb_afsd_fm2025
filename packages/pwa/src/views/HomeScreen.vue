@@ -13,8 +13,49 @@
 
     <!-- Widget Section -->
     <div
+      class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6"
+      v-if="userRole === Role.USER"
+    >
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div class="flex items-center">
+          <div class="p-3 mr-4 bg-orange-50 rounded-lg">
+            <CheckCircle class="text-orange-500 w-8 h-8" />
+          </div>
+          <div>
+            <p class="text-sm">Openstaande Meldingen</p>
+            <p class="text-2xl font-bold text-gray-700 mt-1">3</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div class="flex items-center">
+          <div class="p-3 rounded-lg bg-yellow-50 mr-4">
+            <Clock class="text-yellow-500 w-8 h-8" />
+          </div>
+          <div>
+            <p class="text-sm">Lopende Verzoeken</p>
+            <p class="text-2xl font-bold text-gray-700 mt-1">2</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+        <div class="flex items-center">
+          <div class="p-3 rounded-lg bg-green-50 mr-4">
+            <Check class="text-green-500 w-8 h-8" />
+          </div>
+          <div>
+            <p class="text-sm">Afgerond</p>
+            <p class="text-2xl font-bold text-gray-700 mt-1">7</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
       class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
-      v-if="userRole === 'ADMIN'"
+      v-if="userRole === Role.USER"
     >
       <!-- Manage Buildings (visible only to ADMIN) -->
       <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
@@ -39,7 +80,7 @@
       </div>
     </div>
     <!-- Rounds to do -->
-    <div>
+    <div v-if="userRole === Role.MANAGER">
       <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
       <div
         class="flex items-start gap-4 p-4 bg-white shadow-md rounded-lg mt-4"
@@ -51,7 +92,7 @@
           <div class="flex flex-col gap-2">
             <!-- room section -->
             <div class="flex items-center gap-3 mb-4">
-              <span class="font-medium text-gray-800">Lokaal: 101</span>
+              <span class="text-gray-800">Lokaal: 101</span>
               <span
                 class="px-2 py-1 rounded text-xs bg-green-100 text-green-700"
               >
@@ -96,8 +137,17 @@
 import useFirebase from '@/composables/useFirebase'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
 import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
+import { Role } from '@/interfaces/custom.user.interface'
 import { useQuery } from '@vue/apollo-composable'
-import { Building, Eye, CalendarSearch, MapPin } from 'lucide-vue-next'
+import {
+  Building,
+  Eye,
+  CalendarSearch,
+  MapPin,
+  CheckCircle,
+  Clock,
+  Check,
+} from 'lucide-vue-next'
 import { computed, watch } from 'vue'
 const { firebaseUser } = useFirebase()
 

@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-64 bg-white h-full fixed inset-0 shadow z-1">
+  <aside class="w-64 h-full fixed inset-0 shadow z-1">
     <div class="flex items-center justify-center h-16 border-b mb-4 relative">
       <span class="text-lg font-semibold text-orange-700"
         >Bedenkt een naam</span
@@ -7,7 +7,7 @@
     </div>
     <nav class="h-full overflow-y-auto">
       <ul class="flex flex-col px-4 list-none no-underline">
-        <li v-if="userRole !== 'ADMIN'">
+        <!-- <li v-if="userRole !== Role.ADMIN">
           <router-link
             :to="{ name: 'home' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -20,8 +20,22 @@
             </div>
             <span class="mx-2">Dashboard</span>
           </router-link>
+        </li> -->
+        <li v-if="userRole === Role.USER">
+          <router-link
+            :to="{ name: 'userhome' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
+          >
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <Home class="object-cover" />
+            </div>
+            <span class="mx-2">Dashboard</span>
+          </router-link>
         </li>
-        <li v-if="userRole === 'ADMIN'">
+        <li v-if="userRole === Role.ADMIN">
           <router-link
             :to="{ name: 'admin' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -49,7 +63,7 @@
             <span class="mx-2">Buildings</span>
           </router-link>
         </li>
-        <li v-if="userRole === 'MANAGER'">
+        <li v-if="userRole === Role.MANAGER">
           <router-link
             :to="{ name: 'rounds' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -63,7 +77,7 @@
             <span class="mx-2">My Rounds</span>
           </router-link>
         </li>
-        <li v-if="userRole === 'ADMIN'">
+        <li v-if="userRole === Role.ADMIN">
           <router-link
             :to="{ name: 'admin-rounds' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -78,18 +92,18 @@
           </router-link>
         </li>
         <!-- ?test als rol werkt of niet -->
-        <li v-if="userRole === 'USER'">
+        <li v-if="userRole === Role.USER">
           <router-link
-            :to="{ name: 'rounds' }"
+            :to="{ name: 'reports' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
             active-class="bg-orange-100 text-orange-700"
           >
             <div
               class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
             >
-              <CalendarSearch class="object-cover" />
+              <FileSpreadsheet class="object-cover" />
             </div>
-            <span class="mx-2">Meldingen</span>
+            <span class="mx-2">Reports</span>
           </router-link>
         </li>
         <router-link :to="firebaseUser ? `/myaccount` : `/login`">
@@ -118,10 +132,7 @@
               <h1 class="font-bold text-lg">
                 {{ firebaseUser.displayName || 'Unknown User' }}
               </h1>
-              <p
-                v-if="userRole && userRole !== 'USER'"
-                class="text-sm text-orange-500"
-              >
+              <p v-if="userRole" class="text-sm text-orange-500">
                 {{ userRole }}
               </p>
               <p v-else-if="loading" class="text-sm text-gray-500">
@@ -142,7 +153,13 @@ import { computed, watch } from 'vue'
 import { useQuery } from '@vue/apollo-composable'
 import useFirebase from '@/composables/useFirebase'
 import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
-import { Home, CalendarSearch, BuildingIcon } from 'lucide-vue-next'
+import {
+  Home,
+  CalendarSearch,
+  BuildingIcon,
+  FileSpreadsheet,
+} from 'lucide-vue-next'
+import { Role } from '@/interfaces/custom.user.interface'
 
 // Get Firebase user
 const { firebaseUser } = useFirebase()
