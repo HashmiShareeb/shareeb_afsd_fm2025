@@ -35,12 +35,13 @@ export const MY_ROUNDS = gql`
         roomId
         order
         checklist {
+          itemId
           label
           notes
           status
         }
       }
-
+      buildingId
       status
     }
   }

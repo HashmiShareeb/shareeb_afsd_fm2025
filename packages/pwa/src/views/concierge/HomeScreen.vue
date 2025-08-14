@@ -54,18 +54,33 @@
             </div>
             <div>
               <p class="text-gray-600 text-sm">{{ round.time }}</p>
-              <div class="mt-2 flex items-center text-sm">
-                <span class="text-gray-500 mr-2">Tasks:</span>
-                <span class="font-medium">
-                  <div class="flex flex-wrap gap-2">
-                    <label class="flex items-center gap-1">
-                      <input
-                        type="checkbox"
-                        class="form-checkbox text-orange-500"
-                      />
-                    </label>
-                  </div>
-                </span>
+              <!-- inside the room block -->
+              <div v-for="room in round.rooms" :key="room.roomId" class="mb-4">
+                <p class="font-medium mb-1">order {{ room.order }}</p>
+
+                <!-- checklist items -->
+                <label
+                  v-for="item in room.checklist"
+                  :key="item.itemId"
+                  class="flex items-center gap-2 text-sm"
+                >
+                  <input
+                    type="checkbox"
+                    class="form-checkbox text-orange-500"
+                    :checked="item.status === 'checked'"
+                  />
+                  {{ item.label }}
+                  <span v-if="item.notes" class="text-gray-500 italic">
+                    – {{ item.notes }}
+                  </span>
+                </label>
+
+                <p
+                  v-if="!(room.checklist && room.checklist.length)"
+                  class="text-xs text-gray-400"
+                >
+                  No checklist items yet.
+                </p>
               </div>
             </div>
           </div>
@@ -79,17 +94,23 @@
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 // import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
-import { GET_ROUNDS } from '@/graphql/round.entity'
+import { MY_ROUNDS } from '@/graphql/round.entity'
 import { Role } from '@/interfaces/custom.user.interface'
 import { useQuery } from '@vue/apollo-composable'
 import { MapPin, ChevronDown } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 
 const { firebaseUser } = useFirebase()
-const { userRole } = useCustomUser()
+const { userRole, userId } = useCustomUser()
 
-const { result: roundsData } = useQuery(GET_ROUNDS)
-const rounds = computed(() => roundsData.value?.rounds || [])
+const { result: roundsData } = useQuery(
+  MY_ROUNDS,
+  () => ({ userId: userId.value }),
+  { enabled: computed(() => !!userId.value) },
+)
+
+// const { result: roundsData } = useQuery(GET_ROUNDS)
+const rounds = computed(() => roundsData.value?.myRounds || [])
 
 const expanded = ref<boolean[]>([])
 
@@ -97,16 +118,12 @@ function toggleExpand(index: number) {
   expanded.value[index] = !expanded.value[index]
 }
 
+import { watchEffect } from 'vue'
+
+watchEffect(() => {
+  console.log('rounds from query', rounds.value)
+})
+
 //const { result: buildingData } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 //const buildings = computed(() => buildingData.value?.buildings || [])
-
-// const todaysRounds = [
-//   {
-//     id: 1,
-//     time: '08:00 - 09:30',
-//     buildings: ['Hoofdgebouw', 'Vleugel A'],
-//     checklists: '12 lokalen',
-//     status: 'PLANNED',
-//   },
-// ]
 </script>
