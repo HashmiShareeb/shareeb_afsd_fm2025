@@ -1,6 +1,6 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { ObjectType, Field } from '@nestjs/graphql'
 import { Checklistitem } from 'src/checklistitem/entities/checklistitem.entity'
-import { Column, ObjectIdColumn } from 'typeorm'
+import { Column } from 'typeorm'
 
 export enum RoundRoomStatus {
   OPEN = 'open',
@@ -11,13 +11,8 @@ export enum RoundRoomStatus {
 //it is used to represent a round room in the context of a round
 @ObjectType()
 export class RoundRoom {
-  @ObjectIdColumn()
-  _id: string // stored in MongoDB as _id
-
-  @Field(() => ID)
-  get roundRoomId(): string {
-    return this._id?.toString() // Convert ObjectId to string for GraphQL
-  }
+  @Field(() => String)
+  roundRoomId: string // Ensure this is non-nullable
 
   @Column()
   @Field(() => String)

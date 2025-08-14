@@ -5,6 +5,9 @@ export class CreateRoundRoomInput {
   @Field(() => String)
   roomId: string // ID of the room to be added to the round
 
+  @Field({ nullable: true })
+  roomName?: string
+
   @Field()
   order: number
 

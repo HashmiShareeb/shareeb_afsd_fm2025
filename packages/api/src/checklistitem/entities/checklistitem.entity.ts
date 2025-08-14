@@ -10,9 +10,8 @@ export enum ChecklistItemStatus {
 @ObjectType()
 export class Checklistitem {
   @ObjectIdColumn()
-  _id: string // stored in MongoDB as _id
+  _id: string
 
-  @Column()
   @Field(() => ID)
   get itemId(): string {
     return this._id?.toString()

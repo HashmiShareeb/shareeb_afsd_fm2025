@@ -34,7 +34,13 @@ export const MY_ROUNDS = gql`
       rooms {
         roomId
         order
+        checklist {
+          label
+          notes
+          status
+        }
       }
+
       status
     }
   }

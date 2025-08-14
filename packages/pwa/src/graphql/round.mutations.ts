@@ -43,3 +43,24 @@ export const CREATE_ROUND = gql`
     }
   }
 `
+
+export const CREATE_CHECKLIST_ITEM = gql`
+  mutation AddChecklistItem(
+    $roundId: String!
+    $roundRoomId: String!
+    $label: String!
+    $notes: String
+  ) {
+    addChecklistItem(
+      roundId: $roundId
+      roundRoomId: $roundRoomId
+      label: $label
+      notes: $notes
+    ) {
+      itemId
+      label
+      status
+      notes
+    }
+  }
+`

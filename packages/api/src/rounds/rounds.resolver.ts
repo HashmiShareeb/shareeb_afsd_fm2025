@@ -15,6 +15,10 @@ import { CreateRoundInput } from './dto/create-round.input'
 import { Role, User } from 'src/user/entities/user.entity'
 import { UseGuards } from '@nestjs/common'
 import { AllowedRoles } from 'src/decorators/roles.decorator'
+import {
+  Checklistitem,
+  ChecklistItemStatus,
+} from 'src/checklistitem/entities/checklistitem.entity'
 
 // import { UpdateRoundInput } from './dto/update-round.input'
 
@@ -32,6 +36,36 @@ export class RoundsResolver {
     return await this.roundsService.create(createRoundInput)
   }
 
+  @Mutation(() => Checklistitem)
+  async addChecklistItem(
+    @Args('roundId') roundId: string,
+    @Args('roundRoomId') roundRoomId: string,
+    @Args('label') label: string,
+    @Args('notes', { nullable: true }) notes?: string,
+  ): Promise<Checklistitem> {
+    return this.roundsService.addChecklistItem(
+      roundId,
+      roundRoomId,
+      label,
+      notes,
+    )
+  }
+
+  @Mutation(() => Checklistitem)
+  async updateChecklistItem(
+    @Args('roundId') roundId: string,
+    @Args('roundRoomId') roundRoomId: string,
+    @Args('itemId') itemId: string,
+    @Args('status') status: ChecklistItemStatus,
+  ) {
+    return this.roundsService.updateChecklistItem(
+      roundId,
+      roundRoomId,
+      itemId,
+      status,
+    )
+  }
+
   @ResolveField(() => User, { nullable: true })
   async assignedTo(@Parent() round: Round): Promise<User | null> {
     if (!round.assignedToId) return null
@@ -45,17 +79,15 @@ export class RoundsResolver {
     const user = await this.userService.findOne(userId)
     if (!user) return []
 
-    return this.roundsService.findByUser(userId)
-  }
+    const rounds = await this.roundsService.findByUser(userId)
 
-  // @Mutation(() => Round)
-  // createRound(
-  //   @Args('createRoundInput') createRoundInput: CreateRoundInput,
-  //   @Context() context: { user: { uid: string } },
-  // ) {
-  //   const firebaseUid = context.user.uid // Extract the Firebase UID from the context
-  //   return this.roundsService.create(createRoundInput, firebaseUid)
-  // }
+    // Ensure every checklist is at least []
+    rounds.forEach(r =>
+      r.rooms.forEach(room => (room.checklist = room.checklist ?? [])),
+    )
+
+    return rounds
+  }
 
   @Query(() => [Round], { name: 'rounds' })
   findAll() {
