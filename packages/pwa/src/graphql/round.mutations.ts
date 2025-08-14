@@ -64,3 +64,22 @@ export const CREATE_CHECKLIST_ITEM = gql`
     }
   }
 `
+export const UPDATE_CHECKLIST_ITEM = gql`
+  mutation UpdateChecklistItem(
+    $roundId: String!
+    $roundRoomId: String!
+    $itemId: String!
+    $status: ChecklistItemStatus!
+  ) {
+    updateChecklistItem(
+      roundId: $roundId
+      roundRoomId: $roundRoomId
+      itemId: $itemId
+      status: $status
+    ) {
+      itemId
+      label
+      status
+    }
+  }
+`

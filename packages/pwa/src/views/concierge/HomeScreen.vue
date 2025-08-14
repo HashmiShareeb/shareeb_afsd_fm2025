@@ -46,17 +46,20 @@
                   Building Name here
                 </h3>
               </div>
-              <span
+              <!-- <span
                 class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
               >
                 {{ round.status }}
-              </span>
+              </span> -->
             </div>
             <div>
               <p class="text-gray-600 text-sm">{{ round.time }}</p>
               <!-- inside the room block -->
               <div v-for="room in round.rooms" :key="room.roomId" class="mb-4">
-                <p class="font-medium mb-1">order {{ room.order }}</p>
+                <p class="font-semibold mb-2 text-gray-700">
+                  Room Order:
+                  <span class="text-orange-500">{{ room.order }}</span>
+                </p>
 
                 <!-- checklist items -->
                 <label
@@ -67,10 +70,12 @@
                   <input
                     type="checkbox"
                     class="form-checkbox text-orange-500"
-                    :checked="item.status === 'checked'"
+                    :checked="item.status === 'OK'"
+                    @change="handleChecklistChange(round, room, item)"
                   />
+
                   {{ item.label }}
-                  <span v-if="item.notes" class="text-gray-500 italic">
+                  <span v-if="item.notes" class="block text-gray-500 italic">
                     – {{ item.notes }}
                   </span>
                 </label>
@@ -93,10 +98,15 @@
 <script setup lang="ts">
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
-// import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
 import { MY_ROUNDS } from '@/graphql/round.entity'
+import { UPDATE_CHECKLIST_ITEM } from '@/graphql/round.mutations'
 import { Role } from '@/interfaces/custom.user.interface'
-import { useQuery } from '@vue/apollo-composable'
+import {
+  type ChecklistItem,
+  type Round,
+  type RoundRoom,
+} from '@/interfaces/round.interface'
+import { useMutation, useQuery } from '@vue/apollo-composable'
 import { MapPin, ChevronDown } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 
@@ -112,8 +122,85 @@ const { result: roundsData } = useQuery(
 // const { result: roundsData } = useQuery(GET_ROUNDS)
 const rounds = computed(() => roundsData.value?.myRounds || [])
 
-const expanded = ref<boolean[]>([])
+const { mutate: updateChecklistItemMutation } = useMutation(
+  UPDATE_CHECKLIST_ITEM,
+)
+// const handleChecklistChange = async (
+//   roundId: string,
+//   roundRoomId: string,
+//   item: ChecklistItem,
+// ) => {
+//   const newStatus =
+//     item.status === ChecklistItemStatus.OK
+//       ? ChecklistItemStatus.NOT_CHECKED
+//       : ChecklistItemStatus.OK
 
+//   const roundIndex = rounds.value.findIndex((r: Round) => r.roundId === roundId)
+//   if (roundIndex !== -1) {
+//     const roomIndex = rounds.value[roundIndex].rooms.findIndex(
+//       (r: RoundRoom) => r.roundRoomId === roundRoomId,
+//     )
+//     if (roomIndex !== -1) {
+//       const itemIndex = rounds.value[roundIndex].rooms[
+//         roomIndex
+//       ].checklist.findIndex((i: ChecklistItem) => i.itemId === item.itemId)
+
+//       if (itemIndex !== -1) {
+//         // Clone the checklist array and update locally
+//         const updatedChecklist = [
+//           ...rounds.value[roundIndex].rooms[roomIndex].checklist,
+//         ]
+//         updatedChecklist[itemIndex] = {
+//           ...updatedChecklist[itemIndex],
+//           status: newStatus,
+//         }
+
+//         // Replace in the rooms array
+//         const updatedRoom = {
+//           ...rounds.value[roundIndex].rooms[roomIndex],
+//           checklist: updatedChecklist,
+//         }
+
+//         // Replace in the rounds array
+//         const updatedRooms = [...rounds.value[roundIndex].rooms]
+//         updatedRooms[roomIndex] = updatedRoom
+
+//         rounds.value[roundIndex] = {
+//           ...rounds.value[roundIndex],
+//           rooms: updatedRooms,
+//         }
+//       }
+//     }
+//   }
+
+//   // Send mutation
+//   try {
+//     await updateChecklistItemMutation({
+//       roundId,
+//       roundRoomId,
+//       itemId: item.itemId,
+//       status: newStatus,
+//     })
+//   } catch (err) {
+//     console.error('Failed to update checklist item', err)
+//   }
+// }
+
+const handleChecklistChange = async (
+  round: Round, // the round object
+  room: RoundRoom, // the room object
+  item: ChecklistItem, // the checklist item
+) => {
+  const newStatus = item.status === 'OK' ? 'NOT_CHECKED' : 'OK'
+
+  await updateChecklistItemMutation({
+    roundId: round.roundId, // string
+    roundRoomId: room.roundRoomId, // string
+    itemId: item.itemId, // string
+    status: newStatus, // string
+  })
+}
+const expanded = ref<boolean[]>([])
 function toggleExpand(index: number) {
   expanded.value[index] = !expanded.value[index]
 }
@@ -121,7 +208,7 @@ function toggleExpand(index: number) {
 import { watchEffect } from 'vue'
 
 watchEffect(() => {
-  console.log('rounds from query', rounds.value)
+  console.log('rounds from query', rounds.value) //check if rounds are loaded
 })
 
 //const { result: buildingData } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)

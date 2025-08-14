@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql'
+import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql'
 import { Column, ObjectIdColumn } from 'typeorm'
 
 export enum ChecklistItemStatus {
@@ -6,6 +6,10 @@ export enum ChecklistItemStatus {
   PROBLEM = 'PROBLEM',
   NOT_CHECKED = 'NOT_CHECKED',
 }
+
+registerEnumType(ChecklistItemStatus, {
+  name: 'ChecklistItemStatus', // GraphQL enum name
+})
 
 @ObjectType()
 export class Checklistitem {

@@ -32,6 +32,7 @@ export const MY_ROUNDS = gql`
         name
       }
       rooms {
+        roundRoomId
         roomId
         order
         checklist {

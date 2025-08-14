@@ -19,6 +19,8 @@ import {
   Checklistitem,
   ChecklistItemStatus,
 } from 'src/checklistitem/entities/checklistitem.entity'
+import { ObjectId } from 'mongodb'
+import { RoundRoomStatus } from 'src/round-room/entities/round-room.entity'
 
 // import { UpdateRoundInput } from './dto/update-round.input'
 
@@ -56,7 +58,8 @@ export class RoundsResolver {
     @Args('roundId') roundId: string,
     @Args('roundRoomId') roundRoomId: string,
     @Args('itemId') itemId: string,
-    @Args('status') status: ChecklistItemStatus,
+    @Args('status', { type: () => ChecklistItemStatus })
+    status: ChecklistItemStatus, //ensure its ENUM
   ) {
     return this.roundsService.updateChecklistItem(
       roundId,
@@ -82,8 +85,13 @@ export class RoundsResolver {
     const rounds = await this.roundsService.findByUser(userId)
 
     // Ensure every checklist is at least []
+    // ensure every room has roundRoomId + checklist
     rounds.forEach(r =>
-      r.rooms.forEach(room => (room.checklist = room.checklist ?? [])),
+      r.rooms.forEach(room => {
+        room.roundRoomId = room.roundRoomId ?? new ObjectId().toString()
+        room.checklist = room.checklist ?? []
+        room.status = room.status ?? RoundRoomStatus.OPEN
+      }),
     )
 
     return rounds

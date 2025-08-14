@@ -196,6 +196,32 @@ export class RoundsService {
     return newItem
   }
 
+  // async updateChecklistItem(
+  //   roundId: string,
+  //   roundRoomId: string,
+  //   itemId: string,
+  //   status: ChecklistItemStatus,
+  // ): Promise<Checklistitem> {
+  //   const round = await this.roundRepository.findOne({
+  //     where: { _id: new ObjectId(roundId) },
+  //   })
+
+  //   if (!round) throw new Error('Round not found')
+
+  //   const room = round.rooms.find(r => r.roundRoomId === roundRoomId)
+  //   if (!room) throw new Error('Room not found')
+
+  //   const item = room.checklist.find(i => i.itemId === itemId)
+  //   if (!item) throw new Error('Item not found')
+
+  //   item.status = status
+
+  //   // Force JSON save (see previous tip)
+  //   round.rooms = [...round.rooms]
+  //   await this.roundRepository.save(round)
+
+  //   return item
+  // }
   async updateChecklistItem(
     roundId: string,
     roundRoomId: string,
@@ -205,7 +231,6 @@ export class RoundsService {
     const round = await this.roundRepository.findOne({
       where: { _id: new ObjectId(roundId) },
     })
-
     if (!round) throw new Error('Round not found')
 
     const room = round.rooms.find(r => r.roundRoomId === roundRoomId)
@@ -216,8 +241,23 @@ export class RoundsService {
 
     item.status = status
 
-    // Force JSON save (see previous tip)
-    round.rooms = [...round.rooms]
+    const allChecked = room.checklist.every(
+      i =>
+        i.status === ChecklistItemStatus.OK ||
+        i.status === ChecklistItemStatus.PROBLEM,
+    )
+    room.status = allChecked
+      ? RoundRoomStatus.COMPLETED
+      : RoundRoomStatus.IN_PROGRESS
+
+    const allRoomsCompleted = round.rooms.every(
+      r => r.status === RoundRoomStatus.COMPLETED,
+    )
+    round.status = allRoomsCompleted
+      ? RoundStatus.COMPLETED
+      : RoundStatus.IN_PROGRESS
+
+    round.rooms = [...round.rooms] // force dirty flag
     await this.roundRepository.save(round)
 
     return item
@@ -230,7 +270,11 @@ export class RoundsService {
 
     // ── guarantee an empty array instead of null ──
     rounds.forEach(r =>
-      r.rooms.forEach(room => (room.checklist = room.checklist ?? [])),
+      r.rooms.forEach(room => {
+        room.roundRoomId = room.roundRoomId ?? new ObjectId().toString()
+        room.checklist = room.checklist ?? []
+        room.status = room.status ?? RoundRoomStatus.OPEN
+      }),
     )
 
     return rounds
