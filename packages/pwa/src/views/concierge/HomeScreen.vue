@@ -20,7 +20,9 @@
             </div>
             <div>
               <p class="text-sm">Open Reports</p>
-              <p class="text-2xl font-bold text-gray-600 mt-1"></p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{ rounds?.length || 0 }}
+              </p>
             </div>
           </div>
         </div>
@@ -33,7 +35,13 @@
             </div>
             <div>
               <p class="text-sm">Pending Requests</p>
-              <p class="text-2xl font-bold text-gray-600 mt-1"></p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{
+                  rounds.filter(
+                    (r: Round) => r.status === RoundStatus.IN_PROGRESS,
+                  ).length
+                }}
+              </p>
             </div>
           </div>
         </div>
@@ -315,9 +323,9 @@ const completedCount = (round: Round) =>
 const getStatusColor = (status: string): string => {
   switch (status) {
     case RoundStatus.PLANNED:
-      return 'bg-blue-300 text-blue-500'
+      return 'bg-blue-300 text-blue-700'
     case RoundStatus.IN_PROGRESS:
-      return 'bg-yellow-300 text-yellow-500'
+      return 'bg-yellow-300 text-yellow-700'
     case RoundStatus.COMPLETED:
       return 'bg-green-300 text-gray-700'
     default:

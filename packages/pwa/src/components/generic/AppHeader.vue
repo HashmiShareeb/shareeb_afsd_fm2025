@@ -63,7 +63,7 @@
             <span class="mx-2">Buildings</span>
           </router-link>
         </li>
-        <li v-if="userRole === Role.MANAGER">
+        <!-- <li v-if="userRole === Role.MANAGER">
           <router-link
             :to="{ name: 'rounds' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
@@ -76,7 +76,7 @@
             </div>
             <span class="mx-2">My Rounds</span>
           </router-link>
-        </li>
+        </li> -->
         <li v-if="userRole === Role.ADMIN">
           <router-link
             :to="{ name: 'admin-rounds' }"
@@ -89,6 +89,20 @@
               <CalendarSearch class="object-cover" />
             </div>
             <span class="mx-2">Manage Rounds</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link
+            :to="{ name: 'concierge-energy-reading' }"
+            class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
+            active-class="bg-orange-100 text-orange-700"
+          >
+            <div
+              class="rounded-full overflow-hidden h-10 w-10 object-fit ring-orange-50 flex items-center justify-center bg-orange-100"
+            >
+              <Zap class="object-cover" />
+            </div>
+            <span class="mx-2">Energy Readings</span>
           </router-link>
         </li>
         <!-- ?test als rol werkt of niet -->
@@ -158,6 +172,7 @@ import {
   CalendarSearch,
   BuildingIcon,
   FileSpreadsheet,
+  Zap,
 } from 'lucide-vue-next'
 import { Role } from '@/interfaces/custom.user.interface'
 

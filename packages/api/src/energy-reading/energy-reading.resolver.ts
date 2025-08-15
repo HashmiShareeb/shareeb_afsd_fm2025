@@ -12,12 +12,15 @@ import { EnergyReading, MeterType } from './entities/energy-reading.entity'
 import { CreateEnergyReadingInput } from './dto/create-energy-reading.input'
 import { User } from 'src/user/entities/user.entity'
 import { UserService } from 'src/user/user.service'
+import { Building } from 'src/building/entities/building.entity'
+import { BuildingService } from 'src/building/building.service'
 
 @Resolver(() => EnergyReading)
 export class EnergyReadingResolver {
   constructor(
     private readonly energyReadingService: EnergyReadingService,
     private readonly userService: UserService,
+    private readonly buildingService: BuildingService,
   ) {}
 
   @Mutation(() => EnergyReading)
@@ -55,6 +58,18 @@ export class EnergyReadingResolver {
     return this.energyReadingService.findOne(readingId)
   }
 
+  @Query(() => [EnergyReading], { name: 'energyReadingsByUser' })
+  findByUser(@Args('userId', { type: () => String }) userId: string) {
+    return this.energyReadingService.findByUser(userId)
+  }
+
+  @Query(() => [EnergyReading], { name: 'energyReadingsByBuilding' })
+  findByBuilding(
+    @Args('buildingId', { type: () => String }) buildingId: string,
+  ) {
+    return this.energyReadingService.findByBuildingId(buildingId)
+  }
+
   // @Mutation(() => EnergyReading)
   // updateEnergyReading(
   //   @Args('updateEnergyReadingInput')
@@ -79,5 +94,13 @@ export class EnergyReadingResolver {
 
     if (!reading.recordedById) return null
     return this.userService.findOne(reading.recordedById)
+  }
+
+  @ResolveField(() => Building, { nullable: true })
+  async building(@Parent() reading: EnergyReading): Promise<Building | null> {
+    console.log('Resolving building for reading', reading._id)
+
+    if (!reading.buildingId) return null
+    return this.buildingService.findOne(reading.buildingId)
   }
 }

@@ -11,7 +11,9 @@ export class EnergyReadingService {
     @InjectRepository(EnergyReading)
     private readonly energyReadingRepository: MongoRepository<EnergyReading>,
   ) {}
-  async create(createEnergyReadingInput: CreateEnergyReadingInput) {
+  async create(
+    createEnergyReadingInput: CreateEnergyReadingInput,
+  ): Promise<EnergyReading> {
     // Create a new EnergyReading object from input
     const reading = {
       ...createEnergyReadingInput,
@@ -28,7 +30,7 @@ export class EnergyReadingService {
     return this.energyReadingRepository.find()
   }
 
-  async findOne(recordedById: string) {
+  async findOne(recordedById: string): Promise<EnergyReading | null> {
     return await this.energyReadingRepository.findOne({
       where: { _id: recordedById },
     })
@@ -37,6 +39,12 @@ export class EnergyReadingService {
   async findByUser(userId: string): Promise<EnergyReading[]> {
     return await this.energyReadingRepository.find({
       where: { recordedById: userId },
+    })
+  }
+
+  async findByBuildingId(buildingId: string): Promise<EnergyReading[]> {
+    return await this.energyReadingRepository.find({
+      where: { buildingId },
     })
   }
 

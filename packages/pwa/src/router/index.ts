@@ -59,6 +59,12 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/concierge/HomeScreen.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.MANAGER },
   },
+  {
+    path: '/concierge/energy_reading',
+    name: 'concierge-energy-reading',
+    component: () => import('@/views/concierge/energy/energyReadings.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.MANAGER },
+  },
   // ADMIN ROUTES
   {
     path: '/admin',

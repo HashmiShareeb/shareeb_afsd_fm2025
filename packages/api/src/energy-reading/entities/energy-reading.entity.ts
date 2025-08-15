@@ -2,6 +2,7 @@ import { ObjectType, Field, ID, Float } from '@nestjs/graphql'
 import { User } from 'src/user/entities/user.entity'
 import { Column, Entity, ObjectIdColumn } from 'typeorm'
 import { registerEnumType } from '@nestjs/graphql'
+import { Building } from 'src/building/entities/building.entity'
 
 export enum MeterType {
   ELECTRICITY = 'electricity',
@@ -46,6 +47,9 @@ export class EnergyReading {
 
   @Field(() => User, { nullable: true })
   recordedBy?: User
+
+  @Field(() => Building, { nullable: true })
+  building?: Building
 
   @Field()
   @Column()
