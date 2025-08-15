@@ -9,8 +9,57 @@
     </h1>
     <p class="text-gray-600 mt-2">Your tasks and rounds for today:</p>
 
-    <!-- Rounds to do -->
+    <div>
+      <!-- Widget Section -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6">
+        <!-- Open Reports Widget -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex items-center">
+            <div class="p-3 mr-4 bg-orange-50 rounded-full">
+              <CheckCircle class="text-orange-500 w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm">Open Reports</p>
+              <p class="text-2xl font-bold text-gray-600 mt-1"></p>
+            </div>
+          </div>
+        </div>
 
+        <!-- Pending Requests Widget -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-50 mr-4">
+              <Clock class="text-yellow-500 w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm">Pending Requests</p>
+              <p class="text-2xl font-bold text-gray-600 mt-1"></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completed Widget -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-50 mr-4">
+              <Check class="text-green-500 w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm">Completed</p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{
+                  rounds.filter(
+                    (r: Round) => r.status === RoundStatus.COMPLETED,
+                  ).length
+                }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rounds to do -->
     <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
 
     <div v-if="userRole === Role.MANAGER">
@@ -123,7 +172,7 @@ import {
   type RoundRoom,
 } from '@/interfaces/round.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown, CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 
 const { firebaseUser } = useFirebase()
