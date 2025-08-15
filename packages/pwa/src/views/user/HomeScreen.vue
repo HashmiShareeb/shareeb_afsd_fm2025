@@ -10,62 +10,63 @@
     <p class="text-gray-600 mt-2">
       Here you can manage your reports and special requests.
     </p>
-
-    <!-- Widget Section -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6">
-      <!-- Open Reports Widget -->
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center">
-          <div class="p-3 mr-4 bg-orange-50 rounded-full">
-            <CheckCircle class="text-orange-500 w-5 h-5" />
-          </div>
-          <div>
-            <p class="text-sm">Open Reports</p>
-            <p class="text-2xl font-bold text-gray-600 mt-1">
-              {{
-                reports.filter(
-                  (r: ReportType) => r.status !== ReportStatus.RESOLVED,
-                ).length
-              }}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <!-- Pending Requests Widget -->
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-yellow-50 mr-4">
-            <Clock class="text-yellow-500 w-5 h-5" />
-          </div>
-          <div>
-            <p class="text-sm">Pending Requests</p>
-            <p class="text-2xl font-bold text-gray-600 mt-1">
-              {{
-                reports.filter(
-                  (r: ReportType) => r.status === ReportStatus.PENDING,
-                ).length
-              }}
-            </p>
+    <div>
+      <!-- Widget Section -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6">
+        <!-- Open Reports Widget -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex items-center">
+            <div class="p-3 mr-4 bg-orange-50 rounded-full">
+              <CheckCircle class="text-orange-500 w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm">Open Reports</p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{
+                  reports.filter(
+                    (r: ReportType) => r.status !== ReportStatus.RESOLVED,
+                  ).length
+                }}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- Completed Widget -->
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center">
-          <div class="p-3 rounded-full bg-green-50 mr-4">
-            <Check class="text-green-500 w-5 h-5" />
+        <!-- Pending Requests Widget -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-yellow-50 mr-4">
+              <Clock class="text-yellow-500 w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm">Pending Requests</p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{
+                  reports.filter(
+                    (r: ReportType) => r.status === ReportStatus.PENDING,
+                  ).length
+                }}
+              </p>
+            </div>
           </div>
-          <div>
-            <p class="text-sm">Completed</p>
-            <p class="text-2xl font-bold text-gray-600 mt-1">
-              {{
-                reports.filter(
-                  (r: ReportType) => r.status === ReportStatus.RESOLVED,
-                ).length
-              }}
-            </p>
+        </div>
+
+        <!-- Completed Widget -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+          <div class="flex items-center">
+            <div class="p-3 rounded-full bg-green-50 mr-4">
+              <Check class="text-green-500 w-5 h-5" />
+            </div>
+            <div>
+              <p class="text-sm">Completed</p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{
+                  reports.filter(
+                    (r: ReportType) => r.status === ReportStatus.RESOLVED,
+                  ).length
+                }}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -101,7 +102,12 @@
           Special Requests
         </button>
       </nav>
-      <div class="flex items-center space-x-2" v-if="activeTab === 'reports'">
+      <div
+        class="flex items-center space-x-2"
+        v-if="
+          activeTab === 'reports' && filteredReports && filteredReports.length
+        "
+      >
         <label for="statusFilter" class="text-sm text-gray-600">Filter:</label>
         <select
           id="statusFilter"
@@ -185,6 +191,12 @@
           </tbody>
         </table>
       </div>
+      <div
+        v-if="filteredReports.length === 0"
+        class="text-center text-gray-500 py-6"
+      >
+        No reports found.
+      </div>
     </div>
 
     <!-- Special Requests Tab -->
@@ -256,6 +268,12 @@
           </tbody>
         </table>
       </div>
+      <div
+        v-if="specialRequests.length === 0"
+        class="text-center text-gray-500 py-6"
+      >
+        No reports found.
+      </div>
     </div>
   </div>
 </template>
@@ -292,7 +310,9 @@ const buildings = computed(() => getBuildings.result.value?.buildings ?? [])
 const { result: reportsData } = useQuery(
   MY_MAINTENANCE_REPORT,
   () => ({ userId: userId.value }),
-  { enabled: computed(() => !!userId.value) },
+  {
+    enabled: computed(() => !!userId.value),
+  },
 )
 
 const reports = computed(() => reportsData.value?.myMaintenanceReport || [])

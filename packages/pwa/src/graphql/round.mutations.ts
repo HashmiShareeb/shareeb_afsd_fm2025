@@ -37,6 +37,7 @@ export const CREATE_ROUND = gql`
       buildingId
       rooms {
         roomId
+        roundRoomId
         order
       }
       status

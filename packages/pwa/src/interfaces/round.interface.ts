@@ -16,6 +16,7 @@ export interface RoundRoom {
   roomId: string
   roundRoomId: string
   order: number
+
   checklist?: ChecklistItem[] // Optional checklist for each room
 }
 
@@ -27,12 +28,11 @@ export interface ChecklistItem {
 }
 
 export enum RoundStatus {
-  PLANNED = 'PLANNED',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  CANCELLED = 'CANCELLED',
+  PLANNED = 'planned',
+  IN_PROGRESS = 'in_progress',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }
-
 export enum ChecklistItemStatus {
   NOT_CHECKED = 'NOT_CHECKED',
   OK = 'OK',

@@ -24,6 +24,11 @@
         >
           <h2 class="font-semibold text-gray-700 text-md">
             {{ round.name }}
+            <span
+              :class="`px-2 py-1 text-xs rounded-full ${getStatusColor(round.status)} space-x-8`"
+            >
+              {{ round.status }}
+            </span>
           </h2>
 
           <div
@@ -38,56 +43,66 @@
         </div>
 
         <div class="p-4" v-show="expanded[idx]">
-          <div class="mb-4 last:mb-0">
-            <div class="flex justify-between items-center mb-2">
-              <div class="inline-flex items-center gap-2">
-                <MapPin class="text-orange-500 w-5 h-5" />
-                <h3 class="text-sm text-gray-700 font-600">
-                  Building Name here
-                </h3>
-              </div>
-              <!-- <span
-                class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
+          <!-- Color-coded status -->
+
+          <!-- Progress bar -->
+          <div class="mb-4">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-sm text-gray-600">Progress</span>
+              <span class="text-sm text-gray-600"
+                >{{ calculateProgress(round) }}%</span
               >
-                {{ round.status }}
-              </span> -->
             </div>
-            <div>
-              <p class="text-gray-600 text-sm">{{ round.time }}</p>
-              <!-- inside the room block -->
-              <div v-for="room in round.rooms" :key="room.roomId" class="mb-4">
-                <p class="font-semibold mb-2 text-gray-700">
-                  Room Order:
-                  <span class="text-orange-500">{{ room.order }}</span>
-                </p>
-
-                <!-- checklist items -->
-                <label
-                  v-for="item in room.checklist"
-                  :key="item.itemId"
-                  class="flex items-center gap-2 text-sm"
-                >
-                  <input
-                    type="checkbox"
-                    class="form-checkbox text-orange-500"
-                    :checked="item.status === 'OK'"
-                    @change="handleChecklistChange(round, room, item)"
-                  />
-
-                  {{ item.label }}
-                  <span v-if="item.notes" class="block text-gray-500 italic">
-                    – {{ item.notes }}
-                  </span>
-                </label>
-
-                <p
-                  v-if="!(room.checklist && room.checklist.length)"
-                  class="text-xs text-gray-400"
-                >
-                  No checklist items yet.
-                </p>
-              </div>
+            <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+              <div
+                class="h-2 rounded-full transition-all duration-300 ease-out"
+                :class="{
+                  'bg-green-500': calculateProgress(round) === 100,
+                  'bg-yellow-500':
+                    calculateProgress(round) > 0 &&
+                    calculateProgress(round) < 100,
+                  'bg-gray-500': calculateProgress(round) === 0,
+                }"
+                :style="{ width: calculateProgress(round) + '%' }"
+              ></div>
             </div>
+            <p class="text-xs text-gray-500 mt-1">
+              {{ completedCount(round) }} / {{ totalCount(round) }} tasks
+              completed
+            </p>
+          </div>
+
+          <!-- Room and checklist details -->
+          <div v-for="room in round.rooms" :key="room.roomId" class="mb-4">
+            <p class="font-semibold mb-2 text-gray-700">
+              Room Order:
+              <span class="text-orange-500">{{ room.order }}</span>
+            </p>
+
+            <!-- checklist items -->
+            <label
+              v-for="item in room.checklist"
+              :key="item.itemId"
+              class="flex items-center gap-2 text-sm"
+            >
+              <input
+                type="checkbox"
+                class="form-checkbox text-orange-500"
+                :checked="item.status === 'OK'"
+                @change="handleChecklistChange(round, room, item)"
+              />
+              {{ item.label }}
+              <span v-if="item.notes" class="block text-gray-500 italic">
+                – {{ item.notes }}
+              </span>
+            </label>
+
+            <p
+              v-if="!(room.checklist && room.checklist.length)"
+              class="text-xs text-gray-400"
+            >
+              No checklist items yet.
+            </p>
           </div>
         </div>
       </div>
@@ -102,12 +117,13 @@ import { MY_ROUNDS } from '@/graphql/round.entity'
 import { UPDATE_CHECKLIST_ITEM } from '@/graphql/round.mutations'
 import { Role } from '@/interfaces/custom.user.interface'
 import {
+  RoundStatus,
   type ChecklistItem,
   type Round,
   type RoundRoom,
 } from '@/interfaces/round.interface'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { MapPin, ChevronDown } from 'lucide-vue-next'
+import { ChevronDown } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 
 const { firebaseUser } = useFirebase()
@@ -193,12 +209,26 @@ const handleChecklistChange = async (
 ) => {
   const newStatus = item.status === 'OK' ? 'NOT_CHECKED' : 'OK'
 
-  await updateChecklistItemMutation({
-    roundId: round.roundId, // string
-    roundRoomId: room.roundRoomId, // string
-    itemId: item.itemId, // string
-    status: newStatus, // string
-  })
+  await updateChecklistItemMutation(
+    {
+      roundId: round.roundId,
+      roundRoomId: room.roundRoomId,
+      itemId: item.itemId,
+      status: newStatus,
+    },
+    {
+      optimisticResponse: {
+        updateChecklistItem: {
+          __typename: 'Checklistitem',
+          itemId: item.itemId,
+          label: item.label,
+          notes: item.notes,
+          status: newStatus,
+        },
+      },
+    },
+  )
+  // item.status = newStatus
 }
 const expanded = ref<boolean[]>([])
 function toggleExpand(index: number) {
@@ -210,6 +240,41 @@ import { watchEffect } from 'vue'
 watchEffect(() => {
   console.log('rounds from query', rounds.value) //check if rounds are loaded
 })
+
+const calculateProgress = (round: Round): number => {
+  const totalItems = round.rooms.reduce(
+    (sum, room) => sum + (room.checklist?.length || 0),
+    0,
+  )
+  const completedItems = round.rooms.reduce(
+    (sum, room) =>
+      sum + (room.checklist?.filter(item => item.status === 'OK').length || 0),
+    0,
+  )
+  return totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0
+}
+
+const totalCount = (round: Round) =>
+  round.rooms.reduce((sum, r) => sum + (r.checklist?.length || 0), 0)
+
+const completedCount = (round: Round) =>
+  round.rooms.reduce(
+    (sum, r) => sum + (r.checklist?.filter(i => i.status === 'OK').length || 0),
+    0,
+  )
+
+const getStatusColor = (status: string): string => {
+  switch (status) {
+    case RoundStatus.PLANNED:
+      return 'bg-blue-300 text-blue-500'
+    case RoundStatus.IN_PROGRESS:
+      return 'bg-yellow-300 text-yellow-500'
+    case RoundStatus.COMPLETED:
+      return 'bg-green-300 text-gray-700'
+    default:
+      return 'bg-gray-300 text-gray-700'
+  }
+}
 
 //const { result: buildingData } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 //const buildings = computed(() => buildingData.value?.buildings || [])
