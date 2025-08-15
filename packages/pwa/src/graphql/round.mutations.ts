@@ -34,6 +34,52 @@ export const CREATE_ROUND = gql`
         id
         name
       }
+      buildingId
+      rooms {
+        roomId
+        roundRoomId
+        order
+      }
+      status
+    }
+  }
+`
+
+export const CREATE_CHECKLIST_ITEM = gql`
+  mutation AddChecklistItem(
+    $roundId: String!
+    $roundRoomId: String!
+    $label: String!
+    $notes: String
+  ) {
+    addChecklistItem(
+      roundId: $roundId
+      roundRoomId: $roundRoomId
+      label: $label
+      notes: $notes
+    ) {
+      itemId
+      label
+      status
+      notes
+    }
+  }
+`
+export const UPDATE_CHECKLIST_ITEM = gql`
+  mutation UpdateChecklistItem(
+    $roundId: String!
+    $roundRoomId: String!
+    $itemId: String!
+    $status: ChecklistItemStatus!
+  ) {
+    updateChecklistItem(
+      roundId: $roundId
+      roundRoomId: $roundRoomId
+      itemId: $itemId
+      status: $status
+    ) {
+      itemId
+      label
       status
     }
   }

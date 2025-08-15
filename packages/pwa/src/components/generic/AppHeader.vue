@@ -7,9 +7,9 @@
     </div>
     <nav class="h-full overflow-y-auto">
       <ul class="flex flex-col px-4 list-none no-underline">
-        <!-- <li v-if="userRole !== Role.ADMIN">
+        <li v-if="userRole === Role.MANAGER">
           <router-link
-            :to="{ name: 'home' }"
+            :to="{ name: 'concierge-home' }"
             class="flex items-center p-2 rounded-full hover:bg-orange-100 hover:text-orange-700 mb-2 no-underline"
             active-class="bg-orange-100 text-orange-700"
           >
@@ -20,7 +20,7 @@
             </div>
             <span class="mx-2">Dashboard</span>
           </router-link>
-        </li> -->
+        </li>
         <li v-if="userRole === Role.USER">
           <router-link
             :to="{ name: 'userhome' }"

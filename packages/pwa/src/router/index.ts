@@ -52,6 +52,13 @@ const routes: RouteRecordRaw[] = [
     meta: { shouldBeAuthenticated: true },
   },
 
+  //CONCIERGES
+  {
+    path: '/concierge/home',
+    name: 'concierge-home',
+    component: () => import('@/views/concierge/HomeScreen.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.MANAGER },
+  },
   // ADMIN ROUTES
   {
     path: '/admin',

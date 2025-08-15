@@ -12,7 +12,15 @@ import { Round } from './entities/round.entity'
 // import { Role } from 'src/user/entities/user.entity'
 import { UserService } from 'src/user/user.service'
 import { CreateRoundInput } from './dto/create-round.input'
-import { User } from 'src/user/entities/user.entity'
+import { Role, User } from 'src/user/entities/user.entity'
+import { UseGuards } from '@nestjs/common'
+import { AllowedRoles } from 'src/decorators/roles.decorator'
+import {
+  Checklistitem,
+  ChecklistItemStatus,
+} from 'src/checklistitem/entities/checklistitem.entity'
+import { ObjectId } from 'mongodb'
+import { RoundRoomStatus } from 'src/round-room/entities/round-room.entity'
 
 // import { UpdateRoundInput } from './dto/update-round.input'
 
@@ -24,8 +32,41 @@ export class RoundsResolver {
   ) {}
 
   @Mutation(() => Round)
-  createRound(@Args('createRoundInput') createRoundInput: CreateRoundInput) {
-    return this.roundsService.create(createRoundInput)
+  async createRound(
+    @Args('createRoundInput') createRoundInput: CreateRoundInput,
+  ) {
+    return await this.roundsService.create(createRoundInput)
+  }
+
+  @Mutation(() => Checklistitem)
+  async addChecklistItem(
+    @Args('roundId') roundId: string,
+    @Args('roundRoomId') roundRoomId: string,
+    @Args('label') label: string,
+    @Args('notes', { nullable: true }) notes?: string,
+  ): Promise<Checklistitem> {
+    return this.roundsService.addChecklistItem(
+      roundId,
+      roundRoomId,
+      label,
+      notes,
+    )
+  }
+
+  @Mutation(() => Checklistitem)
+  async updateChecklistItem(
+    @Args('roundId') roundId: string,
+    @Args('roundRoomId') roundRoomId: string,
+    @Args('itemId') itemId: string,
+    @Args('status', { type: () => ChecklistItemStatus })
+    status: ChecklistItemStatus, //ensure its ENUM
+  ) {
+    return this.roundsService.updateChecklistItem(
+      roundId,
+      roundRoomId,
+      itemId,
+      status,
+    )
   }
 
   @ResolveField(() => User, { nullable: true })
@@ -34,14 +75,27 @@ export class RoundsResolver {
     return this.userService.findOne(round.assignedToId)
   }
 
-  // @Mutation(() => Round)
-  // createRound(
-  //   @Args('createRoundInput') createRoundInput: CreateRoundInput,
-  //   @Context() context: { user: { uid: string } },
-  // ) {
-  //   const firebaseUid = context.user.uid // Extract the Firebase UID from the context
-  //   return this.roundsService.create(createRoundInput, firebaseUid)
-  // }
+  @UseGuards()
+  @AllowedRoles(Role.MANAGER)
+  @Query(() => [Round], { name: 'myRounds' })
+  async myRounds(@Args('userId', { type: () => String }) userId: string) {
+    const user = await this.userService.findOne(userId)
+    if (!user) return []
+
+    const rounds = await this.roundsService.findByUser(userId)
+
+    // Ensure every checklist is at least []
+    // ensure every room has roundRoomId + checklist
+    rounds.forEach(r =>
+      r.rooms.forEach(room => {
+        room.roundRoomId = room.roundRoomId ?? new ObjectId().toString()
+        room.checklist = room.checklist ?? []
+        room.status = room.status ?? RoundRoomStatus.OPEN
+      }),
+    )
+
+    return rounds
+  }
 
   @Query(() => [Round], { name: 'rounds' })
   findAll() {
