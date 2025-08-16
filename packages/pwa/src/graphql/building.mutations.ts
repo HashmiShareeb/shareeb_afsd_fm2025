@@ -7,6 +7,7 @@ export const CREATE_BUILDING = gql`
       name
       type
       description
+      imageUrl
     }
   }
 `

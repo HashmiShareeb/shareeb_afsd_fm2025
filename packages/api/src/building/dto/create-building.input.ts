@@ -13,4 +13,7 @@ export class CreateBuildingInput {
 
   @Field({ nullable: true }) // Optional field
   description?: string
+
+  @Field({ nullable: true })
+  imageUrl?: string
 }

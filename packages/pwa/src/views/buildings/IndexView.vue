@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import BuildingCards from '@/components/buildingCards.vue'
+import BuildingCards from '@/components/buildings/buildingCards.vue'
 import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
 import { useQuery } from '@vue/apollo-composable'
 import { computed } from 'vue'

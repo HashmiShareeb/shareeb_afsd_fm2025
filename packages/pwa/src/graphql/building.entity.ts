@@ -8,6 +8,7 @@ export const GET_BUILDINGS = gql`
       address
       type
       description
+      imageUrl
     }
   }
 `
@@ -20,6 +21,7 @@ export const GET_ALL_BUILDINGS_WITH_ROOMS = gql`
       address
       type
       description
+      imageUrl
       rooms {
         roomId
         name
@@ -36,6 +38,7 @@ export const GET_BUILDING_BY_ID = gql`
     building(buildingId: $buildingId) {
       name
       address
+      imageUrl
       rooms {
         roomId
         name

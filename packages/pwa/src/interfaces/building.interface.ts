@@ -6,6 +6,7 @@ export interface BuildingType {
   description?: string
   createdAt?: Date
   updatedAt?: Date
+  imgUrl?: string
 
   rooms?: Array<{
     roomId: string

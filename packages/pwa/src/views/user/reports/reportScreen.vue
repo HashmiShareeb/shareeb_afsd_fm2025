@@ -238,8 +238,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import ReportCard from '@/components/ReportCard.vue'
-import RequestCard from '@/components/RequestCard.vue'
+import ReportCard from '@/components/reports/ReportCard.vue'
+import RequestCard from '@/components/reports/RequestCard.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import ModalView from '@/components/generic/ModalView.vue'
 import useCustomUser from '@/composables/useCustomUser'

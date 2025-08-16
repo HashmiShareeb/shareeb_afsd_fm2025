@@ -16,7 +16,7 @@
     />
     <button
       @click="openModal"
-      class="mx-2 inline-block text-sm text-orange-600 bg-orange-100 rounded-md hover:bg-orange-200 p-2"
+      class="mx-4 inline-block text-sm text-orange-600 bg-orange-100 rounded-md hover:bg-orange-200 p-2"
     >
       Add +
     </button>
@@ -28,83 +28,108 @@
       :key="b.id"
       class="border p-4 mb-4 rounded-xl bg-white"
     >
-      <img src="" alt="" />
-      <h2 class="font-medium text-lg text-gray-700">{{ b.name }}</h2>
-      <p class="text-md text-gray-500">{{ b.address }}</p>
-      <p
-        class="text-gray-500 bg-slate-100 rounded-md w-fit px-2 py-1.2 text-sm mt-2"
-      >
-        {{ b.type }}
-      </p>
+      <!-- flex container: image never grows / shrinks -->
+      <div class="flex gap-6">
+        <!-- fixed-size image -->
+        <img
+          :src="b.imageUrl ? b.imageUrl : placeholderImage"
+          :alt="b.name"
+          class="w-96 object-cover rounded-lg shrink-0"
+        />
 
-      <div class="mt-4">
-        <button
-          class="inline-flex items-center text-sm text-orange-500"
-          @click="openRoomModal(b.buildingId)"
-        >
-          <PlusIcon class="w-4 h-4 mr-1" /> Add Room(s)
-        </button>
-      </div>
+        <!-- right column -->
+        <div class="flex-1 flex flex-col">
+          <!-- top info -->
+          <div>
+            <h2 class="font-medium text-lg text-gray-700">{{ b.name }}</h2>
+            <p class="text-md text-gray-500">{{ b.address }}</p>
+            <p
+              class="text-gray-500 bg-slate-100 rounded-md w-fit px-2 py-1 text-sm mt-2"
+            >
+              {{ b.type }}
+            </p>
+          </div>
 
-      <button
-        class="text-sm text-gray-500 mt-2 cursor-pointer hover:underline inline-flex items-center gap-2"
-        @click="toggleExpanded(b.buildingId)"
-        :disabled="!b.rooms?.length"
-      >
-        {{ b.rooms?.length ?? 0 }} Room(s) available
-        <span v-if="expanded.includes(b.buildingId)"
-          ><ChevronUpIcon class="w-4 h-4"
-        /></span>
-        <span v-else><ChevronDownIcon class="w-4 h-4" /></span>
-      </button>
-      <!-- rooms -->
-      <div
-        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4"
-        v-if="expanded.includes(b.buildingId) && b.rooms?.length > 0"
-      >
-        <div
-          v-for="room in b.rooms"
-          :key="room.id"
-          class="border p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-        >
-          <h3 class="font-medium text-gray-700">{{ room.name }}</h3>
-          <p class="text-sm text-gray-500">Floor: {{ room.floor }}</p>
-          <p class="text-sm text-gray-500">Capacity: {{ room.capacity }}</p>
-        </div>
-      </div>
+          <!-- spacer pushes buttons to bottom -->
+          <div class="flex-1 mt-4">
+            <button
+              class="inline-flex items-center text-sm text-orange-500"
+              @click="openRoomModal(b.buildingId)"
+            >
+              <PlusIcon class="w-4 h-4 mr-1" /> Add Room(s)
+            </button>
 
-      <div class="flex items-center justify-end gap-2 mt-4">
-        <div
-          class="text-sm text-gray-500 flex justify-start mr-auto items-center gap-1"
-        >
-          <span>{{ b.buildingId }}</span>
-          <button
-            @click="copyToClipboard(b.buildingId)"
-            class="ml-1 p-1 rounded hover:bg-gray-100"
-            type="button"
-            :title="`Copy ${b.name} to clipboard`"
+            <button
+              class="text-sm text-gray-500 ml-4 cursor-pointer hover:underline inline-flex items-center gap-1"
+              @click="toggleExpanded(b.buildingId)"
+              :disabled="!b.rooms?.length"
+            >
+              {{ b.rooms?.length ?? 0 }} Room(s)
+              <ChevronUpIcon
+                v-if="expanded.includes(b.buildingId)"
+                class="w-4 h-4"
+              />
+              <ChevronDownIcon v-else class="w-4 h-4" />
+            </button>
+
+            <!-- rooms grid (never affects outer flex) -->
+            <div
+              v-if="expanded.includes(b.buildingId) && b.rooms?.length"
+              class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4"
+            >
+              <div
+                v-for="room in b.rooms"
+                :key="room.id"
+                class="border p-3 rounded-lg bg-gray-50 hover:bg-gray-100"
+              >
+                <h3 class="font-medium text-gray-700">{{ room.name }}</h3>
+                <p class="text-sm text-gray-500">Floor: {{ room.floor }}</p>
+                <p class="text-sm text-gray-500">
+                  Capacity: {{ room.capacity }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- bottom actions row – always pinned -->
+          <div
+            class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm mt-4 pt-4 border-t border-gray-100"
           >
-            <Clipboard class="w-4 h-4" />
-          </button>
-        </div>
-        <!-- <button @click="testKnopje" class="text-sm text-blue-500">edit</button> -->
-        <div class="inline-flex items-center gap-1.2">
-          <Pencil class="w-3 h-3" />
-          <p class="text-sm">Edit</p>
-        </div>
-        <router-link
-          :to="`/admin/buildings/${b.buildingId}`"
-          class="inline-flex items-center gap-1.2 hover:underline text-gray-700"
-        >
-          <EyeIcon class="w-3 h-3" />
-          <p class="text-sm">View</p>
-        </router-link>
-        <div
-          class="inline-flex items-center gap-1.2 cursor-pointer text-red-500"
-          @click="deleteBuilding(b.buildingId)"
-        >
-          <TrashIcon class="w-3 h-3" />
-          <p class="text-sm">Delete</p>
+            <!-- building id + copy -->
+            <div class="flex items-center text-gray-500 mr-auto gap-1">
+              <span>{{ b.buildingId }}</span>
+              <button
+                @click="copyToClipboard(b.buildingId)"
+                class="p-1 rounded hover:bg-gray-100"
+                type="button"
+                :title="`Copy ${b.name} to clipboard`"
+              >
+                <Clipboard class="w-4 h-4" />
+              </button>
+            </div>
+
+            <!-- action buttons -->
+            <button
+              class="inline-flex items-center gap-1 text-gray-700 hover:underline"
+            >
+              <Pencil class="w-3 h-3" /> Edit
+            </button>
+
+            <router-link
+              :to="`/admin/buildings/${b.buildingId}`"
+              class="inline-flex items-center gap-1 text-gray-700 hover:underline"
+            >
+              <EyeIcon class="w-3 h-3" /> View
+            </router-link>
+
+            <button
+              class="inline-flex items-center gap-1 text-red-500 hover:underline"
+              @click="deleteBuilding(b.buildingId)"
+              type="button"
+            >
+              <TrashIcon class="w-3 h-3" /> Delete
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -153,6 +178,23 @@
         rows="4"
         class="input"
       ></textarea>
+
+      <!-- <label class="text-gray-500 font-medium text-base">Building Image</label>
+      <input
+        type="file"
+        accept="image/*"
+      
+        class="input file-input"
+      />
+
+      
+      <div  class="w-full h-32 rounded-lg overflow-hidden">
+        <img
+         
+          class="w-full h-full object-cover"
+          alt="Preview"
+        />
+      </div> -->
 
       <button
         type="submit"
@@ -242,6 +284,8 @@ import {
 } from '@/graphql/building.mutations'
 import ModalView from '@/components/generic/ModalView.vue'
 import type { BuildingType } from '@/interfaces/building.interface'
+
+import placeholderImage from '@/assets/placeholder-image.jpg'
 
 const { result, refetch } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
 const buildings = computed(() => result.value?.buildings ?? [])

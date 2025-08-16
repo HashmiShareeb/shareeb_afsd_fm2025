@@ -21,6 +21,8 @@ import {
 } from 'src/checklistitem/entities/checklistitem.entity'
 import { ObjectId } from 'mongodb'
 import { RoundRoomStatus } from 'src/round-room/entities/round-room.entity'
+import { Building } from 'src/building/entities/building.entity'
+import { BuildingService } from 'src/building/building.service'
 
 // import { UpdateRoundInput } from './dto/update-round.input'
 
@@ -29,6 +31,7 @@ export class RoundsResolver {
   constructor(
     private readonly roundsService: RoundsService,
     private readonly userService: UserService,
+    private readonly buildingService: BuildingService,
   ) {}
 
   @Mutation(() => Round)
@@ -111,6 +114,14 @@ export class RoundsResolver {
   // updateRound(@Args('updateRoundInput') updateRoundInput: UpdateRoundInput) {
   //   return this.roundsService.update(updateRoundInput.id, updateRoundInput);
   // }
+
+  @ResolveField(() => Building, { nullable: true })
+  async building(@Parent() round: Round): Promise<Building | null> {
+    console.log('Resolving building for round', round._id)
+
+    if (!round.buildingId) return null
+    return await this.buildingService.findOne(round.buildingId)
+  }
 
   @Mutation(() => Round)
   removeRound(@Args('roundId', { type: () => String }) roundId: string) {

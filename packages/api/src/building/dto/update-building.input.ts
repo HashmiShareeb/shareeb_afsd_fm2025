@@ -16,5 +16,8 @@ export class UpdateBuildingInput extends PartialType(CreateBuildingInput) {
   type?: string
 
   @Field({ nullable: true })
+  imageUrl?: string
+
+  @Field({ nullable: true })
   description?: string
 }
