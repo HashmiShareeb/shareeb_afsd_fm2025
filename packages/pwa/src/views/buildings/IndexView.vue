@@ -5,7 +5,7 @@
       Here you can view all buildings and their details.
     </p>
 
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading" class="animate-pulse text-gray-400">Loading...</div>
 
     <div
       v-else

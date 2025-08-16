@@ -196,13 +196,43 @@
         />
       </div> -->
 
-      <button
-        type="submit"
-        class="btn-primary rounded-full"
-        :disabled="loading"
-      >
-        {{ loading ? 'Adding...' : 'Add Building' }}
-      </button>
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          @click="showModal = false"
+          class="px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn-primary rounded-md transition flex items-center justify-center"
+          :disabled="loading"
+        >
+          <svg
+            v-if="loading"
+            class="animate-spin h-5 w-5 mr-2 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          {{ loading ? 'Submitting...' : 'Submit Building' }}
+        </button>
+      </div>
 
       <p v-if="success" class="text-green-600 text-sm">
         Building added successfully!
@@ -247,13 +277,43 @@
         class="input"
       />
 
-      <button
-        type="submit"
-        class="btn-primary rounded-full"
-        :disabled="loadingRoom"
-      >
-        {{ loadingRoom ? 'Adding...' : 'Add Room' }}
-      </button>
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          @click="showModal = false"
+          class="px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn-primary rounded-md transition flex items-center justify-center"
+          :disabled="loadingRoom"
+        >
+          <svg
+            v-if="loading && loadingRoom"
+            class="animate-spin h-5 w-5 mr-2 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          {{ loading ? 'Submitting...' : 'Submit Room' }}
+        </button>
+      </div>
 
       <p v-if="roomSuccess" class="text-green-600 text-sm">Room added!</p>
       <p v-if="roomError" class="text-red-600 text-sm">

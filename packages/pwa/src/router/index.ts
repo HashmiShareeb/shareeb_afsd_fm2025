@@ -32,6 +32,7 @@ const routes: RouteRecordRaw[] = [
     name: 'building-details',
     component: () => import('@/views/buildings/_slug.vue'),
     meta: { shouldBeAuthenticated: true },
+    props: true,
   },
   {
     path: '/rounds',
@@ -50,6 +51,12 @@ const routes: RouteRecordRaw[] = [
     name: 'myaccount',
     component: () => import('@/views/MyAccountView.vue'),
     meta: { shouldBeAuthenticated: true },
+  },
+  {
+    path: '/user/energy_reading',
+    name: 'user-energy-reading',
+    component: () => import('@/views/user/energy/energyReadings.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.USER },
   },
 
   //CONCIERGES
@@ -88,6 +95,12 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/rounds',
     name: 'admin-rounds',
     component: () => import('@/views/admin/rounds/IndexView.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
+  },
+  {
+    path: '/admin/energy_reading',
+    name: 'admin-energy-reading',
+    component: () => import('@/views/admin/energy/energyReadings.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
   },
   // {

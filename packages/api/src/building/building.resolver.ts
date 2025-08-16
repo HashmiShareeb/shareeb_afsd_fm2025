@@ -116,4 +116,11 @@ export class BuildingResolver {
   ): Promise<boolean> {
     return this.buildingService.existsByName(name)
   }
+
+  @Query(() => Building, { name: 'findBuildingById', nullable: true })
+  async findBuildingById(
+    @Args('buildingId', { type: () => String }) buildingId: string,
+  ): Promise<Building | null> {
+    return this.buildingService.findOne(buildingId)
+  }
 }
