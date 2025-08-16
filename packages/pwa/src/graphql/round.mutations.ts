@@ -45,6 +45,26 @@ export const CREATE_ROUND = gql`
   }
 `
 
+export const UPDATE_ROUND = gql`
+  mutation UpdateRound($updateRoundInput: UpdateRoundInput!) {
+    updateRound(updateRoundInput: $updateRoundInput) {
+      roundId
+      name
+      assignedTo {
+        id
+        name
+      }
+      buildingId
+      rooms {
+        roomId
+        roundRoomId
+        order
+      }
+      status
+    }
+  }
+`
+
 export const CREATE_CHECKLIST_ITEM = gql`
   mutation AddChecklistItem(
     $roundId: String!

@@ -180,17 +180,17 @@
       ></textarea>
 
       <!-- <label class="text-gray-500 font-medium text-base">Building Image</label>
-      <input
-        type="file"
-        accept="image/*"
-      
-        class="input file-input"
-      />
+      <button
+        type="button"
+        class="btn-primary rounded-lg"
+        @click="openUploadWidget()"
+      >
+        Upload Image
+      </button>
 
-      
-      <div  class="w-full h-32 rounded-lg overflow-hidden">
+      <div class="w-full h-32 rounded-lg overflow-hidden" v-if="form.imageUrl">
         <img
-         
+          :src="form.imageUrl"
           class="w-full h-full object-cover"
           alt="Preview"
         />
@@ -380,6 +380,7 @@ const form = ref({
   address: '',
   type: '',
   description: '',
+  // imageUrl: '',
 })
 
 const success = ref(false)
@@ -401,6 +402,7 @@ const addBuilding = async () => {
       address: '',
       type: '',
       description: '',
+      // imageUrl: '',
     }
     await refetch()
   } catch (err) {
@@ -408,6 +410,7 @@ const addBuilding = async () => {
   }
 }
 const deleteBuilding = async (buildingId: string) => {
+  if (!window.confirm('You are deleting this image')) return
   try {
     await removeBuildingMutation({ buildingId })
     await refetch() // Refresh list after deletion
@@ -478,4 +481,18 @@ const copyToClipboard = async (text: string) => {
     console.error('Clipboard error:', err)
   }
 }
+
+// const widget = window.cloudinary.createUploadWidget(
+//   {
+//     cloud_name: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+//     upload_preset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
+//     // multiple: false,
+//   },
+//   (error, result) => {
+//     console.log(error)
+//     console.log(result)
+//   },
+// )
+
+//const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`
 </script>
