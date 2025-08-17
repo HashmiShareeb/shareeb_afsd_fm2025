@@ -8,6 +8,7 @@ export const GET_ALL_ENERGY_READINGS = gql`
       value
       recordedBy {
         id
+        uid
         name
       }
       building {

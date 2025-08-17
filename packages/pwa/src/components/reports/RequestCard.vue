@@ -2,11 +2,11 @@
   <div
     class="bg-white rounded-xl shadow-sm p-5 mb-4 border-l-4 transition-all hover:shadow-md"
     :class="{
-      'border-l-orange-500':
+      'border-l-yellow-500':
         specialRequest.status === SpecialRequestStatus.PENDING,
       'border-l-blue-500':
         specialRequest.status === SpecialRequestStatus.APPROVED,
-      'border-l-green-500':
+      'border-l-red-500':
         specialRequest.status === SpecialRequestStatus.REJECTED,
     }"
   >
@@ -21,11 +21,11 @@
           <span
             class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
             :class="{
-              'bg-orange-100 text-orange-800':
+              'bg-yellow-100 text-yellow-800':
                 specialRequest.status === SpecialRequestStatus.PENDING,
               'bg-blue-100 text-blue-800':
                 specialRequest.status === SpecialRequestStatus.APPROVED,
-              'bg-green-100 text-green-800':
+              'bg-red-100 text-red-800':
                 specialRequest.status === SpecialRequestStatus.REJECTED,
             }"
           >
@@ -67,21 +67,17 @@
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
             </svg>
-            {{
-              buildings.find(
-                (b: BuildingType) => b.buildingId === specialRequest.buildingId,
-              )?.name || 'Unknown Building'
-            }}
+            {{ specialRequest.building?.name || 'Building not specified' }}
           </div>
         </div>
       </div>
 
-      <button
+      <!-- <button
         class="text-orange-600 hover:text-orange-800 flex items-center text-sm font-medium"
       >
         View Details
         <ChevronRight class="inline-block w-4 h-4 ml-1" />
-      </button>
+      </button> -->
     </div>
   </div>
 </template>
@@ -92,12 +88,7 @@ import {
   SpecialRequestStatus,
   type SpecialRequestType,
 } from '@/interfaces/special-request.interface'
-import {
-  UserRoundIcon,
-  Calendar,
-  Clock3Icon,
-  ChevronRight,
-} from 'lucide-vue-next'
+import { UserRoundIcon, Calendar, Clock3Icon } from 'lucide-vue-next'
 
 defineProps({
   specialRequest: {

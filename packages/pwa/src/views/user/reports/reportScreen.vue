@@ -247,7 +247,7 @@ import { useMutation, useQuery } from '@vue/apollo-composable'
 import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
 import type { BuildingType } from '@/interfaces/building.interface'
 import { CREATE_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.entity'
-import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
+import { MY_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.mutations'
 import { CREATE_SPECIAL_REQUEST } from '@/graphql/special-resquest.mutations'
 import { MY_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
 
@@ -280,8 +280,16 @@ const buildings = computed(
     ) || [],
 )
 
-const { result: reportsData, refetch } = useQuery(GET_MAINTENANCE_REPORTS)
-const reports = computed(() => reportsData.value?.maintenancereport || [])
+const { result: reportsData, refetch } = useQuery(
+  MY_MAINTENANCE_REPORT,
+  () => ({
+    userId: userId.value,
+  }),
+  {
+    enabled: computed(() => !!userId.value),
+  },
+)
+const reports = computed(() => reportsData.value?.myMaintenanceReport || [])
 
 const { result: specialRequestData, refetch: refetchRequests } = useQuery(
   MY_SPECIAL_REQUESTS,

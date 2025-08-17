@@ -1,6 +1,8 @@
+import type { BuildingType } from './building.interface'
 import type { CustomUser } from './custom.user.interface'
 
 export interface ReportType {
+  building?: BuildingType
   buildingId: string
   reportId: string
   title: string

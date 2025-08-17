@@ -103,8 +103,19 @@ export class BuildingService {
     return building
   }
 
-  update(buildingId: string, updateBuildingInput: UpdateBuildingInput) {
-    return this.buildingRepository.update(buildingId, updateBuildingInput)
+  // update(buildingId: string, updateBuildingInput: UpdateBuildingInput) {
+  //   return this.buildingRepository.update(buildingId, updateBuildingInput)
+  // }
+
+  async update(
+    buildingId: string,
+    updateBuildingInput: UpdateBuildingInput,
+  ): Promise<Building> {
+    await this.buildingRepository.updateOne(
+      { _id: new ObjectId(buildingId) },
+      { $set: { ...updateBuildingInput } },
+    )
+    return this.findOne(buildingId)
   }
 
   saveAll(buildings: Building[]): Promise<Building[]> {

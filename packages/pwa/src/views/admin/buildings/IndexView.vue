@@ -112,7 +112,13 @@
             <button
               class="inline-flex items-center gap-1 text-gray-700 hover:underline"
             >
-              <Pencil class="w-3 h-3" /> Edit
+              <!-- <Pencil class="w-3 h-3" /> Edit -->
+              <button
+                class="inline-flex items-center gap-1 text-gray-700 hover:underline"
+                @click="openEditModal(b)"
+              >
+                <Pencil class="w-3 h-3" /> Edit
+              </button>
             </button>
 
             <router-link
@@ -321,6 +327,85 @@
       </p>
     </form>
   </ModalView>
+
+  <!-- edit building modal -->
+  <ModalView
+    v-if="showEditModal"
+    title="Edit Building"
+    @close="showEditModal = false"
+  >
+    <form @submit.prevent="updateBuilding" class="grid gap-4">
+      <label for="name" class="text-gray-500 font-medium text-base">Name</label>
+      <input v-model="editForm.name" type="text" class="input" />
+
+      <label for="address" class="text-gray-500 font-medium text-base"
+        >Address</label
+      >
+      <input v-model="editForm.address" type="text" class="input" />
+
+      <label for="type" class="text-gray-500 font-medium text-base">Type</label>
+      <select v-model="editForm.type" class="input">
+        <option disabled value="">Select type</option>
+        <option value="Flat">Flat</option>
+        <option value="Campus">Campus</option>
+        <option value="Office">Office</option>
+        <option value="Classroom">Classroom</option>
+        <option value="Lab">Lab</option>
+        <option value="Sanitary">Sanitary</option>
+      </select>
+
+      <label for="description" class="text-gray-500 font-medium text-base"
+        >Description</label
+      >
+      <textarea
+        v-model="editForm.description"
+        rows="4"
+        class="input"
+      ></textarea>
+
+      <!-- <label for="imageUrl" class="text-gray-500 font-medium text-base"
+        >Image URL</label
+      >
+      <input
+        v-model="editForm.imageUrl"
+        type="text"
+        class="input"
+        placeholder="Paste image URL"
+      />
+
+      <div
+        v-if="editForm.imageUrl"
+        class="w-full h-32 rounded-lg overflow-hidden"
+      >
+        <img
+          :src="editForm.imageUrl"
+          class="w-full h-full object-cover"
+          alt="Preview"
+        />
+      </div> -->
+
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          @click="showEditModal = false"
+          class="px-4 py-2 bg-gray-100 rounded-lg"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn-primary rounded-md flex items-center justify-center"
+          :disabled="updating"
+        >
+          {{ updating ? 'Updating...' : 'Update Building' }}
+        </button>
+      </div>
+
+      <p v-if="updateError" class="text-red-600 text-sm">
+        Error updating building: {{ updateError.message }}
+      </p>
+    </form>
+  </ModalView>
 </template>
 
 <script setup lang="ts">
@@ -341,17 +426,16 @@ import {
   ADD_ROOM_TO_BUILDING,
   CREATE_BUILDING,
   REMOVE_BUILDING,
+  UPDATE_BUILDING,
 } from '@/graphql/building.mutations'
 import ModalView from '@/components/generic/ModalView.vue'
 import type { BuildingType } from '@/interfaces/building.interface'
-
 import placeholderImage from '@/assets/placeholder-image.jpg'
-
-const { result, refetch } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
-const buildings = computed(() => result.value?.buildings ?? [])
 
 const showModal = ref(false)
 const showRoomModal = ref(false)
+const showEditModal = ref(false)
+
 const expanded = ref<string[]>([])
 
 const search = ref('')
@@ -371,11 +455,39 @@ const openModal = () => {
   console.log('Modal opened')
 }
 
+// const currentBuildingId = ref<string>('')
+
+const {
+  mutate: updateBuildingMutation,
+  loading: updating,
+  error: updateError,
+} = useMutation(UPDATE_BUILDING)
+
+const openEditModal = (building: BuildingType) => {
+  currentBuildingId.value = building.buildingId
+  editForm.value = { ...building }
+  showEditModal.value = true
+
+  console.log('edit this!')
+}
+
 //*BUILDING
+
+const { result, refetch } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
+const buildings = computed(() => result.value?.buildings ?? [])
+
 const { mutate, loading, error } = useMutation(CREATE_BUILDING, {})
 const { mutate: removeBuildingMutation } = useMutation(REMOVE_BUILDING)
 
 const form = ref({
+  name: '',
+  address: '',
+  type: '',
+  description: '',
+  // imageUrl: '',
+})
+
+const editForm = ref({
   name: '',
   address: '',
   type: '',
@@ -461,6 +573,27 @@ const submitRoom = async () => {
     console.error('Room mutation error', e)
   } finally {
     roomForm.value = { name: '', floor: 0, capacity: 0 }
+  }
+}
+
+// Submit edit
+const updateBuilding = async () => {
+  try {
+    await updateBuildingMutation({
+      buildingId: currentBuildingId.value,
+      updateBuildingInput: {
+        name: editForm.value.name,
+        address: editForm.value.address,
+        type: editForm.value.type,
+        description: editForm.value.description,
+        //imageUrl: editForm.value.imageUrl,
+      },
+    })
+    showEditModal.value = false
+    await refetch()
+    alert('Building updated!')
+  } catch (err) {
+    console.error('Update failed:', err)
   }
 }
 
