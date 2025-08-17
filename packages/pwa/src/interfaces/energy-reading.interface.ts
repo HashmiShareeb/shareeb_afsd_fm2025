@@ -11,6 +11,7 @@ export interface energyReadingType {
   readingId: string
   meterType: MeterType
   value: number
+  unit: string
   recordedBy: CustomUser
   recordedById: string
   building: BuildingType

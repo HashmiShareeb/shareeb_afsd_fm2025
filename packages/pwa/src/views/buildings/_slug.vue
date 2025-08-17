@@ -33,7 +33,7 @@
 
     <!-- meta -->
     <h1 class="text-3xl font-bold mt-4">{{ building?.name }}</h1>
-    <p class="text-gray-600 mt-1">{{ building?.address }}</p>
+    <p class="text-gray-600 mt-1 font-500">{{ building?.address }}</p>
     <p class="text-sm bg-gray-200 w-fit px-2 py-1 mt-2 rounded">
       {{ building?.type }}
     </p>
@@ -41,7 +41,10 @@
 
     <!-- rooms -->
     <h2 class="text-xl font-semibold mt-8 mb-3">Rooms</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+    <div
+      v-if="building.rooms && building.rooms.length"
+      class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+    >
       <div
         v-for="room in building.rooms"
         :key="room.id"
@@ -52,8 +55,20 @@
         <p class="text-sm text-gray-500">Capacity {{ room?.capacity }}</p>
       </div>
     </div>
-    <!-- rooms -->
+    <div v-else>
+      <p class="text-gray-600 mt-2">No rooms available for this building.</p>
+    </div>
+    <!-- Chart components here -->
     <h2 class="text-xl font-semibold mt-8 mb-3">Energy Readings</h2>
+    <div v-if="buildingEnergyReadings && buildingEnergyReadings.length">
+      <BarChart :myEnergyReadingsBar="buildingEnergyReadings" />
+      <EnergyLineChart :myEnergyReadings="buildingEnergyReadings" />
+    </div>
+    <div v-else>
+      <p class="text-gray-600 mt-2">
+        no energy reading data available for this building
+      </p>
+    </div>
   </div>
 </template>
 
@@ -64,6 +79,10 @@ import { GET_BUILDING_BY_ID } from '@/graphql/building.entity'
 import placeholderImage from '@/assets/placeholder-image.jpg'
 import { computed } from 'vue'
 import SkeletonLarge from '@/components/skeleton/SkeletonLarge.vue'
+//import MiniChart from '@/components/charts/MiniChart.vue'
+import EnergyLineChart from '@/components/charts/EnergyLineChart.vue'
+import { GET_ENERGY_READINGS_BY_BUILDING } from '@/graphql/energy-reading.entity'
+import BarChart from '@/components/charts/BarChart.vue'
 
 const route = useRoute()
 const { result, loading, error } = useQuery(GET_BUILDING_BY_ID, {
@@ -71,5 +90,15 @@ const { result, loading, error } = useQuery(GET_BUILDING_BY_ID, {
 })
 
 const building = computed(() => result.value?.building)
+
+const { result: energyResult } = useQuery(GET_ENERGY_READINGS_BY_BUILDING, {
+  buildingId: route.params.slug,
+})
+
+const buildingEnergyReadings = computed(
+  () => energyResult.value?.energyReadingsByBuilding || [],
+)
+
+console.log(buildingEnergyReadings)
 console.log('slug from URL →', route.params.slug)
 </script>
