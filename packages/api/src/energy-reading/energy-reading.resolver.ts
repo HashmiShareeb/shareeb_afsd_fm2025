@@ -81,11 +81,11 @@ export class EnergyReadingResolver {
   //   )
   // }
 
-  @Mutation(() => EnergyReading)
-  removeEnergyReading(
+  @Mutation(() => EnergyReading, { nullable: true })
+  async removeEnergyReading(
     @Args('readingId', { type: () => String }) readingId: string,
-  ) {
-    return this.energyReadingService.remove(readingId)
+  ): Promise<EnergyReading | null> {
+    return await this.energyReadingService.remove(readingId)
   }
 
   @ResolveField(() => User, { nullable: true })

@@ -1,4 +1,6 @@
 <template>
+  <AppToast v-if="success" type="success" title="Round Added Successfully" />
+  <AppToast v-if="error" type="error" :title="error.message" />
   <div class="flex justify-between items-center mb-6">
     <div class="inline-flex items-center gap-2">
       <!-- <Building
@@ -204,6 +206,7 @@ import type { BuildingType } from '@/interfaces/building.interface'
 import ModalView from '@/components/generic/ModalView.vue'
 import { XIcon } from 'lucide-vue-next'
 import roundsList from '@/components/rounds/roundsList.vue'
+import AppToast from '@/components/toast/AppToast.vue'
 
 const { result: roundsData, refetch } = useQuery(GET_ROUNDS)
 const rounds = computed(() => roundsData.value?.rounds || [])

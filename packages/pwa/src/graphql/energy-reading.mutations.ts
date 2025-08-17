@@ -23,3 +23,16 @@ export const RECORD_ENERGY_READING = gql`
     }
   }
 `
+
+export const REMOVE_ENERGY_READING = gql`
+  mutation RemoveEnergyReading($readingId: String!) {
+    removeEnergyReading(readingId: $readingId) {
+      readingId
+      buildingId
+      meterType
+      value
+      recordedById
+      recordedAt
+    }
+  }
+`

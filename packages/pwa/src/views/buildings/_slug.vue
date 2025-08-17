@@ -52,6 +52,8 @@
         <p class="text-sm text-gray-500">Capacity {{ room?.capacity }}</p>
       </div>
     </div>
+    <!-- rooms -->
+    <h2 class="text-xl font-semibold mt-8 mb-3">Energy Readings</h2>
   </div>
 </template>
 

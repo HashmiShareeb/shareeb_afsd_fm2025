@@ -7,7 +7,6 @@
         firebaseUser?.displayName || 'displayName'
       }}</span>
     </h1>
-    <p class="text-gray-600 mt-2">Your tasks and rounds for today:</p>
 
     <div>
       <!-- Widget Section -->
@@ -69,6 +68,7 @@
 
     <!-- Rounds to do -->
     <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
+    <p class="text-gray-600 mt-2">Your tasks and rounds for today:</p>
 
     <div v-if="userRole === Role.MANAGER">
       <div

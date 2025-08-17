@@ -10,7 +10,6 @@
     Here you can manage your buildings and view details.
   </p>
   <!-- Widget Section -->
-  <ToastCard />
   <div
     class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
     v-if="userRole === Role.ADMIN"
@@ -102,7 +101,7 @@
           <tr
             v-for="report in reports"
             :key="report.reportId"
-            class="hover:bg-gray-50"
+            class="hover:bg-orange-50"
           >
             <td class="px-6 py-4 whitespace-nowrap">
               <div class="font-medium text-gray-900">{{ report.title }}</div>
@@ -248,7 +247,7 @@ import { GET_ROUNDS } from '@/graphql/round.entity'
 import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
 import { UPDATE_STATUS_MAINTENANCE } from '@/graphql/maintenance-report.entity'
 import type { ReportStatus, ReportType } from '@/interfaces/report.interface'
-import ToastCard from '@/components/toast/ToastCard.vue'
+// import AppToast from '@/components/toast/AppToast.vue'
 
 const { userRole } = useCustomUser()
 const { firebaseUser } = useFirebase()

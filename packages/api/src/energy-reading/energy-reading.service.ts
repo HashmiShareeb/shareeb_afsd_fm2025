@@ -3,6 +3,7 @@ import { CreateEnergyReadingInput } from './dto/create-energy-reading.input'
 import { InjectRepository } from '@nestjs/typeorm'
 import { EnergyReading, MeterType } from './entities/energy-reading.entity'
 import { MongoRepository } from 'typeorm'
+import { ObjectId } from 'mongodb'
 // import { UpdateEnergyReadingInput } from './dto/update-energy-reading.input'
 
 @Injectable()
@@ -52,7 +53,16 @@ export class EnergyReadingService {
   //   return `This action updates a #${id} energyReading`
   // }
 
-  async remove(readingId: string) {
-    return await this.energyReadingRepository.delete({ _id: readingId })
+  async remove(readingId: string): Promise<EnergyReading | null> {
+    const energyReading = await this.energyReadingRepository.findOne({
+      where: { _id: new ObjectId(readingId) }, // Convert to ObjectId
+    })
+
+    if (!energyReading) {
+      throw new Error(`EnergyReading with ID ${readingId} not found`)
+    }
+
+    await this.energyReadingRepository.delete(new ObjectId(readingId))
+    return energyReading
   }
 }

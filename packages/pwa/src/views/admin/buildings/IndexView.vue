@@ -1,4 +1,13 @@
 <template>
+  <AppToast v-if="success" type="success" title="Round Added Successfully" />
+  <AppToast v-if="error" type="error" :title="error.message" />
+  <AppToast v-if="roomSuccess" type="success" title="Room Added Successfully" />
+  <AppToast
+    v-if="successEdit"
+    type="success"
+    title="Building Updated Successfully"
+  />
+  <AppToast v-if="updateError" type="error" :title="updateError.message" />
   <div class="flex justify-between items-center mb-6">
     <div class="inline-flex items-center gap-2">
       <Building
@@ -109,18 +118,14 @@
             </div>
 
             <!-- action buttons -->
+            <!-- <Pencil class="w-3 h-3" /> Edit -->
             <button
               class="inline-flex items-center gap-1 text-gray-700 hover:underline"
+              @click="openEditModal(b)"
             >
-              <!-- <Pencil class="w-3 h-3" /> Edit -->
-              <button
-                class="inline-flex items-center gap-1 text-gray-700 hover:underline"
-                @click="openEditModal(b)"
-              >
-                <Pencil class="w-3 h-3" /> Edit
-              </button>
+              <Pencil class="w-3 h-3" />
+              <span>Edit</span>
             </button>
-
             <router-link
               :to="`/admin/buildings/${b.buildingId}`"
               class="inline-flex items-center gap-1 text-gray-700 hover:underline"
@@ -431,6 +436,7 @@ import {
 import ModalView from '@/components/generic/ModalView.vue'
 import type { BuildingType } from '@/interfaces/building.interface'
 import placeholderImage from '@/assets/placeholder-image.jpg'
+import AppToast from '@/components/toast/AppToast.vue'
 
 const showModal = ref(false)
 const showRoomModal = ref(false)
@@ -506,8 +512,6 @@ const addBuilding = async () => {
     success.value = true
     showModal.value = false
 
-    alert('Building added successfully!')
-
     // Reset form
     form.value = {
       name: '',
@@ -567,7 +571,7 @@ const submitRoom = async () => {
     })
     roomSuccess.value = true
     showRoomModal.value = false
-    alert('Room added!')
+
     await refetch()
   } catch (e) {
     console.error('Room mutation error', e)
@@ -576,6 +580,7 @@ const submitRoom = async () => {
   }
 }
 
+const successEdit = ref(false)
 // Submit edit
 const updateBuilding = async () => {
   try {
@@ -591,7 +596,7 @@ const updateBuilding = async () => {
     })
     showEditModal.value = false
     await refetch()
-    alert('Building updated!')
+    successEdit.value = true
   } catch (err) {
     console.error('Update failed:', err)
   }

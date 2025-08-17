@@ -1,4 +1,10 @@
 <template>
+  <AppToast
+    v-if="success"
+    title="Success"
+    type="success"
+    message="Reading recorded"
+  />
   <div class="max-w-7xl mx-auto">
     <h2 class="text-xl font-semibold text-gray-700">Energy Readings</h2>
     <p class="text-gray-500 mt-2">
@@ -94,18 +100,38 @@
       <!-- Table -->
       <div v-else class="overflow-x-auto">
         <table class="min-w-full bg-white rounded-xl shadow">
-          <thead class="bg-gray-50">
+          <thead class="bg-gray-200">
             <tr>
-              <th class="px-4 py-3 text-left text-sm font-semibold">
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
                 Building
               </th>
-              <th class="px-4 py-3 text-left text-sm font-semibold">Address</th>
-              <th class="px-4 py-3 text-left text-sm font-semibold">Meter</th>
-              <th class="px-4 py-3 text-left text-sm font-semibold">Value</th>
-              <th class="px-4 py-3 text-left text-sm font-semibold">
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Address
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Meter
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Value
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
                 Recorded by
               </th>
-              <th class="px-4 py-3 text-left text-sm font-semibold">Date</th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Date
+              </th>
               <th class="px-4 py-3"></th>
             </tr>
           </thead>
@@ -132,13 +158,13 @@
                 {{ new Date(reading.recordedAt).toLocaleString() }}
               </td>
               <!-- Delete -->
-              <td class="px-4 py-3">
-                <!-- <button
+              <td class="px-4 py-3" v-if="userRole === Role.ADMIN">
+                <button
                   @click="deleteReading(reading.readingId)"
                   class="text-red-500 hover:text-red-700"
                 >
                   <Trash />
-                </button> -->
+                </button>
               </td>
             </tr>
           </tbody>
@@ -156,12 +182,17 @@ import SkeletonMedium from '@/components/skeleton/SkeletonMedium.vue'
 
 import { GET_ALL_ENERGY_READINGS } from '@/graphql/energy-reading.entity'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
-import { RECORD_ENERGY_READING } from '@/graphql/energy-reading.mutations'
+import {
+  RECORD_ENERGY_READING,
+  REMOVE_ENERGY_READING,
+} from '@/graphql/energy-reading.mutations'
 
 import useCustomUser from '@/composables/useCustomUser'
 import { MeterType } from '@/interfaces/energy-reading.interface'
+import { Role } from '@/interfaces/custom.user.interface'
+import AppToast from '@/components/toast/AppToast.vue'
 
-const { restoreCustomUser, userId } = useCustomUser()
+const { restoreCustomUser, userId, userRole } = useCustomUser()
 
 // --- Form state
 const form = ref({
@@ -187,8 +218,9 @@ const buildings = computed(() => buildingsResult.value?.buildings ?? [])
 const { mutate: recordReading, loading: recordLoading } = useMutation(
   RECORD_ENERGY_READING,
 )
-// const { mutate: removeReading } = useMutation(REMOVE_ENERGY_READING)
+const { mutate: removeReading } = useMutation(REMOVE_ENERGY_READING)
 
+const success = ref(false)
 // --- Submit
 const submitReading = async () => {
   try {
@@ -207,22 +239,22 @@ const submitReading = async () => {
       unit: 'kWh',
       recordedById: userId.value || '',
     }
-    alert('Reading recorded ✅')
+    success.value = true
   } catch (e) {
     console.error('Error recording reading', e)
   }
 }
 
 //Delete
-// const deleteReading = async (readingId: string) => {
-//   if (!window.confirm('Delete this reading?')) return
-//   try {
-//     await removeReading({ readingId })
-//     await refetchReadings()
-//   } catch (e) {
-//     console.error('Error deleting reading', e)
-//   }
-// }
+const deleteReading = async (readingId: string) => {
+  if (!window.confirm('Delete this reading?')) return
+  try {
+    await removeReading({ readingId })
+    await refetchReadings()
+  } catch (e) {
+    console.error('Error deleting reading', e)
+  }
+}
 
 // --- Init user
 onMounted(async () => {

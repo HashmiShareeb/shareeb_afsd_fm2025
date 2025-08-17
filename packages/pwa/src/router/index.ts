@@ -52,13 +52,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/MyAccountView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
-  {
-    path: '/user/energy_reading',
-    name: 'user-energy-reading',
-    component: () => import('@/views/user/energy/energyReadings.vue'),
-    meta: { shouldBeAuthenticated: true, role: Role.USER },
-  },
-
   //CONCIERGES
   {
     path: '/concierge/home',
