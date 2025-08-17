@@ -65,4 +65,14 @@ export class EnergyReadingService {
     await this.energyReadingRepository.delete(new ObjectId(readingId))
     return energyReading
   }
+
+  //seeding
+
+  async saveAll(readings: EnergyReading[]): Promise<EnergyReading[]> {
+    return this.energyReadingRepository.save(readings)
+  }
+
+  async truncate(): Promise<void> {
+    await this.energyReadingRepository.deleteMany({})
+  }
 }

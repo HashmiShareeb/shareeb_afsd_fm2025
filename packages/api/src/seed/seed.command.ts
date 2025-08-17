@@ -27,4 +27,26 @@ export class DatabaseSeedCommand {
     await this.seedService.deleteAllBuildings()
     console.info('🏢 Removed buildings')
   }
+
+  // * Energy Readings
+  @Command({
+    command: 'seed:database:energyReadings',
+    describe: 'Seed the database with energy readings from JSON',
+  })
+  async seedEnergyReadings() {
+    console.info('🔋 Start seeding of energy readings')
+    const readings = await this.seedService.addEnergyReadingsFromJson()
+    console.info(`🔋 ${readings.length} energy readings added`)
+  }
+
+  //   * Reset Energy Readings
+  @Command({
+    command: 'seed:reset:energyReadings',
+    describe: 'Delete all data from the energy readings',
+  })
+  async deleteEnergyReadings() {
+    console.info('🔋 Start removal of energy readings')
+    await this.seedService.deleteAllEnergyReadings()
+    console.info('🔋 Removed energy readings')
+  }
 }

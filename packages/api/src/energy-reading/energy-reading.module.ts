@@ -13,5 +13,6 @@ import { BuildingModule } from 'src/building/building.module'
     BuildingModule,
   ],
   providers: [EnergyReadingResolver, EnergyReadingService],
+  exports: [EnergyReadingService],
 })
 export class EnergyReadingModule {}

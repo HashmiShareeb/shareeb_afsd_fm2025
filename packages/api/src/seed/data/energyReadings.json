@@ -1,0 +1,106 @@
+[
+  {
+    "meterType": "GAS",
+    "value": 15,
+    "unit": "m³",
+    "recordedBy": {
+      "name": "adminUser"
+    },
+    "building": {
+      "name": "AF Headquarters",
+      "address": "123 Main Street"
+    },
+    "recordedAt": "2025-08-17T15:38:38.960Z"
+  },
+  {
+    "meterType": "ELECTRICITY",
+    "value": 2200,
+    "unit": "kWh",
+    "recordedBy": {
+      "name": "Marty"
+    },
+    "building": {
+      "name": "The Penta",
+      "address": "TesterStraat 458"
+    },
+    "recordedAt": "2025-08-17T18:40:50.617Z"
+  },
+  {
+    "meterType": "WATER",
+    "value": 18200,
+    "unit": "m³",
+    "recordedBy": {
+      "name": "Marty"
+    },
+    "building": {
+      "name": "The Penta",
+      "address": "TesterStraat 458"
+    },
+    "recordedAt": "2025-08-17T18:41:56.621Z"
+  },
+  {
+    "meterType": "GAS",
+    "value": 230,
+    "unit": "m³",
+    "recordedBy": {
+      "name": "Marty"
+    },
+    "building": {
+      "name": "The Penta",
+      "address": "TesterStraat 458"
+    },
+    "recordedAt": "2025-08-17T18:42:28.301Z"
+  },
+  {
+    "meterType": "ELECTRICITY",
+    "value": 150.5,
+    "unit": "kWh",
+    "recordedBy": {
+      "name": "ChristopheLap"
+    },
+    "building": {
+      "name": "AF Headquarters",
+      "address": "123 Main Street"
+    },
+    "recordedAt": "2025-08-17T19:37:28.079Z"
+  },
+  {
+    "meterType": "ELECTRICITY",
+    "value": 150,
+    "unit": "kWh",
+    "recordedBy": {
+      "name": "Marty"
+    },
+    "building": {
+      "name": "The Penta",
+      "address": "TesterStraat 458"
+    },
+    "recordedAt": "2025-08-17T19:38:00.509Z"
+  },
+  {
+    "meterType": "ELECTRICITY",
+    "value": 230,
+    "unit": "kWh",
+    "recordedBy": {
+      "name": "Marty"
+    },
+    "building": {
+      "name": "The Penta",
+      "address": "TesterStraat 458"
+    },
+    "recordedAt": "2025-08-17T19:38:09.375Z"
+  },
+  {
+    "meterType": "ELECTRICITY",
+    "value": 652,
+    "unit": "kWh",
+    "recordedBy": {
+      "name": "adminUser"
+    },
+    "building": {
+      "name": "The Penta",
+      "address": "TesterStraat 458"
+    },
+    "recordedAt": "2025-08-17T19:39:06.188Z"
+  }
+]

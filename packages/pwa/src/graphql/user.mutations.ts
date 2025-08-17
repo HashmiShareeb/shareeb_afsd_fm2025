@@ -9,3 +9,14 @@ export const ADD_NEW_USER = gql`
     }
   }
 `
+
+export const UPDATE_USER = gql`
+  mutation updateUser($updateUserInput: UpdateUserInput!) {
+    updateUser(updateUserInput: $updateUserInput) {
+      id
+      uid
+      name
+      role
+    }
+  }
+`
