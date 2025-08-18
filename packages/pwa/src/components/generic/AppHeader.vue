@@ -1,11 +1,7 @@
 <template>
   <aside class="w-64 h-full fixed inset-0 shadow z-1">
-    <div class="flex items-center justify-center h-16 border-b mb-4 relative">
-      <span class="text-lg font-semibold text-orange-700 capitalize font-mono"
-        >Nexus FM</span
-      >
-    </div>
-    <nav class="h-full overflow-y-auto">
+    <AppLogo />
+    <nav class="h-full overflow-y-auto mt-6">
       <ul class="flex flex-col px-4 list-none no-underline">
         <li v-if="userRole === Role.MANAGER">
           <router-link
@@ -189,6 +185,7 @@ import {
   Zap,
 } from 'lucide-vue-next'
 import { Role } from '@/interfaces/custom.user.interface'
+import AppLogo from './AppLogo.vue'
 
 // Get Firebase user
 const { firebaseUser } = useFirebase()
