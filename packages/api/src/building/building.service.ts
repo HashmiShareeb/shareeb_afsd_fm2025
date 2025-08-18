@@ -12,7 +12,7 @@ import { CreateBuildingInput } from './dto/create-building.input'
 import { RoomService } from 'src/room/room.service'
 import { CreateRoomInput } from 'src/room/dto/create-room.input'
 import { Room } from 'src/room/entities/room.entity'
-// import { UpdateBuildingInput } from './dto/update-building.input'
+import { UpdateBuildingInput } from './dto/update-building.input'
 
 @Injectable()
 export class BuildingService {
@@ -89,9 +89,34 @@ export class BuildingService {
     return this.buildingRepository.findOneByOrFail({ _id: objID }) // use the _id field to find the object (that is the default field name for the id in mongodb)
   }
 
-  // update(id: number, updateBuildingInput: UpdateBuildingInput) {
-  //   return `This action updates a #${id} building`
+  async updateImage(buildingId: string, imageUrl: string): Promise<Building> {
+    await this.buildingRepository.updateOne(
+      { _id: new ObjectId(buildingId) },
+      { $set: { imageUrl } },
+    )
+    const building = await this.buildingRepository.findOneBy({
+      _id: new ObjectId(buildingId),
+    })
+    if (!building) {
+      throw new NotFoundException(`Building with ID ${buildingId} not found`)
+    }
+    return building
+  }
+
+  // update(buildingId: string, updateBuildingInput: UpdateBuildingInput) {
+  //   return this.buildingRepository.update(buildingId, updateBuildingInput)
   // }
+
+  async update(
+    buildingId: string,
+    updateBuildingInput: UpdateBuildingInput,
+  ): Promise<Building> {
+    await this.buildingRepository.updateOne(
+      { _id: new ObjectId(buildingId) },
+      { $set: { ...updateBuildingInput } },
+    )
+    return this.findOne(buildingId)
+  }
 
   saveAll(buildings: Building[]): Promise<Building[]> {
     return this.buildingRepository.save(buildings)

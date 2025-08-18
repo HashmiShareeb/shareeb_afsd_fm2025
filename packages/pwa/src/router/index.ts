@@ -32,6 +32,7 @@ const routes: RouteRecordRaw[] = [
     name: 'building-details',
     component: () => import('@/views/buildings/_slug.vue'),
     meta: { shouldBeAuthenticated: true },
+    props: true,
   },
   {
     path: '/rounds',
@@ -51,12 +52,17 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/MyAccountView.vue'),
     meta: { shouldBeAuthenticated: true },
   },
-
   //CONCIERGES
   {
     path: '/concierge/home',
     name: 'concierge-home',
     component: () => import('@/views/concierge/HomeScreen.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.MANAGER },
+  },
+  {
+    path: '/concierge/energy_reading',
+    name: 'concierge-energy-reading',
+    component: () => import('@/views/concierge/energy/energyReadings.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.MANAGER },
   },
   // ADMIN ROUTES
@@ -82,6 +88,12 @@ const routes: RouteRecordRaw[] = [
     path: '/admin/rounds',
     name: 'admin-rounds',
     component: () => import('@/views/admin/rounds/IndexView.vue'),
+    meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
+  },
+  {
+    path: '/admin/energy_reading',
+    name: 'admin-energy-reading',
+    component: () => import('@/views/admin/energy/energyReadings.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.ADMIN },
   },
   // {
@@ -171,11 +183,22 @@ router.beforeEach(async (to, from, next) => {
     try {
       await restoreCustomUser() // Fetch user role
       const role = userRole.value
-      if (role !== to.meta.role) {
-        console.log(
-          `Access denied: Required role ${to.meta.role}, but user has ${role}`,
-        )
+      if (!role) {
+        // No role found, redirect to home --> fallback route
         return next({ name: 'home' })
+      }
+      // Redirect to the correct route based on role if not matching
+      if (role !== to.meta.role) {
+        switch (role) {
+          case Role.ADMIN:
+            return next({ name: 'admin' })
+          case Role.MANAGER:
+            return next({ name: 'concierge-home' })
+          case Role.USER:
+            return next({ name: 'userhome' })
+          default:
+            return next({ name: 'home' })
+        }
       }
     } catch (error) {
       console.error('Error fetching user role:', error)

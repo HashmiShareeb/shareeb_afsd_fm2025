@@ -7,6 +7,26 @@ export const CREATE_BUILDING = gql`
       name
       type
       description
+      imageUrl
+    }
+  }
+`
+
+export const UPDATE_BUILDING = gql`
+  mutation UpdateBuilding(
+    $buildingId: String!
+    $updateBuildingInput: UpdateBuildingInput!
+  ) {
+    updateBuilding(
+      buildingId: $buildingId
+      updateBuildingInput: $updateBuildingInput
+    ) {
+      buildingId
+      name
+      address
+      type
+      description
+      imageUrl
     }
   }
 `

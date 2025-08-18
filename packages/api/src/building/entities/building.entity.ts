@@ -32,6 +32,10 @@ export class Building {
   @Field({ nullable: true }) // graphql
   description?: string
 
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  imageUrl?: string // cloudinary image link
+
   // @Field(() => [Room], { nullable: true }) // GraphQL
   // rooms?: Room[]
 }

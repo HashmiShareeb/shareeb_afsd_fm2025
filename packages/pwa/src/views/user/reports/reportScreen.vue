@@ -230,7 +230,7 @@
                 d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
               ></path>
             </svg>
-            {{ loadingRequest ? 'Submitting...' : 'Submit Report' }}
+            {{ loadingRequest ? 'Submitting...' : 'Submit Request' }}
           </button>
         </div>
       </form>
@@ -238,8 +238,8 @@
   </div>
 </template>
 <script setup lang="ts">
-import ReportCard from '@/components/ReportCard.vue'
-import RequestCard from '@/components/RequestCard.vue'
+import ReportCard from '@/components/reports/ReportCard.vue'
+import RequestCard from '@/components/reports/RequestCard.vue'
 import { ref, computed, onMounted, watch } from 'vue'
 import ModalView from '@/components/generic/ModalView.vue'
 import useCustomUser from '@/composables/useCustomUser'
@@ -247,8 +247,8 @@ import { useMutation, useQuery } from '@vue/apollo-composable'
 import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
 import type { BuildingType } from '@/interfaces/building.interface'
 import { CREATE_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.entity'
-import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
-import { CREATE_SPECIAL_REQUEST } from '@/graphql/special-resquest.mutations'
+import { MY_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.mutations'
+import { CREATE_SPECIAL_REQUEST } from '@/graphql/special-request.mutations'
 import { MY_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
 
 const { restoreCustomUser, userId } = useCustomUser()
@@ -280,8 +280,16 @@ const buildings = computed(
     ) || [],
 )
 
-const { result: reportsData, refetch } = useQuery(GET_MAINTENANCE_REPORTS)
-const reports = computed(() => reportsData.value?.maintenancereport || [])
+const { result: reportsData, refetch } = useQuery(
+  MY_MAINTENANCE_REPORT,
+  () => ({
+    userId: userId.value,
+  }),
+  {
+    enabled: computed(() => !!userId.value),
+  },
+)
+const reports = computed(() => reportsData.value?.myMaintenanceReport || [])
 
 const { result: specialRequestData, refetch: refetchRequests } = useQuery(
   MY_SPECIAL_REQUESTS,

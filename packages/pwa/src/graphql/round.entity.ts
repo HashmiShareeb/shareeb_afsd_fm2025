@@ -16,7 +16,12 @@ export const GET_ROUNDS = gql`
         roomId
         order
       }
-      buildingId
+      building {
+        buildingId
+        name
+        address
+        type
+      }
     }
   }
 `
@@ -35,6 +40,7 @@ export const MY_ROUNDS = gql`
         roundRoomId
         roomId
         order
+        status
         checklist {
           itemId
           label
@@ -42,7 +48,12 @@ export const MY_ROUNDS = gql`
           status
         }
       }
-      buildingId
+      building {
+        buildingId
+        name
+        address
+        type
+      }
       status
     }
   }

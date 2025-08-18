@@ -15,6 +15,7 @@ import { RoundRoomModule } from './round-room/round-room.module'
 import { SpecialrequestModule } from './specialrequest/specialrequest.module'
 import { MaintenancereportModule } from './maintenancereport/maintenancereport.module'
 import { ChecklistitemModule } from './checklistitem/checklistitem.module'
+import { EnergyReadingModule } from './energy-reading/energy-reading.module'
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ChecklistitemModule } from './checklistitem/checklistitem.module'
     SpecialrequestModule,
     MaintenancereportModule,
     ChecklistitemModule,
+    EnergyReadingModule,
   ],
   controllers: [AppController],
   providers: [AppService],

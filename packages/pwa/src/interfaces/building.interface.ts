@@ -3,9 +3,10 @@ export interface BuildingType {
   name: string
   address: string
   type: string
-  description?: string
+  description: string
   createdAt?: Date
   updatedAt?: Date
+  imgUrl?: string
 
   rooms?: Array<{
     roomId: string

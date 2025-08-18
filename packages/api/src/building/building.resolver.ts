@@ -13,8 +13,7 @@ import { CreateBuildingInput } from './dto/create-building.input'
 import { Room } from 'src/room/entities/room.entity'
 import { CreateRoomInput } from 'src/room/dto/create-room.input'
 import { RoomService } from 'src/room/room.service'
-
-// import { UpdateBuildingInput } from './dto/update-building.input'
+import { UpdateBuildingInput } from './dto/update-building.input'
 
 @Resolver(() => Building)
 export class BuildingResolver {
@@ -52,15 +51,6 @@ export class BuildingResolver {
     return this.buildingService.addRoomToBuilding(buildingId, createRoomInput)
   }
 
-  // @ResolveField(() => [Room], { nullable: true })
-  // async rooms(@Parent() building: Building): Promise<Room[]> {
-  //   const buildingId = building._id.toString() // Convert ObjectId to string
-  //   console.log('Fetching rooms for buildingId:', buildingId) // Debug
-  //   const rooms = await this.roomService.findByBuildingId(buildingId)
-  //   console.log('Found rooms:', rooms) // Debug
-  //   return rooms
-  // }
-
   @ResolveField(() => [Room], { nullable: true })
   async rooms(@Parent() building: Building): Promise<Room[]> {
     const buildingId = building._id.toString()
@@ -70,15 +60,13 @@ export class BuildingResolver {
     return rooms
   }
 
-  // @Mutation(() => Building)
-  // updateBuilding(
-  //   @Args('updateBuildingInput') updateBuildingInput: UpdateBuildingInput,
-  // ) {
-  //   return this.buildingService.update(
-  //     updateBuildingInput.id,
-  //     updateBuildingInput,
-  //   )
-  // }
+  @Mutation(() => Building)
+  updateBuilding(
+    @Args('buildingId') buildingId: string,
+    @Args('updateBuildingInput') updateBuildingInput: UpdateBuildingInput,
+  ) {
+    return this.buildingService.update(buildingId, updateBuildingInput)
+  }
 
   @Mutation(() => Building, { name: 'removeBuilding' })
   async removeBuilding(
@@ -90,8 +78,19 @@ export class BuildingResolver {
     return building
   }
 
-  // Extra queries for building logic
+  @Mutation(() => Building, { name: 'updateBuildingImage' })
+  async updateBuildingImage(
+    @Args('buildingId', { type: () => String }) buildingId: string,
+    @Args('imageUrl', { type: () => String }) imageUrl: string,
+  ): Promise<Building | null> {
+    const building = await this.buildingService.findOne(buildingId)
+    if (!building) return null
+    building.imageUrl = imageUrl
+    await this.buildingService.update(buildingId, building)
+    return building
+  }
 
+  // Extra queries for building logic
   @Query(() => Building, { name: 'buildingByName', nullable: true })
   findByName(
     @Args('name', { type: () => String }) name: string,
@@ -116,5 +115,12 @@ export class BuildingResolver {
     @Args('name', { type: () => String }) name: string,
   ): Promise<boolean> {
     return this.buildingService.existsByName(name)
+  }
+
+  @Query(() => Building, { name: 'findBuildingById', nullable: true })
+  async findBuildingById(
+    @Args('buildingId', { type: () => String }) buildingId: string,
+  ): Promise<Building | null> {
+    return this.buildingService.findOne(buildingId)
   }
 }

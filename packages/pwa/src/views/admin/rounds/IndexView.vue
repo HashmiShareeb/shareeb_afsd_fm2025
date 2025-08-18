@@ -1,4 +1,6 @@
 <template>
+  <AppToast v-if="success" type="success" title="Round Added Successfully" />
+  <AppToast v-if="error" type="error" :title="error.message" />
   <div class="flex justify-between items-center mb-6">
     <div class="inline-flex items-center gap-2">
       <!-- <Building
@@ -14,25 +16,25 @@
       Add +
     </button>
   </div>
+  <!-- Skeleton -->
+  <div
+    v-if="loading"
+    class="mb-3 p-4 rounded-xl bg-white/50 shadow animate-pulse flex justify-between items-center"
+  >
+    <div class="space-y-2 flex-1">
+      <div class="h-5 w-3/4 bg-gray-200 rounded"></div>
+      <div class="h-4 w-1/2 bg-gray-200 rounded"></div>
+    </div>
+    <div class="h-5 w-16 bg-gray-200 rounded-full"></div>
+  </div>
   <div>
     <ul>
-      <li
+      <roundsList
         v-for="round in rounds"
-        :key="round.id"
-        class="mb-2 p-3 bg-white rounded shadow flex justify-between items-center"
-      >
-        <div>
-          <span class="font-medium text-gray-800">{{ round.name }}</span>
-          <span class="text-gray-500 text-sm ml-2">
-            Assigned to: {{ round.assignedTo?.name || 'N/A' }}
-          </span>
-        </div>
-        <div>
-          <span class="text-gray-400 text-xs uppercase">{{
-            round.status
-          }}</span>
-        </div>
-      </li>
+        :key="round.roundId"
+        :myRounds="round"
+      />
+
       <li v-if="!rounds.length" class="text-gray-400 text-center py-4">
         No rounds found.
       </li>
@@ -149,13 +151,43 @@
         </button>
       </div>
 
-      <button
-        type="submit"
-        class="btn-primary rounded-full mt-4"
-        :disabled="loading"
-      >
-        {{ loading ? 'Creating...' : 'Add Round' }}
-      </button>
+      <div class="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          @click="showModal = false"
+          class="px-4 py-2.5 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="btn-primary rounded-md transition flex items-center justify-center"
+          :disabled="loading"
+        >
+          <svg
+            v-if="loading"
+            class="animate-spin h-5 w-5 mr-2 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            ></circle>
+            <path
+              class="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+          {{ loading ? 'Submitting...' : 'Submit Round' }}
+        </button>
+      </div>
 
       <p v-if="success" class="text-green-600 text-sm mt-2">Round added!</p>
       <p v-if="error" class="text-red-600 text-sm mt-2">{{ error.message }}</p>
@@ -173,6 +205,8 @@ import { GET_MANAGERS } from '@/graphql/user.query'
 import type { BuildingType } from '@/interfaces/building.interface'
 import ModalView from '@/components/generic/ModalView.vue'
 import { XIcon } from 'lucide-vue-next'
+import roundsList from '@/components/rounds/roundsList.vue'
+import AppToast from '@/components/toast/AppToast.vue'
 
 const { result: roundsData, refetch } = useQuery(GET_ROUNDS)
 const rounds = computed(() => roundsData.value?.rounds || [])

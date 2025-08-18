@@ -8,6 +8,7 @@ export const GET_BUILDINGS = gql`
       address
       type
       description
+      imageUrl
     }
   }
 `
@@ -20,6 +21,7 @@ export const GET_ALL_BUILDINGS_WITH_ROOMS = gql`
       address
       type
       description
+      imageUrl
       rooms {
         roomId
         name
@@ -32,16 +34,38 @@ export const GET_ALL_BUILDINGS_WITH_ROOMS = gql`
 `
 
 export const GET_BUILDING_BY_ID = gql`
-  query getBuildingWithRooms($buildingId: String!) {
+  query getBuildingById($buildingId: String!) {
     building(buildingId: $buildingId) {
+      buildingId
       name
       address
+      type
+      description
+      imageUrl
       rooms {
         roomId
         name
         capacity
         floor
-        buildingId
+      }
+    }
+  }
+`
+
+export const GET_BUILDING_BY_NAME = gql`
+  query GetBuildingByName($name: String!) {
+    buildingByName(name: $name) {
+      buildingId
+      name
+      address
+      type
+      description
+      imageUrl
+      rooms {
+        roomId
+        name
+        floor
+        capacity
       }
     }
   }

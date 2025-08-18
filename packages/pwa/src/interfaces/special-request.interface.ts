@@ -1,3 +1,4 @@
+import type { BuildingType } from './building.interface'
 import type { CustomUser } from './custom.user.interface'
 
 export enum SpecialRequestStatus {
@@ -17,4 +18,5 @@ export interface SpecialRequestType {
   updatedAt: Date
   roomId: string
   buildingId: string
+  building: BuildingType
 }

@@ -2,12 +2,9 @@
   <div
     class="bg-white rounded-xl shadow-sm p-5 mb-4 border-l-4 transition-all hover:shadow-md"
     :class="{
-      'border-l-orange-500':
-        specialRequest.status === SpecialRequestStatus.PENDING,
-      'border-l-blue-500':
-        specialRequest.status === SpecialRequestStatus.APPROVED,
-      'border-l-green-500':
-        specialRequest.status === SpecialRequestStatus.REJECTED,
+      'border-l-orange-500': report.status === ReportStatus.PENDING,
+      'border-l-blue-500': report.status === ReportStatus.IN_PROGRESS,
+      'border-l-green-500': report.status === ReportStatus.RESOLVED,
     }"
   >
     <div
@@ -16,37 +13,37 @@
       <div>
         <div class="flex items-center gap-2">
           <h3 class="font-semibold text-lg text-gray-800">
-            {{ specialRequest.title }}
+            {{ report.title }}
           </h3>
           <span
             class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
             :class="{
               'bg-orange-100 text-orange-800':
-                specialRequest.status === SpecialRequestStatus.PENDING,
+                report.status === ReportStatus.PENDING,
               'bg-blue-100 text-blue-800':
-                specialRequest.status === SpecialRequestStatus.APPROVED,
+                report.status === ReportStatus.IN_PROGRESS,
               'bg-green-100 text-green-800':
-                specialRequest.status === SpecialRequestStatus.REJECTED,
+                report.status === ReportStatus.RESOLVED,
             }"
           >
-            {{ specialRequest.status }}
+            {{ report.status }}
           </span>
         </div>
-        <p class="text-gray-600 mt-2">{{ specialRequest.description }}</p>
+        <p class="text-gray-600 mt-2">{{ report.description }}</p>
 
         <div class="flex flex-wrap gap-3 mt-4">
           <div class="flex items-center text-sm text-gray-500">
             <UserRoundIcon class="inline-block w-4 h-4 mr-1" />
-            {{ specialRequest.requestedBy?.name || 'You' }}
+            {{ report.reportedBy?.name || 'You' }}
           </div>
           <div class="flex items-center text-sm text-gray-500">
             <Calendar class="inline-block w-4 h-4 mr-1" />
-            {{ new Date(specialRequest.requestedAt).toLocaleDateString() }}
+            {{ new Date(report.reportedAt).toLocaleDateString() }}
           </div>
           <div class="flex items-center text-sm text-gray-500">
             <Clock3Icon class="inline-block w-4 h-4 mr-1" />
             {{
-              new Date(specialRequest.requestedAt).toLocaleTimeString([], {
+              new Date(report.reportedAt).toLocaleTimeString([], {
                 hour: '2-digit',
                 minute: '2-digit',
               })
@@ -67,11 +64,7 @@
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
             </svg>
-            {{
-              buildings.find(
-                (b: BuildingType) => b.buildingId === specialRequest.buildingId,
-              )?.name || 'Unknown Building'
-            }}
+            {{ report.building?.name || 'Building not specified' }}
           </div>
         </div>
       </div>
@@ -87,11 +80,8 @@
 </template>
 
 <script setup lang="ts">
+import { ReportStatus, type ReportType } from '@/interfaces/report.interface'
 import type { BuildingType } from '@/interfaces/building.interface'
-import {
-  SpecialRequestStatus,
-  type SpecialRequestType,
-} from '@/interfaces/special-request.interface'
 import {
   UserRoundIcon,
   Calendar,
@@ -100,8 +90,8 @@ import {
 } from 'lucide-vue-next'
 
 defineProps({
-  specialRequest: {
-    type: Object as () => SpecialRequestType,
+  report: {
+    type: Object as () => ReportType,
     required: true,
   },
   buildings: {

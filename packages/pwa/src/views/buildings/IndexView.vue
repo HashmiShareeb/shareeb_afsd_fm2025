@@ -5,7 +5,7 @@
       Here you can view all buildings and their details.
     </p>
 
-    <div v-if="loading">Loading...</div>
+    <div v-if="loading" class="animate-pulse text-gray-400">Loading...</div>
 
     <div
       v-else
@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import BuildingCards from '@/components/buildingCards.vue'
+import BuildingCards from '@/components/buildings/buildingCards.vue'
 import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
 import { useQuery } from '@vue/apollo-composable'
 import { computed } from 'vue'

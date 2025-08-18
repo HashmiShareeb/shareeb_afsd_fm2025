@@ -7,7 +7,6 @@
         firebaseUser?.displayName || 'displayName'
       }}</span>
     </h1>
-    <p class="text-gray-600 mt-2">Your tasks and rounds for today:</p>
 
     <div>
       <!-- Widget Section -->
@@ -20,7 +19,9 @@
             </div>
             <div>
               <p class="text-sm">Open Reports</p>
-              <p class="text-2xl font-bold text-gray-600 mt-1"></p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{ rounds?.length || 0 }}
+              </p>
             </div>
           </div>
         </div>
@@ -33,7 +34,13 @@
             </div>
             <div>
               <p class="text-sm">Pending Requests</p>
-              <p class="text-2xl font-bold text-gray-600 mt-1"></p>
+              <p class="text-2xl font-bold text-gray-600 mt-1">
+                {{
+                  rounds.filter(
+                    (r: Round) => r.status === RoundStatus.IN_PROGRESS,
+                  ).length
+                }}
+              </p>
             </div>
           </div>
         </div>
@@ -61,6 +68,7 @@
 
     <!-- Rounds to do -->
     <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
+    <p class="text-gray-600 mt-2">Your tasks and rounds for today:</p>
 
     <div v-if="userRole === Role.MANAGER">
       <div
@@ -93,7 +101,15 @@
 
         <div class="p-4" v-show="expanded[idx]">
           <!-- Color-coded status -->
-
+          <div class="flex items-center gap-2 mb-2">
+            <MapPin class="text-orange-500" />
+            <span class="text-sm font-semibold flex items-center">
+              {{ round.building?.name || 'No building assigned' }}
+              <span v-if="round.building?.type" class="ml-2 text-gray-400">
+                ({{ round.building.type }})
+              </span>
+            </span>
+          </div>
           <!-- Progress bar -->
           <div class="mb-4">
             <div class="flex justify-between items-center mb-1">
@@ -174,6 +190,7 @@ import {
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ChevronDown, CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
+import { MapPin } from 'lucide-vue-next'
 
 const { firebaseUser } = useFirebase()
 const { userRole, userId } = useCustomUser()
@@ -315,13 +332,13 @@ const completedCount = (round: Round) =>
 const getStatusColor = (status: string): string => {
   switch (status) {
     case RoundStatus.PLANNED:
-      return 'bg-blue-300 text-blue-500'
+      return 'bg-blue-300 text-blue-800'
     case RoundStatus.IN_PROGRESS:
-      return 'bg-yellow-300 text-yellow-500'
+      return 'bg-yellow-300 text-yellow-800'
     case RoundStatus.COMPLETED:
-      return 'bg-green-300 text-gray-700'
+      return 'bg-green-300 text-gray-800'
     default:
-      return 'bg-gray-300 text-gray-700'
+      return 'bg-gray-300 text-gray-800'
   }
 }
 
