@@ -69,6 +69,9 @@
         no energy reading data available for this building
       </p>
     </div>
+
+    <!-- progress tracker should be here -->
+    <LiveProgress :building-id="building.buildingId" />
   </div>
 </template>
 
@@ -77,15 +80,21 @@ import { useQuery } from '@vue/apollo-composable'
 import { useRoute } from 'vue-router'
 import { GET_BUILDING_BY_ID } from '@/graphql/building.entity'
 import placeholderImage from '@/assets/placeholder-image.jpg'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import SkeletonLarge from '@/components/skeleton/SkeletonLarge.vue'
 //import MiniChart from '@/components/charts/MiniChart.vue'
 import EnergyLineChart from '@/components/charts/EnergyLineChart.vue'
 import { GET_ENERGY_READINGS_BY_BUILDING } from '@/graphql/energy-reading.entity'
 import BarChart from '@/components/charts/BarChart.vue'
+import LiveProgress from '@/components/charts/LiveProgess.vue'
 
 const route = useRoute()
-const { result, loading, error } = useQuery(GET_BUILDING_BY_ID, {
+const {
+  result,
+  loading,
+  error,
+  refetch: refetchBuildingById,
+} = useQuery(GET_BUILDING_BY_ID, {
   buildingId: route.params.slug,
 })
 
@@ -101,4 +110,9 @@ const buildingEnergyReadings = computed(
 
 console.log(buildingEnergyReadings)
 console.log('slug from URL →', route.params.slug)
+
+onMounted(() => {
+  console.log('Building data:', building.value)
+  refetchBuildingById()
+})
 </script>

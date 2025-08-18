@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-xl font-semibold mt-8 text-gray-700">Buildings Overview</h2>
+    <h2 class="text-xl font-semibold mb-4 text-gray-700">Buildings Overview</h2>
     <p class="text-gray-500 mt-2">
       Here you can view all buildings and their details.
     </p>
@@ -30,8 +30,19 @@
 import BuildingCards from '@/components/buildings/buildingCards.vue'
 import { GET_ALL_BUILDINGS_WITH_ROOMS } from '@/graphql/building.entity'
 import { useQuery } from '@vue/apollo-composable'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 
-const { result, loading, error } = useQuery(GET_ALL_BUILDINGS_WITH_ROOMS)
+const { result, loading, error, refetch } = useQuery(
+  GET_ALL_BUILDINGS_WITH_ROOMS,
+)
 const buildings = computed(() => result.value?.buildings ?? [])
+
+// Example: Refetch buildings when needed
+async function refreshBuildings() {
+  await refetch()
+}
+
+onMounted(() => {
+  refreshBuildings()
+})
 </script>

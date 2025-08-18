@@ -187,4 +187,10 @@ export class RoundsService {
   truncate(): Promise<void> {
     return this.roundRepository.clear()
   }
+
+  async findByBuilding(buildingId: string): Promise<Round[]> {
+    return this.roundRepository.find({
+      where: { buildingId: new ObjectId(buildingId) },
+    })
+  }
 }

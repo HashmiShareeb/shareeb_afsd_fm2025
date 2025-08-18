@@ -331,7 +331,6 @@ const submitReport = async () => {
     await createReport({
       input: { ...form.value },
     })
-    await refetch()
     showModal.value = false
     form.value = {
       title: '',
@@ -340,6 +339,7 @@ const submitReport = async () => {
       reportedById: userId.value || '',
       buildingId: '',
     }
+    await refetch()
   } catch (err) {
     console.error('Error creating report:', err)
   }
@@ -350,7 +350,7 @@ const submitRequest = async () => {
     await createRequest({
       input: { ...requestForm.value },
     })
-    await refetchRequests()
+
     showModal.value = false
     requestForm.value = {
       title: '',
@@ -359,6 +359,7 @@ const submitRequest = async () => {
       requestedById: userId.value || '',
       buildingId: '',
     }
+    await refetchRequests()
   } catch (err) {
     console.error('Error creating request:', err)
   }
@@ -402,6 +403,9 @@ onMounted(async () => {
   await restoreCustomUser()
   form.value.reportedById = userId.value || ''
   requestForm.value.requestedById = userId.value || ''
+
+  await refetchRequests()
+  await refetch()
 })
 
 console.log('Special Requests:', specialRequests.value)

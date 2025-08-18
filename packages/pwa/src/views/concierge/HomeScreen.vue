@@ -195,7 +195,7 @@ import { MapPin } from 'lucide-vue-next'
 const { firebaseUser } = useFirebase()
 const { userRole, userId } = useCustomUser()
 
-const { result: roundsData } = useQuery(
+const { result: roundsData, refetch: refetchRounds } = useQuery(
   MY_ROUNDS,
   () => ({ userId: userId.value }),
   { enabled: computed(() => !!userId.value) },
@@ -207,66 +207,6 @@ const rounds = computed(() => roundsData.value?.myRounds || [])
 const { mutate: updateChecklistItemMutation } = useMutation(
   UPDATE_CHECKLIST_ITEM,
 )
-// const handleChecklistChange = async (
-//   roundId: string,
-//   roundRoomId: string,
-//   item: ChecklistItem,
-// ) => {
-//   const newStatus =
-//     item.status === ChecklistItemStatus.OK
-//       ? ChecklistItemStatus.NOT_CHECKED
-//       : ChecklistItemStatus.OK
-
-//   const roundIndex = rounds.value.findIndex((r: Round) => r.roundId === roundId)
-//   if (roundIndex !== -1) {
-//     const roomIndex = rounds.value[roundIndex].rooms.findIndex(
-//       (r: RoundRoom) => r.roundRoomId === roundRoomId,
-//     )
-//     if (roomIndex !== -1) {
-//       const itemIndex = rounds.value[roundIndex].rooms[
-//         roomIndex
-//       ].checklist.findIndex((i: ChecklistItem) => i.itemId === item.itemId)
-
-//       if (itemIndex !== -1) {
-//         // Clone the checklist array and update locally
-//         const updatedChecklist = [
-//           ...rounds.value[roundIndex].rooms[roomIndex].checklist,
-//         ]
-//         updatedChecklist[itemIndex] = {
-//           ...updatedChecklist[itemIndex],
-//           status: newStatus,
-//         }
-
-//         // Replace in the rooms array
-//         const updatedRoom = {
-//           ...rounds.value[roundIndex].rooms[roomIndex],
-//           checklist: updatedChecklist,
-//         }
-
-//         // Replace in the rounds array
-//         const updatedRooms = [...rounds.value[roundIndex].rooms]
-//         updatedRooms[roomIndex] = updatedRoom
-
-//         rounds.value[roundIndex] = {
-//           ...rounds.value[roundIndex],
-//           rooms: updatedRooms,
-//         }
-//       }
-//     }
-//   }
-
-//   // Send mutation
-//   try {
-//     await updateChecklistItemMutation({
-//       roundId,
-//       roundRoomId,
-//       itemId: item.itemId,
-//       status: newStatus,
-//     })
-//   } catch (err) {
-//     console.error('Failed to update checklist item', err)
-//   }
-// }
 
 const handleChecklistChange = async (
   round: Round, // the round object
@@ -275,26 +215,14 @@ const handleChecklistChange = async (
 ) => {
   const newStatus = item.status === 'OK' ? 'NOT_CHECKED' : 'OK'
 
-  await updateChecklistItemMutation(
-    {
-      roundId: round.roundId,
-      roundRoomId: room.roundRoomId,
-      itemId: item.itemId,
-      status: newStatus,
-    },
-    {
-      optimisticResponse: {
-        updateChecklistItem: {
-          __typename: 'Checklistitem',
-          itemId: item.itemId,
-          label: item.label,
-          notes: item.notes,
-          status: newStatus,
-        },
-      },
-    },
-  )
+  await updateChecklistItemMutation({
+    roundId: round.roundId,
+    roundRoomId: room.roundRoomId,
+    itemId: item.itemId,
+    status: newStatus,
+  })
   // item.status = newStatus
+  await refetchRounds()
 }
 const expanded = ref<boolean[]>([])
 function toggleExpand(index: number) {

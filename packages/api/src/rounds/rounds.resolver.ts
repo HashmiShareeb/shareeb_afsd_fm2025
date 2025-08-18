@@ -127,4 +127,11 @@ export class RoundsResolver {
   removeRound(@Args('roundId', { type: () => String }) roundId: string) {
     return this.roundsService.remove(roundId)
   }
+
+  @Query(() => [Round], { name: 'roundsByBuilding' })
+  async roundsByBuilding(
+    @Args('buildingId', { type: () => String }) buildingId: string,
+  ): Promise<Round[]> {
+    return this.roundsService.findByBuilding(buildingId)
+  }
 }
