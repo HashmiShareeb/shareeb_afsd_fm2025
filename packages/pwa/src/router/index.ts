@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/HomeScreen.vue'),
   },
   {
-    path: '/user',
+    path: '/docent',
     name: 'userhome',
     component: () => import('@/views/user/HomeScreen.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.USER },
@@ -54,7 +54,7 @@ const routes: RouteRecordRaw[] = [
   },
   //CONCIERGES
   {
-    path: '/concierge/home',
+    path: '/concierge',
     name: 'concierge-home',
     component: () => import('@/views/concierge/HomeScreen.vue'),
     meta: { shouldBeAuthenticated: true, role: Role.MANAGER },

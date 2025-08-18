@@ -58,7 +58,9 @@
 </template>
 
 <script lang="ts">
+import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
+import { Role } from '@/interfaces/custom.user.interface'
 import type { AuthError } from 'firebase/auth'
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -68,6 +70,7 @@ export default {
     // Composables
     const { login, firebaseUser } = useFirebase()
     const { replace } = useRouter()
+    const { userRole } = useCustomUser()
 
     // Logic
     const loginCredentials = ref({
@@ -80,7 +83,13 @@ export default {
     const handleLogin = () => {
       login(loginCredentials.value.email, loginCredentials.value.password)
         .then(() => {
-          replace('/')
+          if (userRole.value === Role.ADMIN) {
+            replace('/admin')
+          } else if (userRole.value === Role.MANAGER) {
+            replace('/concierge')
+          } else {
+            replace('/docent')
+          }
         })
         .catch((err: AuthError) => {
           error.value = err.message
@@ -92,6 +101,7 @@ export default {
       loginCredentials,
       error,
       handleLogin,
+      userRole,
     }
   },
 }

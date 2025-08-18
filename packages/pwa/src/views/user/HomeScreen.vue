@@ -104,9 +104,7 @@
       </nav>
       <div
         class="flex items-center space-x-2"
-        v-if="
-          activeTab === 'reports' && filteredReports && filteredReports.length
-        "
+        v-if="activeTab === 'reports' && filteredReports"
       >
         <label for="statusFilter" class="text-sm text-gray-600">Filter:</label>
         <select
@@ -124,6 +122,7 @@
     </div>
 
     <!-- Reports Tab -->
+
     <div
       v-if="activeTab === 'reports'"
       class="bg-white shadow rounded-lg overflow-hidden"
@@ -175,14 +174,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
                   class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
-                  :class="{
-                    'bg-orange-100 text-orange-800':
-                      report.status === ReportStatus.PENDING,
-                    'bg-blue-100 text-blue-800':
-                      report.status === ReportStatus.IN_PROGRESS,
-                    'bg-green-100 text-green-800':
-                      report.status === ReportStatus.RESOLVED,
-                  }"
+                  :class="getStatusReportColor(report.status)"
                 >
                   {{ report.status }}
                 </span>
@@ -251,15 +243,8 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
-                  class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
-                  :class="{
-                    'bg-orange-100 text-orange-800':
-                      request.status === 'PENDING',
-                    'bg-blue-100 text-blue-800':
-                      request.status === 'IN_PROGRESS',
-                    'bg-green-100 text-green-800':
-                      request.status === 'RESOLVED',
-                  }"
+                  class="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full uppercase"
+                  :class="getStatusColor(request.status)"
                 >
                   {{ request.status }}
                 </span>
@@ -288,10 +273,7 @@ import { CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { ReportStatus, type ReportType } from '@/interfaces/report.interface'
 import { MY_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
-// import {
-//   SpecialRequestStatus,
-//   type SpecialRequestType,
-// } from '@/interfaces/special-request.interface'
+import { SpecialRequestStatus } from '@/interfaces/special-request.interface'
 
 const { firebaseUser } = useFirebase()
 const { restoreCustomUser, userId } = useCustomUser()
@@ -343,4 +325,30 @@ const filteredReports = computed(() => {
     (report: ReportType) => report.status === selectedStatus.value,
   )
 })
+
+const getStatusColor = (status: string): string => {
+  switch (status) {
+    case SpecialRequestStatus.PENDING:
+      return 'bg-orange-100 text-orange-800'
+    case SpecialRequestStatus.APPROVED:
+      return 'bg-blue-100 text-blue-800'
+    case SpecialRequestStatus.REJECTED:
+      return 'bg-red-100 text-red-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const getStatusReportColor = (status: string): string => {
+  switch (status) {
+    case ReportStatus.PENDING:
+      return 'bg-orange-100 text-orange-800'
+    case ReportStatus.IN_PROGRESS:
+      return 'bg-blue-100 text-blue-800'
+    case ReportStatus.RESOLVED:
+      return 'bg-green-100 text-green-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
 </script>

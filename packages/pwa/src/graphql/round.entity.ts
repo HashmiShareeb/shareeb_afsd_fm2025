@@ -68,8 +68,13 @@ export const GET_ROUNDS_BY_BUILDING = gql`
         id
         name
       }
+      building {
+        buildingId
+        name
+      }
       rooms {
         roundRoomId
+        roomName
         roomId
         status
       }

@@ -28,7 +28,7 @@
         <div class="w-full bg-gray-200 rounded-full h-2">
           <div
             :style="{ width: progress(round) + '%' }"
-            class="bg-orange-500 h-2 rounded-full transition-all"
+            class="bg-green-500 h-2 rounded-full transition-all"
           ></div>
         </div>
         <p class="text-xs text-gray-600 mt-1">
@@ -91,7 +91,7 @@ onMounted(() => {
 
 <script setup lang="ts">
 import { useQuery } from '@vue/apollo-composable'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, watch } from 'vue'
 import SkeletonLarge from '@/components/skeleton/SkeletonLarge.vue'
 import { CheckIcon, CircleIcon } from 'lucide-vue-next'
 import { GET_ROUNDS_BY_BUILDING } from '@/graphql/round.entity'
@@ -121,4 +121,11 @@ onMounted(() => {
   console.log('Rounds data:', rounds.value)
   refetchRoundsByBuilding()
 })
+
+watch(
+  () => props.buildingId,
+  () => {
+    refetchRoundsByBuilding()
+  },
+)
 </script>

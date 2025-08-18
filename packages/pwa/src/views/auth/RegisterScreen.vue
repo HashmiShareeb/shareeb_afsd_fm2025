@@ -69,26 +69,62 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
+import { ADD_NEW_USER } from '@/graphql/user.mutations'
+import type { AuthError } from 'firebase/auth'
 import useFirebase from '@/composables/useFirebase'
 import { ref } from 'vue'
-import type { AuthError } from 'firebase/auth'
+import { useRouter } from 'vue-router'
+import { useMutation } from '@vue/apollo-composable'
 
-const { register } = useFirebase()
-const newUser = ref({
-  name: '',
-  email: '',
-  password: '',
-})
-const error = ref<AuthError | null>(null)
+export default {
+  setup() {
+    const { register } = useFirebase()
+    const { replace } = useRouter()
+    const { mutate: addUserMutation } = useMutation(ADD_NEW_USER)
+    const newUser = ref({
+      name: '',
+      email: '',
+      password: '',
+    })
 
-const handleRegister = () => {
-  register(newUser.value.name, newUser.value.email, newUser.value.password)
-    .then(user => {
-      console.log('User registered', user)
-    })
-    .catch((err: AuthError) => {
-      error.value = err
-    })
+    const error = ref<AuthError | null>(null)
+
+    const handleRegister = () => {
+      // Register the user in Firebase
+      register(newUser.value.name, newUser.value.email, newUser.value.password)
+        .then(newFirebaseUser => {
+          console.log('🎉 New Firebase user created')
+          console.log(newFirebaseUser)
+          console.log('uid', newFirebaseUser.uid)
+
+          // Register the user in our database with the same uid
+          addUserMutation({
+            myinput: {
+              uid: newFirebaseUser.uid,
+              name: newUser.value.name,
+              role: 'USER',
+            },
+          })
+            .then(() => {
+              console.log('🎉 User created in our database')
+              replace({ name: 'myaccount' })
+            })
+            .catch(err => {
+              console.error(err)
+              error.value = err
+            })
+        })
+        .catch((err: AuthError) => {
+          error.value = err
+        })
+    }
+
+    return {
+      newUser,
+      handleRegister,
+      error,
+    }
+  },
 }
 </script>

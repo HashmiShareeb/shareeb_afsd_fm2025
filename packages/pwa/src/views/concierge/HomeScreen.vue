@@ -191,6 +191,7 @@ import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ChevronDown, CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
 import { MapPin } from 'lucide-vue-next'
+import { watchEffect } from 'vue'
 
 const { firebaseUser } = useFirebase()
 const { userRole, userId } = useCustomUser()
@@ -228,8 +229,6 @@ const expanded = ref<boolean[]>([])
 function toggleExpand(index: number) {
   expanded.value[index] = !expanded.value[index]
 }
-
-import { watchEffect } from 'vue'
 
 watchEffect(() => {
   console.log('rounds from query', rounds.value) //check if rounds are loaded
