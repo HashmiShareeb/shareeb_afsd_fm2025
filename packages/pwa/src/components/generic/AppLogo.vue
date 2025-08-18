@@ -1,11 +1,9 @@
 <template>
-  <div class="mt-2">
-    <img
-      src="/src/assets/nexus_fm_logo.png"
-      alt="Logo"
-      class="w-64 h-[120px] object-cover overflow-auto"
-    />
-  </div>
+  <img
+    src="/src/assets/nexusFM_logo_icon.png"
+    alt="Logo"
+    class="h-32 w-auto object-contain"
+  />
 </template>
 
 <script setup lang="ts"></script>

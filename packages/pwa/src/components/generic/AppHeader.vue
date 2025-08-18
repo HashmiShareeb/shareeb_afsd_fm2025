@@ -1,7 +1,14 @@
 <template>
   <aside class="w-64 h-full fixed inset-0 shadow z-1">
-    <AppLogo />
-    <nav class="h-full overflow-y-auto mt-6">
+    <div class="p-4 border-b">
+      <div class="flex items-center gap-2">
+        <AppLogo class="h-9 w-9" />
+        <span class="text-xl font-semibold text-gray-800 flex items-center h-9"
+          >Nexus FM</span
+        >
+      </div>
+    </div>
+    <nav class="h-full overflow-y-auto mt-4">
       <ul class="flex flex-col px-4 list-none no-underline">
         <li v-if="userRole === Role.MANAGER">
           <router-link
