@@ -101,7 +101,15 @@
 
         <div class="p-4" v-show="expanded[idx]">
           <!-- Color-coded status -->
-
+          <div class="flex items-center gap-2 mb-2">
+            <MapPin class="text-orange-500" />
+            <span class="text-sm font-semibold flex items-center">
+              {{ round.building?.name || 'No building assigned' }}
+              <span v-if="round.building?.type" class="ml-2 text-gray-400">
+                ({{ round.building.type }})
+              </span>
+            </span>
+          </div>
           <!-- Progress bar -->
           <div class="mb-4">
             <div class="flex justify-between items-center mb-1">
@@ -182,6 +190,7 @@ import {
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { ChevronDown, CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
+import { MapPin } from 'lucide-vue-next'
 
 const { firebaseUser } = useFirebase()
 const { userRole, userId } = useCustomUser()
@@ -323,13 +332,13 @@ const completedCount = (round: Round) =>
 const getStatusColor = (status: string): string => {
   switch (status) {
     case RoundStatus.PLANNED:
-      return 'bg-blue-300 text-blue-700'
+      return 'bg-blue-300 text-blue-800'
     case RoundStatus.IN_PROGRESS:
-      return 'bg-yellow-300 text-yellow-700'
+      return 'bg-yellow-300 text-yellow-800'
     case RoundStatus.COMPLETED:
-      return 'bg-green-300 text-gray-700'
+      return 'bg-green-300 text-gray-800'
     default:
-      return 'bg-gray-300 text-gray-700'
+      return 'bg-gray-300 text-gray-800'
   }
 }
 

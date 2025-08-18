@@ -6,6 +6,7 @@ export const GET_ALL_ENERGY_READINGS = gql`
       readingId
       meterType
       value
+      unit
       recordedBy {
         id
         uid
@@ -27,6 +28,27 @@ export const GET_ENERGY_READINGS_BY_BUILDING = gql`
       readingId
       meterType
       value
+      building {
+        buildingId
+        name
+        address
+      }
+      recordedAt
+    }
+  }
+`
+
+export const MY_ENERGY_READINGS = gql`
+  query MyEnergyReading($userId: String!) {
+    myEnergyReadings(userId: $userId) {
+      readingId
+      meterType
+      value
+      unit
+      recordedBy {
+        id
+        name
+      }
       building {
         buildingId
         name

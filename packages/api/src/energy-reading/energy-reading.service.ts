@@ -22,7 +22,9 @@ export class EnergyReadingService {
       unit:
         createEnergyReadingInput.meterType === MeterType.ELECTRICITY
           ? 'kWh'
-          : 'm³',
+          : createEnergyReadingInput.meterType === MeterType.WATER
+            ? 'L'
+            : 'm³',
     }
     return await this.energyReadingRepository.save(reading)
   }
@@ -67,7 +69,6 @@ export class EnergyReadingService {
   }
 
   //seeding
-
   async saveAll(readings: EnergyReading[]): Promise<EnergyReading[]> {
     return this.energyReadingRepository.save(readings)
   }

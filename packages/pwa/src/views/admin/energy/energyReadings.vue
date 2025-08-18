@@ -85,10 +85,6 @@
 
     <!-- TABLE / LIST -->
     <div class="mt-10">
-      <h2 class="text-md font-semibold text-gray-700 mb-4">
-        All Energy Readings
-      </h2>
-
       <!-- Skeleton -->
       <SkeletonMedium v-if="readingsLoading" />
       <!-- Empty -->
@@ -106,83 +102,105 @@
       </div>
 
       <!-- Table -->
-      <div v-else class="overflow-x-auto">
-        <table class="min-w-full bg-white rounded-xl shadow">
-          <thead class="bg-white border-b border-gray-200">
-            <tr>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-              >
-                Building
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-              >
-                Address
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-              >
-                Meter
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-              >
-                Value
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-              >
-                Recorded by
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
-              >
-                Date
-              </th>
-              <th class="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr
-              v-for="reading in energyReadings"
-              :key="reading.readingId"
-              class="hover:bg-orange-50 transition"
+      <div v-else>
+        <div class="flex items-center space-x-2 justify-between mb-2">
+          <h2 class="text-md font-semibold text-gray-700 mb-4">
+            All Energy Readings
+          </h2>
+          <div>
+            <label for="statusFilter" class="text-sm text-gray-600 mr-2"
+              >Filter:</label
             >
-              <td class="px-4 py-3 text-sm font-medium">
-                {{ reading.building?.name }}
-              </td>
-              <td class="px-4 py-3 text-sm text-gray-600">
-                {{ reading.building?.address }}
-              </td>
-              <td class="px-4 py-3 text-sm">{{ reading.meterType }}</td>
-              <td class="px-4 py-3 text-sm">
-                {{ reading.value }} {{ reading.unit }}
-              </td>
-              <td class="px-4 py-3 text-sm">
-                {{ reading.recordedBy?.name || 'Unknown' }}
-              </td>
-              <td class="px-4 py-3 text-sm">
-                {{ new Date(reading.recordedAt).toLocaleString() }}
-              </td>
-              <!-- Delete -->
-              <td class="px-4 py-3" v-if="userRole === Role.ADMIN">
-                <button
-                  @click="deleteReading(reading.readingId)"
-                  class="text-red-500 hover:text-red-700"
+            <select
+              id="statusFilter"
+              v-model="selectedFilter"
+              class="input border-gray-300 rounded px-2 py-1 text-sm"
+            >
+              <option value="ALL">All</option>
+              <option value="ELECTRICITY">Electricity</option>
+              <option value="WATER">Water</option>
+              <option value="GAS">Gas</option>
+            </select>
+          </div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white rounded-xl shadow">
+            <thead class="bg-white border-b border-gray-200">
+              <tr>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
                 >
-                  <Trash />
-                </button>
-                <!-- <button
+                  Building
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
+                  Address
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
+                  Meter
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
+                  Value
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
+                  Recorded by
+                </th>
+                <th
+                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+                >
+                  Date
+                </th>
+                <th class="px-4 py-3"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr
+                v-for="reading in filteredEnergyReadings"
+                :key="reading.readingId"
+                class="hover:bg-orange-50 transition"
+              >
+                <td class="px-4 py-3 text-sm font-medium">
+                  {{ reading.building?.name }}
+                </td>
+                <td class="px-4 py-3 text-sm text-gray-600">
+                  {{ reading.building?.address }}
+                </td>
+                <td class="px-4 py-3 text-sm">{{ reading.meterType }}</td>
+                <td class="px-4 py-3 text-sm">
+                  {{ reading.value }} {{ reading.unit }}
+                </td>
+                <td class="px-4 py-3 text-sm">
+                  {{ reading.recordedBy?.name || 'Unknown' }}
+                </td>
+                <td class="px-4 py-3 text-sm">
+                  {{ new Date(reading.recordedAt).toLocaleString() }}
+                </td>
+                <!-- Delete -->
+                <td class="px-4 py-3" v-if="userRole === Role.ADMIN">
+                  <button
+                    @click="deleteReading(reading.readingId)"
+                    class="text-red-500 hover:text-red-700"
+                  >
+                    <Trash />
+                  </button>
+                  <!-- <button
                   @click="deleteReading(reading.readingId)"
                   class="text-red-500 hover:text-red-700"
                 >
                   <Trash />
                 </button> -->
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -202,11 +220,16 @@ import {
 } from '@/graphql/energy-reading.mutations'
 
 import useCustomUser from '@/composables/useCustomUser'
-import { MeterType } from '@/interfaces/energy-reading.interface'
+import {
+  MeterType,
+  type energyReadingType,
+} from '@/interfaces/energy-reading.interface'
 import { Role } from '@/interfaces/custom.user.interface'
 import AppToast from '@/components/toast/AppToast.vue'
 
 const { restoreCustomUser, userId, userRole } = useCustomUser()
+
+const selectedFilter = ref('ALL')
 
 // --- Form state
 const form = ref({
@@ -226,6 +249,16 @@ const {
 const energyReadings = computed(
   () => readingsResult.value?.energyReadings ?? [],
 )
+
+const filteredEnergyReadings = computed(() => {
+  console.log('Selected Filter:', selectedFilter.value)
+  if (selectedFilter.value === 'ALL') {
+    return energyReadings.value
+  }
+  return energyReadings.value.filter(
+    (reading: energyReadingType) => reading.meterType === selectedFilter.value,
+  )
+})
 
 const { result: buildingsResult } = useQuery(GET_BUILDINGS)
 const buildings = computed(() => buildingsResult.value?.buildings ?? [])

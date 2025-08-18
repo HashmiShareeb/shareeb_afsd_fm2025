@@ -70,6 +70,11 @@ export class EnergyReadingResolver {
     return this.energyReadingService.findByBuildingId(buildingId)
   }
 
+  @Query(() => [EnergyReading], { name: 'myEnergyReadings' })
+  findMyEnergyReadings(@Args('userId', { type: () => String }) userId: string) {
+    return this.energyReadingService.findByUser(userId)
+  }
+
   // @Mutation(() => EnergyReading)
   // updateEnergyReading(
   //   @Args('updateEnergyReadingInput')

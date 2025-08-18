@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-screen font-sans">
+  <div class="flex h-screen font-sans text-gray-700">
     <AppHeader />
     <main
       class="font-sans flex-grow ml-64 min-h-screen bg-gray-50 overflow-auto"
