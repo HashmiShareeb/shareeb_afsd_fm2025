@@ -183,11 +183,22 @@ router.beforeEach(async (to, from, next) => {
     try {
       await restoreCustomUser() // Fetch user role
       const role = userRole.value
-      if (role !== to.meta.role) {
-        console.log(
-          `Access denied: Required role ${to.meta.role}, but user has ${role}`,
-        )
+      if (!role) {
+        // No role found, redirect to home --> fallback route
         return next({ name: 'home' })
+      }
+      // Redirect to the correct route based on role if not matching
+      if (role !== to.meta.role) {
+        switch (role) {
+          case Role.ADMIN:
+            return next({ name: 'admin' })
+          case Role.MANAGER:
+            return next({ name: 'concierge-home' })
+          case Role.USER:
+            return next({ name: 'userhome' })
+          default:
+            return next({ name: 'home' })
+        }
       }
     } catch (error) {
       console.error('Error fetching user role:', error)

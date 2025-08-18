@@ -141,8 +141,13 @@
             <!-- @change="changeStatus(report.reportId, report.status)" -->
             <td class="px-6 py-4 whitespace-nowrap">
               <select
-                v-model="report.status"
-                @change="changeStatus(report.reportId, report.status)"
+                :value="report.status"
+                @change="
+                  changeStatus(
+                    report.reportId,
+                    ($event.target as HTMLSelectElement).value as ReportStatus,
+                  )
+                "
                 class="input border-gray-300 text-sm rounded"
               >
                 <option value="NEW">New</option>
@@ -154,6 +159,243 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+  <div>
+    <!-- Tabs Navigation -->
+    <div
+      class="border-b border-gray-200 mb-6 flex items-center justify-between"
+    >
+      <nav class="flex space-x-8">
+        <button
+          @click="activeTab = 'reports'"
+          :class="{
+            'py-4 px-1 font-medium text-sm border-b-2 border-orange-500 text-orange-600':
+              activeTab === 'reports',
+            'py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+              activeTab !== 'reports',
+          }"
+        >
+          Recent Reports
+        </button>
+        <button
+          @click="activeTab = 'requests'"
+          :class="{
+            'py-4 px-1 font-medium text-sm border-b-2 border-orange-500 text-orange-600':
+              activeTab === 'requests',
+            'py-4 px-1 font-medium text-sm border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300':
+              activeTab !== 'requests',
+          }"
+        >
+          Special Requests
+        </button>
+      </nav>
+      <!-- <div
+        class="flex items-center space-x-2"
+        v-if="
+          activeTab === 'reports' && filteredReports && filteredReports.length
+        "
+      >
+        <label for="statusFilter" class="text-sm text-gray-600">Filter:</label>
+        <select
+          id="statusFilter"
+          v-model="selectedStatus"
+          class="input border-gray-300 rounded px-2 py-1 text-sm"
+        >
+          <option selected value="">All</option>
+          <option :value="ReportStatus.NEW">New</option>
+          <option :value="ReportStatus.PENDING">Pending</option>
+          <option :value="ReportStatus.IN_PROGRESS">In Progress</option>
+          <option :value="ReportStatus.RESOLVED">Resolved</option>
+        </select>
+      </div> -->
+    </div>
+
+    <!-- Reports Tab -->
+    <div
+      v-if="activeTab === 'reports'"
+      class="bg-white shadow rounded-lg overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-white">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Report
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Requested by
+              </th>
+
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Date
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr
+              v-for="report in reports"
+              :key="report.reportId"
+              class="hover:bg-orange-50"
+            >
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="font-medium text-gray-900">{{ report.title }}</div>
+                <div class="text-gray-500 text-sm mt-1">
+                  {{ report.description }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-gray-900">
+                  {{ report.reportedBy?.name || 'User' }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                {{ new Date(report.reportedAt).toLocaleDateString() }} <br />
+                {{
+                  new Date(report.reportedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <select
+                  :value="report.status"
+                  @change="
+                    changeStatus(
+                      report.reportId,
+                      ($event.target as HTMLSelectElement)
+                        .value as ReportStatus,
+                    )
+                  "
+                  class="input border-gray-300 text-sm rounded"
+                >
+                  <option value="NEW">New</option>
+                  <option value="PENDING">Pending</option>
+                  <option value="IN_PROGRESS">In Progress</option>
+                  <option value="RESOLVED">Resolved</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div v-if="reports.length === 0" class="text-center text-gray-500 py-6">
+        No reports found.
+      </div>
+    </div>
+
+    <!-- Special Requests Tab -->
+    <div
+      v-if="activeTab === 'requests'"
+      class="bg-white shadow rounded-lg overflow-hidden"
+    >
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-white">
+            <tr>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Requests
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Requested by
+              </th>
+
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Date
+              </th>
+              <th
+                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
+              >
+                Status
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white divide-y divide-gray-200">
+            <tr
+              v-for="request in specialRequests"
+              :key="request.requestId"
+              class="hover:bg-orange-50"
+            >
+              <td class="px-6 py-4 whitespace-wrap">
+                <div class="font-medium text-gray-900">{{ request.title }}</div>
+                <div class="text-gray-500 text-sm mt-1">
+                  {{ request.description }}
+                </div>
+              </td>
+
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-gray-900">
+                  {{ request.requestedBy?.name || 'User' }}
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-gray-500">
+                {{ new Date(request.requestedAt).toLocaleDateString() }} <br />
+
+                {{
+                  new Date(request.requestedAt).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                }}
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <!-- <span
+                  class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
+                  :class="{
+                    'bg-orange-100 text-orange-800':
+                      request.status === 'PENDING',
+                    'bg-blue-100 text-blue-800':
+                      request.status === 'IN_PROGRESS',
+                    'bg-green-100 text-green-800':
+                      request.status === 'RESOLVED',
+                  }"
+                >
+                  {{ request.status }}
+                </span> -->
+                <select
+                  :value="request.status"
+                  @change="
+                    changeRequestStatus(
+                      request.requestId,
+                      ($event.target as HTMLSelectElement)
+                        .value as SpecialRequestStatus,
+                    )
+                  "
+                  class="input border-gray-300 text-sm rounded"
+                >
+                  <option value="PENDING">Pending</option>
+                  <option value="APPROVED">Approved</option>
+                  <option value="REJECTED">Rejected</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div
+        v-if="specialRequests.length === 0"
+        class="text-center text-gray-500 py-6"
+      >
+        No requests found.
+      </div>
     </div>
   </div>
 
@@ -239,7 +481,7 @@ import useFirebase from '@/composables/useFirebase'
 import { Building2, UserCog2Icon, UserRoundSearch } from 'lucide-vue-next'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
 import { useMutation, useQuery } from '@vue/apollo-composable'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { GET_MANAGERS } from '@/graphql/user.query'
 import { Role } from '@/interfaces/custom.user.interface'
 import { GET_ROUNDS } from '@/graphql/round.entity'
@@ -247,8 +489,11 @@ import { GET_ROUNDS } from '@/graphql/round.entity'
 import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
 import { UPDATE_STATUS_MAINTENANCE } from '@/graphql/maintenance-report.entity'
 import type { ReportStatus, ReportType } from '@/interfaces/report.interface'
+import { GET_ALL_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
+import type { SpecialRequestStatus } from '@/interfaces/special-request.interface'
+import { UPDATE_STATUS_SPECIAL_REQUEST } from '@/graphql/special-request.mutations'
 // import AppToast from '@/components/toast/AppToast.vue'
-
+const activeTab = ref<'reports' | 'requests'>('reports') // Default to "reports"
 const { userRole } = useCustomUser()
 const { firebaseUser } = useFirebase()
 
@@ -261,24 +506,55 @@ const managers = computed(() => managerData.value?.usersByRole || [])
 const { result: roundData } = useQuery(GET_ROUNDS)
 const rounds = computed(() => roundData.value?.rounds || [])
 
-const { result: reportsData } = useQuery(GET_MAINTENANCE_REPORTS)
+const { result: reportsData, refetch: reportsRefetch } = useQuery(
+  GET_MAINTENANCE_REPORTS,
+)
+// const filteredReports = computed(() => {
+//   if (!selectedStatus.value) return reports.value // Show all reports if no status is selected
+//   return reports.value.filter(
+//     (report: ReportType) => report.status === selectedStatus.value,
+//   )
+// })
 const reports = computed(() => reportsData.value?.maintenancereport || [])
+
+const { result: requestData, refetch: requestsRefetch } = useQuery(
+  GET_ALL_SPECIAL_REQUESTS,
+)
+
+const specialRequests = computed(() => requestData.value?.specialrequest || [])
 
 // const changeStatus = () => {
 //   console.log('test')
 // }
 
 const { mutate: updateStatus } = useMutation(UPDATE_STATUS_MAINTENANCE)
+const { mutate: updateRequestStatus } = useMutation(
+  UPDATE_STATUS_SPECIAL_REQUEST,
+)
 
-const changeStatus = async (
-  reportId: ReportType['reportId'],
-  status: ReportStatus,
-) => {
+const changeStatus = async (reportId: ReportType, status: ReportStatus) => {
   try {
     const response = await updateStatus({
-      requestId: reportId,
-      status: status,
+      reportId,
+      status,
     })
+    await reportsRefetch()
+    console.log('Status updated:', response?.data.updateSpecialRequestStatus)
+  } catch (error) {
+    console.error('Failed to update status:', error)
+  }
+}
+
+const changeRequestStatus = async (
+  requestId: ReportType,
+  status: SpecialRequestStatus,
+) => {
+  try {
+    const response = await updateRequestStatus({
+      requestId,
+      status,
+    })
+    await requestsRefetch()
     console.log('Status updated:', response?.data.updateSpecialRequestStatus)
   } catch (error) {
     console.error('Failed to update status:', error)

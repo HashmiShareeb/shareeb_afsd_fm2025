@@ -100,7 +100,7 @@
       <!-- Table -->
       <div v-else class="overflow-x-auto">
         <table class="min-w-full bg-white rounded-xl shadow">
-          <thead class="bg-gray-200">
+          <thead class="bg-slate-100">
             <tr>
               <th
                 class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase"
@@ -132,14 +132,14 @@
               >
                 Date
               </th>
-              <th class="px-4 py-3"></th>
+              <th class="px-4 py-3" v-if="userRole === Role.ADMIN"></th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
             <tr
               v-for="reading in energyReadings"
               :key="reading.readingId"
-              class="hover:bg-gray-50 transition"
+              class="hover:bg-slate-100 transition"
             >
               <td class="px-4 py-3 text-sm font-medium">
                 {{ reading.building?.name }}

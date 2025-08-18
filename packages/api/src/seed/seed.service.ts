@@ -51,6 +51,7 @@ export class SeedService {
       const er = new EnergyReading()
       er.meterType = energyReading.meterType as MeterType
       er.value = energyReading.value
+
       er.unit = energyReading.unit
       const foundBuilding = await this.buildingService.findByName(
         energyReading.building.name,
