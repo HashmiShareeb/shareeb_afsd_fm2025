@@ -1,10 +1,34 @@
 <template>
   <div>
-    <h1 class="text-2xl font-bold">You are not supposed to see this screen</h1>
-
-    <button class="btn-primary rounded-lg" @click="router.push('/login')">
-      Go to Login
-    </button>
+    <h1 class="text-2xl font-bold" tabindex="0">
+      You are not supposed to see this screen
+    </h1>
+    <div
+      v-if="!firebaseUser"
+      class="flex flex-col items-center mt-8"
+      role="alert"
+      aria-live="polite"
+    >
+      <button
+        class="btn-primary rounded-lg"
+        @click="router.push('/login')"
+        aria-label="Go to Login"
+      >
+        Go to Login
+      </button>
+      <p class="mt-4 text-gray-500 text-sm" tabindex="0">
+        Please log in to continue.
+      </p>
+    </div>
+    <SkeletonLarge
+      v-else
+      class="mt-8"
+      :rows="5"
+      :columns="3"
+      :loading="true"
+      aria-busy="true"
+      aria-label="Loading content"
+    />
   </div>
 </template>
 
@@ -16,6 +40,7 @@ import { useQuery } from '@vue/apollo-composable'
 import { useRouter } from 'vue-router'
 
 import { computed, watch } from 'vue'
+import SkeletonLarge from '@/components/skeleton/SkeletonLarge.vue'
 const { firebaseUser } = useFirebase()
 const router = useRouter()
 
