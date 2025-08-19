@@ -55,40 +55,6 @@
   </div>
 </template>
 
-<!-- <script setup lang="ts">
-import { useQuery } from '@vue/apollo-composable'
-import { computed, onMounted } from 'vue'
-import SkeletonLarge from '@/components/skeleton/SkeletonLarge.vue'
-import { CheckIcon, CircleIcon } from 'lucide-vue-next'
-import { GET_ROUNDS_BY_BUILDING } from '@/graphql/round.entity'
-import { RoundRoomStatus, type Round } from '@/interfaces/round.interface'
-
-const props = defineProps<{ buildingId: string }>()
-
-const {
-  result,
-  loading,
-  refetch: refetchRoundsByBuilding,
-} = useQuery(GET_ROUNDS_BY_BUILDING, {
-  buildingId: props.buildingId,
-  pollInterval: 2000,
-})
-
-const rounds = computed(() => result.value?.roundsByBuilding || [])
-
-const progress = (round: Round) => {
-  const total = round.rooms?.length || 0
-  const done =
-    round.rooms?.filter(r => r.status === RoundRoomStatus.COMPLETED).length || 0
-  return total ? Math.round((done / total) * 100) : 0
-}
-
-onMounted(() => {
-  console.log('Rounds data:', rounds.value)
-  refetchRoundsByBuilding()
-})
-</script> -->
-
 <script setup lang="ts">
 import { useQuery } from '@vue/apollo-composable'
 import { computed, onMounted, watch } from 'vue'

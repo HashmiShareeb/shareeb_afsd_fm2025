@@ -35,12 +35,6 @@ const routes: RouteRecordRaw[] = [
     props: true,
   },
   {
-    path: '/rounds',
-    name: 'rounds',
-    component: () => import('@/views/rounds/indexView.vue'),
-    meta: { shouldBeAuthenticated: true },
-  },
-  {
     path: '/reports',
     name: 'reports',
     component: () => import('@/views/user/reports/reportScreen.vue'),

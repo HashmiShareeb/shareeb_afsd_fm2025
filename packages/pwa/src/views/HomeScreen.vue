@@ -1,135 +1,10 @@
 <template>
   <div>
-    <!-- HomeScreen content -->
-    <h1 class="text-2xl font-bold">
-      Welcome back,
-      <span class="text-orange-500">{{
-        firebaseUser?.displayName || 'displayName'
-      }}</span>
-    </h1>
-    <p class="text-gray-600 mt-2">
-      Here you can manage your buildings and view details.
-    </p>
+    <h1 class="text-2xl font-bold">You are not supposed to see this screen</h1>
 
-    <!-- Widget Section -->
-    <div
-      class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-6"
-      v-if="userRole === Role.USER"
-    >
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center">
-          <div class="p-3 mr-4 bg-orange-50 rounded-lg">
-            <CheckCircle class="text-orange-500 w-8 h-8" />
-          </div>
-          <div>
-            <p class="text-sm">Openstaande Meldingen</p>
-            <p class="text-2xl font-bold text-gray-700 mt-1">3</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center">
-          <div class="p-3 rounded-lg bg-yellow-50 mr-4">
-            <Clock class="text-yellow-500 w-8 h-8" />
-          </div>
-          <div>
-            <p class="text-sm">Lopende Verzoeken</p>
-            <p class="text-2xl font-bold text-gray-700 mt-1">2</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-        <div class="flex items-center">
-          <div class="p-3 rounded-lg bg-green-50 mr-4">
-            <Check class="text-green-500 w-8 h-8" />
-          </div>
-          <div>
-            <p class="text-sm">Afgerond</p>
-            <p class="text-2xl font-bold text-gray-700 mt-1">7</p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div
-      class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"
-      v-if="userRole === Role.USER"
-    >
-      <!-- Manage Buildings (visible only to ADMIN) -->
-      <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
-        <Building class="text-orange-500 w-8 h-8" />
-        <div>
-          <h2 class="text-lg font-semibold">Manage Buildings</h2>
-          <p class="text-gray-600 text-sm">
-            Add, edit, or remove buildings. (this is for the facility manager
-            example) you should see this as an ADMIN
-          </p>
-        </div>
-      </div>
-      <!-- View Details -->
-      <div class="flex items-center gap-4 p-4 bg-white shadow-md rounded-lg">
-        <Eye class="text-orange-500 w-8 h-8" />
-        <div>
-          <h2 class="text-lg font-semibold">View Details</h2>
-          <p class="text-gray-600 text-sm">
-            Check building information and stats.
-          </p>
-        </div>
-      </div>
-    </div>
-    <!-- Rounds to do -->
-    <div v-if="userRole === Role.MANAGER">
-      <h2 class="text-xl font-semibold mt-8 text-gray-700">Rounds to do</h2>
-      <div
-        class="flex items-start gap-4 p-4 bg-white shadow-md rounded-lg mt-4"
-      >
-        <MapPin class="text-orange-500 w-8 h-8 mt-1" />
-        <div>
-          <h2 class="text-lg font-semibold">Building A</h2>
-          <p class="text-gray-600 text-sm mb-4">ergenstraat 42</p>
-          <div class="flex flex-col gap-2">
-            <!-- room section -->
-            <div class="flex items-center gap-3 mb-4">
-              <span class="text-gray-800">Lokaal: 101</span>
-              <span
-                class="px-2 py-1 rounded text-xs bg-green-100 text-green-700"
-              >
-                Gecontroleerd
-              </span>
-              <span
-                class="ml-2 px-2 py-1 rounded bg-blue-100 text-blue-700 text-xs"
-              >
-                Checklist ingevuld
-              </span>
-            </div>
-            <div class="flex items-center gap-3 mb-4">
-              <span class="font-medium text-gray-800">Lokaal: 104</span>
-              <span
-                class="px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-700"
-              >
-                In behandeling
-              </span>
-            </div>
-            <div class="flex items-center gap-3 mb-4">
-              <span class="font-medium text-gray-800">Lokaal: 105</span>
-              <span class="px-2 py-1 rounded text-xs bg-red-100 text-red-700">
-                Niet gestart
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- v-else (for now not dynamic because im setting up the base UI) -->
-      <h2 class="text-xl font-semibold mt-8 text-gray-700">if no rounds</h2>
-      <div class="mt-4">
-        <div class="flex items-center gap-2 bg-white p-4 shadow-md rounded-lg">
-          <CalendarSearch class="text-orange-500 w-6 h-6" />
-          <p class="text-gray-600">No upcoming rounds scheduled.</p>
-        </div>
-      </div>
-    </div>
+    <button class="btn-primary rounded-lg" @click="router.push('/login')">
+      Go to Login
+    </button>
   </div>
 </template>
 
@@ -137,19 +12,12 @@
 import useFirebase from '@/composables/useFirebase'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
 import { OWN_USER_ACCOUNT } from '@/graphql/user.query'
-import { Role } from '@/interfaces/custom.user.interface'
 import { useQuery } from '@vue/apollo-composable'
-import {
-  Building,
-  Eye,
-  CalendarSearch,
-  MapPin,
-  CheckCircle,
-  Clock,
-  Check,
-} from 'lucide-vue-next'
+import { useRouter } from 'vue-router'
+
 import { computed, watch } from 'vue'
 const { firebaseUser } = useFirebase()
+const router = useRouter()
 
 const variables = computed(() => {
   return firebaseUser.value?.uid ? { uid: firebaseUser.value.uid } : null
@@ -187,9 +55,4 @@ watch(error, newVal => {
   if (newVal) console.error('GraphQL query error:', newVal)
 })
 // Compute role
-const userRole = computed(() => {
-  const role = result.value?.userByUid?.role || null
-  console.log('Computed userRole:', role)
-  return role ? role.toUpperCase() : null
-})
 </script>

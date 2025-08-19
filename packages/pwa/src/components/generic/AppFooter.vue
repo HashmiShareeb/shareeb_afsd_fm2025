@@ -1,5 +1,7 @@
 <template>
-  <footer class="mt-auto text-center fixed bottom-0 left-0 right-0 p-4">
+  <footer
+    class="mt-auto text-center fixed bottom-0 left-0 right-0 p-1 bg-gray-50"
+  >
     <p class="text-xs">
       Created by Shareeb Hashmi
       <a

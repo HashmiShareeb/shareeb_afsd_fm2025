@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-64 h-full fixed inset-0 shadow z-1">
+  <aside class="w-64 h-full fixed inset-0 shadow z-1 bg-white">
     <div class="p-4 border-b">
       <div class="flex items-center gap-2">
         <AppLogo class="h-9 w-9" />

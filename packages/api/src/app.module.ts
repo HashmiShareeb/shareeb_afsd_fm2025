@@ -23,6 +23,11 @@ import { EnergyReadingModule } from './energy-reading/energy-reading.module'
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: true,
+      formatError: err => {
+        // map GraphQL errors → HTTP status codes
+        const code = err.extensions?.status || 500
+        return { ...err, extensions: { ...err.extensions, status: code } }
+      },
     }),
     TypeOrmModule.forRoot({
       type: 'mongodb',
