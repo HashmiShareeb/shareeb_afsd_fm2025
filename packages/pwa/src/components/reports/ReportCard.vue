@@ -68,13 +68,6 @@
           </div>
         </div>
       </div>
-
-      <button
-        class="text-orange-600 hover:text-orange-800 flex items-center text-sm font-medium"
-      >
-        View Details
-        <ChevronRight class="inline-block w-4 h-4 ml-1" />
-      </button>
     </div>
   </div>
 </template>
@@ -82,12 +75,7 @@
 <script setup lang="ts">
 import { ReportStatus, type ReportType } from '@/interfaces/report.interface'
 import type { BuildingType } from '@/interfaces/building.interface'
-import {
-  UserRoundIcon,
-  Calendar,
-  Clock3Icon,
-  ChevronRight,
-} from 'lucide-vue-next'
+import { UserRoundIcon, Calendar, Clock3Icon } from 'lucide-vue-next'
 
 defineProps({
   report: {

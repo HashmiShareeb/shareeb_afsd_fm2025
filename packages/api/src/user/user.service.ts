@@ -89,12 +89,13 @@ export class UserService {
     return updated
   }
 
-  async updateRole(uid: string, role: Role): Promise<User> {
+  async updateRoleName(uid: string, role: Role, name: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ uid })
     if (!user) {
       throw new Error('User not found')
     }
     user.role = role
+    user.name = name
     await this.userRepository.save(user)
     return user
   }

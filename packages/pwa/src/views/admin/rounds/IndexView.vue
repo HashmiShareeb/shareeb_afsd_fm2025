@@ -196,7 +196,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useMutation, useQuery } from '@vue/apollo-composable'
 import { GET_ROUNDS } from '@/graphql/round.entity'
 import { CREATE_CHECKLIST_ITEM, CREATE_ROUND } from '@/graphql/round.mutations'
@@ -315,6 +315,10 @@ const submitRound = async () => {
     console.error('Error creating round with checklist:', err)
   }
 }
+
+onMounted(() => {
+  refetch()
+})
 
 // const availableRooms = computed(() => {
 //   const building = buildings.value.find(

@@ -57,11 +57,11 @@ Also you can see the queries and mutations of this project in the `PWA` in `/gra
 
 # 🔐 Test Accounts
 
-| Role    | UID / Email         | Password    | Notes                            |
-| ------- | ------------------- | ----------- | -------------------------------- |
-| Admin   | docent@howest.be    | P@ssword123 | Full access                      |
-| Manager | concierge@howest.be | Conc123     | Can plan rounds & read meters    |
-| User    | docent@howest.be    | User123     | Can report issues & see own data |
+| Role    | UID / Email           | Password    | Notes                            |
+| ------- | --------------------- | ----------- | -------------------------------- |
+| Admin   | docent@howest.be      | P@ssword123 | Full access                      |
+| Manager | concierge@howest.be   | Conc123     | Can plan rounds & read meters    |
+| User    | docent.user@gmail.com | docentUser  | Can report issues & see own data |
 
 # ⏱️ Time Tracking
 

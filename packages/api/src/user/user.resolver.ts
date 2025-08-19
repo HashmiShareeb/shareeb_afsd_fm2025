@@ -54,11 +54,12 @@ export class UserResolver {
 
   @AllowedRoles(Role.ADMIN)
   @Mutation(() => User)
-  updateUserRole(
+  updateUserRoleName(
     @Args('uid', { type: () => String }) uid: string,
     @Args('role', { type: () => String }) role: Role,
+    @Args('name', { type: () => String }) name: string,
   ) {
-    return this.userService.updateRole(uid, role)
+    return this.userService.updateRoleName(uid, role, name)
   }
 
   @Mutation(() => User)
