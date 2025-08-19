@@ -104,9 +104,7 @@
       </nav>
       <div
         class="flex items-center space-x-2"
-        v-if="
-          activeTab === 'reports' && filteredReports && filteredReports.length
-        "
+        v-if="activeTab === 'reports' && filteredReports"
       >
         <label for="statusFilter" class="text-sm text-gray-600">Filter:</label>
         <select
@@ -119,6 +117,22 @@
           <option :value="ReportStatus.PENDING">Pending</option>
           <option :value="ReportStatus.IN_PROGRESS">In Progress</option>
           <option :value="ReportStatus.RESOLVED">Resolved</option>
+        </select>
+      </div>
+      <!-- Special Requests Tab -->
+      <div v-if="activeTab === 'requests'" class="flex items-center space-x-2">
+        <label for="requestStatusFilter" class="text-sm text-gray-600"
+          >Filter:</label
+        >
+        <select
+          id="requestStatusFilter"
+          v-model="selectedRequestStatus"
+          class="input border-gray-300 rounded px-2 py-1 text-sm"
+        >
+          <option selected value="">All</option>
+          <option :value="SpecialRequestStatus.PENDING">Pending</option>
+          <option :value="SpecialRequestStatus.APPROVED">Approved</option>
+          <option :value="SpecialRequestStatus.REJECTED">Rejected</option>
         </select>
       </div>
     </div>
@@ -175,14 +189,7 @@
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
                   class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
-                  :class="{
-                    'bg-orange-100 text-orange-800':
-                      report.status === ReportStatus.PENDING,
-                    'bg-blue-100 text-blue-800':
-                      report.status === ReportStatus.IN_PROGRESS,
-                    'bg-green-100 text-green-800':
-                      report.status === ReportStatus.RESOLVED,
-                  }"
+                  :class="getStatusReportColor(report.status)"
                 >
                   {{ report.status }}
                 </span>
@@ -199,7 +206,6 @@
       </div>
     </div>
 
-    <!-- Special Requests Tab -->
     <div
       v-if="activeTab === 'requests'"
       class="bg-white shadow rounded-lg overflow-hidden"
@@ -228,7 +234,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
-              v-for="request in specialRequests"
+              v-for="request in filteredRequests"
               :key="request.requestId"
               class="hover:bg-gray-50"
             >
@@ -251,15 +257,8 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span
-                  class="inline-block px-2.5 py-0.5 text-xs bg-gray-100 font-medium rounded-full uppercase"
-                  :class="{
-                    'bg-orange-100 text-orange-800':
-                      request.status === 'PENDING',
-                    'bg-blue-100 text-blue-800':
-                      request.status === 'IN_PROGRESS',
-                    'bg-green-100 text-green-800':
-                      request.status === 'RESOLVED',
-                  }"
+                  class="inline-block px-2.5 py-0.5 text-xs font-medium rounded-full uppercase"
+                  :class="getStatusColor(request.status)"
                 >
                   {{ request.status }}
                 </span>
@@ -288,16 +287,17 @@ import { CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { ReportStatus, type ReportType } from '@/interfaces/report.interface'
 import { MY_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
-// import {
-//   SpecialRequestStatus,
-//   type SpecialRequestType,
-// } from '@/interfaces/special-request.interface'
+import {
+  SpecialRequestStatus,
+  type SpecialRequestType,
+} from '@/interfaces/special-request.interface'
 
 const { firebaseUser } = useFirebase()
 const { restoreCustomUser, userId } = useCustomUser()
 
 const activeTab = ref<'reports' | 'requests'>('reports') // Default to "reports"
 const selectedStatus = ref<ReportStatus | ''>('') // Default to show all statuses
+const selectedRequestStatus = ref<SpecialRequestStatus | ''>('') // Default to show all request statuses
 
 onMounted(async () => {
   await restoreCustomUser()
@@ -343,4 +343,38 @@ const filteredReports = computed(() => {
     (report: ReportType) => report.status === selectedStatus.value,
   )
 })
+
+const filteredRequests = computed(() => {
+  if (!selectedRequestStatus.value) return specialRequests.value // Show all requests if no status is selected
+  return specialRequests.value.filter(
+    (request: SpecialRequestType) =>
+      request.status === selectedRequestStatus.value,
+  )
+})
+
+const getStatusColor = (status: string): string => {
+  switch (status) {
+    case SpecialRequestStatus.PENDING:
+      return 'bg-orange-100 text-orange-800'
+    case SpecialRequestStatus.APPROVED:
+      return 'bg-blue-100 text-blue-800'
+    case SpecialRequestStatus.REJECTED:
+      return 'bg-red-100 text-red-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
+
+const getStatusReportColor = (status: string): string => {
+  switch (status) {
+    case ReportStatus.PENDING:
+      return 'bg-orange-100 text-orange-800'
+    case ReportStatus.IN_PROGRESS:
+      return 'bg-blue-100 text-blue-800'
+    case ReportStatus.RESOLVED:
+      return 'bg-green-100 text-green-800'
+    default:
+      return 'bg-gray-100 text-gray-800'
+  }
+}
 </script>

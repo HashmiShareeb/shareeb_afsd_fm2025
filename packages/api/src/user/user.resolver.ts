@@ -27,7 +27,7 @@ export class UserResolver {
     return this.userService.findOne(id)
   }
 
-  @UseGuards(FirebaseGuard)
+  //@UseGuards(FirebaseGuard)
   @Mutation(() => User)
   createOwnUseraccount(
     @Args('createUserInput') createUserInput: CreateUserInput,
@@ -46,7 +46,7 @@ export class UserResolver {
     return this.userService.findOneByFirebaseUid(uid)
   }
 
-  // @UseGuards(FirebaseGuard)
+  @UseGuards(FirebaseGuard)
   @Mutation(() => User)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.uid, updateUserInput)

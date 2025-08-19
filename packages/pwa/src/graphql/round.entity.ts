@@ -58,3 +58,26 @@ export const MY_ROUNDS = gql`
     }
   }
 `
+
+export const GET_ROUNDS_BY_BUILDING = gql`
+  query GetRoundsByBuilding($buildingId: String!) {
+    roundsByBuilding(buildingId: $buildingId) {
+      roundId
+      name
+      assignedTo {
+        id
+        name
+      }
+      building {
+        buildingId
+        name
+      }
+      rooms {
+        roundRoomId
+        roomName
+        roomId
+        status
+      }
+    }
+  }
+`

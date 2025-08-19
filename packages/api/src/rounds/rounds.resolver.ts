@@ -127,4 +127,23 @@ export class RoundsResolver {
   removeRound(@Args('roundId', { type: () => String }) roundId: string) {
     return this.roundsService.remove(roundId)
   }
+
+  // @Query(() => [Round], { name: 'roundsByBuilding' })
+  // async roundsByBuilding(
+  //   @Args('buildingId', { type: () => String }) buildingId: string,
+  // ): Promise<Round[]> {
+  //   return this.roundsService.findByBuilding(buildingId)
+  // }
+
+  @Query(() => [Round], { name: 'roundsByBuilding' })
+  async roundsByBuilding(
+    @Args('buildingId') buildingId: string,
+  ): Promise<Round[]> {
+    console.log('Input buildingId:', buildingId)
+
+    const rounds = await this.roundsService.findByBuildingId(buildingId)
+    console.log('Filtered rounds:', rounds)
+
+    return rounds
+  }
 }

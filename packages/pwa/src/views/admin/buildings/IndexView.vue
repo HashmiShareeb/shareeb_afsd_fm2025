@@ -127,7 +127,7 @@
               <span>Edit</span>
             </button>
             <router-link
-              :to="`/admin/buildings/${b.buildingId}`"
+              :to="`/buildings/${b.buildingId}`"
               class="inline-flex items-center gap-1 text-gray-700 hover:underline"
             >
               <EyeIcon class="w-3 h-3" /> View
@@ -619,18 +619,4 @@ const copyToClipboard = async (text: string) => {
     console.error('Clipboard error:', err)
   }
 }
-
-// const widget = window.cloudinary.createUploadWidget(
-//   {
-//     cloud_name: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
-//     upload_preset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
-//     // multiple: false,
-//   },
-//   (error, result) => {
-//     console.log(error)
-//     console.log(result)
-//   },
-// )
-
-//const url = `https://api.cloudinary.com/v1_1/${cloudName}/upload`
 </script>

@@ -55,9 +55,17 @@
           {{ rounds.length }}
         </p>
       </div>
+      <div class="flex justify-end mt-auto ml-auto">
+        <router-link
+          :to="{ name: 'admin-rounds' }"
+          class="mt-2 inline-block text-sm text-orange-600 hover:underline"
+        >
+          rounds list
+        </router-link>
+      </div>
     </div>
 
-    <ul v-if="rounds.length" class="mt-4 space-y-2">
+    <!-- <ul v-if="rounds.length" class="mt-4 space-y-2">
       <li
         v-for="round in rounds.slice(0, 3)"
         :key="round.id"
@@ -68,7 +76,7 @@
           round.status || ''
         }}</span>
       </li>
-    </ul>
+    </ul> -->
   </div>
 
   <div>
