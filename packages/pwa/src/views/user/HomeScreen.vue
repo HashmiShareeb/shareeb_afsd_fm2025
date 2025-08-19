@@ -119,10 +119,25 @@
           <option :value="ReportStatus.RESOLVED">Resolved</option>
         </select>
       </div>
+      <!-- Special Requests Tab -->
+      <div v-if="activeTab === 'requests'" class="flex items-center space-x-2">
+        <label for="requestStatusFilter" class="text-sm text-gray-600"
+          >Filter:</label
+        >
+        <select
+          id="requestStatusFilter"
+          v-model="selectedRequestStatus"
+          class="input border-gray-300 rounded px-2 py-1 text-sm"
+        >
+          <option selected value="">All</option>
+          <option :value="SpecialRequestStatus.PENDING">Pending</option>
+          <option :value="SpecialRequestStatus.APPROVED">Approved</option>
+          <option :value="SpecialRequestStatus.REJECTED">Rejected</option>
+        </select>
+      </div>
     </div>
 
     <!-- Reports Tab -->
-
     <div
       v-if="activeTab === 'reports'"
       class="bg-white shadow rounded-lg overflow-hidden"
@@ -191,7 +206,6 @@
       </div>
     </div>
 
-    <!-- Special Requests Tab -->
     <div
       v-if="activeTab === 'requests'"
       class="bg-white shadow rounded-lg overflow-hidden"
@@ -220,7 +234,7 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr
-              v-for="request in specialRequests"
+              v-for="request in filteredRequests"
               :key="request.requestId"
               class="hover:bg-gray-50"
             >
@@ -273,13 +287,17 @@ import { CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'
 import { ReportStatus, type ReportType } from '@/interfaces/report.interface'
 import { MY_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
-import { SpecialRequestStatus } from '@/interfaces/special-request.interface'
+import {
+  SpecialRequestStatus,
+  type SpecialRequestType,
+} from '@/interfaces/special-request.interface'
 
 const { firebaseUser } = useFirebase()
 const { restoreCustomUser, userId } = useCustomUser()
 
 const activeTab = ref<'reports' | 'requests'>('reports') // Default to "reports"
 const selectedStatus = ref<ReportStatus | ''>('') // Default to show all statuses
+const selectedRequestStatus = ref<SpecialRequestStatus | ''>('') // Default to show all request statuses
 
 onMounted(async () => {
   await restoreCustomUser()
@@ -323,6 +341,14 @@ const filteredReports = computed(() => {
   if (!selectedStatus.value) return reports.value // Show all reports if no status is selected
   return reports.value.filter(
     (report: ReportType) => report.status === selectedStatus.value,
+  )
+})
+
+const filteredRequests = computed(() => {
+  if (!selectedRequestStatus.value) return specialRequests.value // Show all requests if no status is selected
+  return specialRequests.value.filter(
+    (request: SpecialRequestType) =>
+      request.status === selectedRequestStatus.value,
   )
 })
 
