@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+  ForbiddenException,
+} from '@nestjs/common'
 import { CreateUserInput } from './dto/create-user.input'
 import { Role, User } from './entities/user.entity'
 import { InjectRepository } from '@nestjs/typeorm'
@@ -35,7 +40,7 @@ export class UserService {
   async create(createUserInput: CreateUserInput) {
     // If the user already exists, throw an error
     if (await this.findOneByFirebaseUid(createUserInput.uid)) {
-      throw new Error(
+      throw new ConflictException(
         'User not authorized to create this user. A Firebase user is already connected to an account.',
       )
     }
@@ -52,7 +57,7 @@ export class UserService {
   async createAdmin(createUserInput: CreateUserInput) {
     // If the user already exists, throw an error
     if (await this.findOneByFirebaseUid(createUserInput.uid)) {
-      throw new Error(
+      throw new ConflictException(
         'User not authorized to create this user. A Firebase user is already connected to an account.',
       )
     }
@@ -68,7 +73,7 @@ export class UserService {
   async update(uid: string, updateUserInput: UpdateUserInput): Promise<User> {
     const user = await this.userRepository.findOneBy({ uid })
     if (!user) {
-      throw new Error('User not found')
+      throw new NotFoundException('User not found')
     }
 
     const updatedUser = {
@@ -79,12 +84,12 @@ export class UserService {
     await this.userRepository.update(user.id, updatedUser)
     const updated = await this.userRepository.findOneBy({ uid })
     if (!updated) {
-      throw new Error('User not found after update')
+      throw new NotFoundException('User not found after update')
     }
 
     // Do NOT allow ROLE change --> ADMIN ONLY
     if (updateUserInput.role) {
-      throw new Error('Not allowed')
+      throw new ForbiddenException('Not allowed')
     }
     return updated
   }
@@ -92,7 +97,7 @@ export class UserService {
   async updateRoleName(uid: string, role: Role, name: string): Promise<User> {
     const user = await this.userRepository.findOneBy({ uid })
     if (!user) {
-      throw new Error('User not found')
+      throw new NotFoundException('User not found')
     }
     user.role = role
     user.name = name

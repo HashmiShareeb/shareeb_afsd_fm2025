@@ -222,8 +222,6 @@ const buildings = computed(
 const { result: managerData } = useQuery(GET_MANAGERS)
 const managers = computed(() => managerData.value?.usersByRole || [])
 
-console.log(managers.value)
-
 const { mutate: createRound, loading, error } = useMutation(CREATE_ROUND)
 const { mutate: addChecklistItemMutation } = useMutation(CREATE_CHECKLIST_ITEM)
 

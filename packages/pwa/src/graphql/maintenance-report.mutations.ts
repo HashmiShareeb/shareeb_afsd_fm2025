@@ -1,69 +1,26 @@
 import gql from 'graphql-tag'
 
-export const GET_MAINTENANCE_REPORTS = gql`
-  query GetMaintenanceReports {
-    maintenancereport {
+export const CREATE_MAINTENANCE_REPORT = gql`
+  mutation CreateMaintenancereport($input: CreateMaintenancereportInput!) {
+    createMaintenancereport(createMaintenancereportInput: $input) {
       reportId
       title
       description
-      reportedAt
-      status
       reportedBy {
         id
-        uid
         name
+        role
       }
-    }
-  }
-`
-export const GET_MAINTENANCE_REPORT_BY_ID = gql`
-  query GetMaintenanceReportById($reportId: String!) {
-    maintenancereport(reportId: $reportId) {
-      reportId
-      title
-      description
-      reportedAt
       status
-      reportedBy {
-        id
-        uid
-        name
-      }
+      reportedAt
     }
   }
 `
 
-export const MY_MAINTENANCE_REPORT = gql`
-  query ($userId: String!) {
-    myMaintenanceReport(userId: $userId) {
+export const UPDATE_MAINTENANCE_REPORT_STATUS = gql`
+  mutation UpdateMaintenanceReportStatus($reportId: String!, $status: String!) {
+    updateMaintenanceReportStatus(reportId: $reportId, status: $status) {
       reportId
-      title
-      description
-      reportedBy {
-        uid
-        name
-      }
-      building {
-        buildingId
-        name
-        address
-        rooms {
-          roomId
-          name
-        }
-      }
-      status
-      reportedAt
-    }
-  }
-`
-export const UPDATE_MAINTENANCE_REPORT = gql`
-  mutation UpdateMaintenanceReportStatus(
-    $requestId: String!
-    $status: String!
-  ) {
-    updateSpecialRequestStatus(requestId: $requestId, status: $status) {
-      requestId
       status
     }
   }

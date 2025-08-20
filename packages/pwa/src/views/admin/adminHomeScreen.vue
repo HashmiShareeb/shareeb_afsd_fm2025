@@ -404,8 +404,8 @@ import { GET_MANAGERS } from '@/graphql/user.query'
 import { Role } from '@/interfaces/custom.user.interface'
 import { GET_ROUNDS } from '@/graphql/round.entity'
 //import { ReportStatus } from '@/interfaces/report.interface'
-import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.mutations'
-import { UPDATE_STATUS_MAINTENANCE } from '@/graphql/maintenance-report.entity'
+import { GET_MAINTENANCE_REPORTS } from '@/graphql/maintenance-report.entity'
+import { UPDATE_MAINTENANCE_REPORT_STATUS } from '@/graphql/maintenance-report.mutations'
 import type { ReportStatus, ReportType } from '@/interfaces/report.interface'
 import { GET_ALL_SPECIAL_REQUESTS } from '@/graphql/special-request.entity'
 import type { SpecialRequestStatus } from '@/interfaces/special-request.interface'
@@ -445,7 +445,7 @@ const specialRequests = computed(() => requestData.value?.specialrequest || [])
 //   console.log('test')
 // }
 
-const { mutate: updateStatus } = useMutation(UPDATE_STATUS_MAINTENANCE)
+const { mutate: updateStatus } = useMutation(UPDATE_MAINTENANCE_REPORT_STATUS)
 const { mutate: updateRequestStatus } = useMutation(
   UPDATE_STATUS_SPECIAL_REQUEST,
 )

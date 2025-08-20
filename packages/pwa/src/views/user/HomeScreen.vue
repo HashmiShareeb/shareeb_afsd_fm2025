@@ -281,7 +281,7 @@
 import useCustomUser from '@/composables/useCustomUser'
 import useFirebase from '@/composables/useFirebase'
 import { GET_BUILDINGS } from '@/graphql/building.entity'
-import { MY_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.mutations'
+import { MY_MAINTENANCE_REPORT } from '@/graphql/maintenance-report.entity'
 import { useQuery } from '@vue/apollo-composable'
 import { CheckCircle, Clock, Check } from 'lucide-vue-next'
 import { computed, onMounted, ref } from 'vue'

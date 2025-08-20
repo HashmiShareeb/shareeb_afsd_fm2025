@@ -251,7 +251,6 @@ const energyReadings = computed(
 )
 
 const filteredEnergyReadings = computed(() => {
-  console.log('Selected Filter:', selectedFilter.value)
   if (selectedFilter.value === 'ALL') {
     return energyReadings.value
   }

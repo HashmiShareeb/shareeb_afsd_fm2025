@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common'
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Round, RoundStatus } from './entities/round.entity'
 import { MongoRepository } from 'typeorm'
@@ -27,10 +31,10 @@ export class RoundsService {
       _id: new ObjectId(createRoundInput.assignedToId),
     })
 
-    console.log('User found:', user)
-
     if (!user || user.role !== Role.MANAGER) {
-      throw new Error('Can only assign rounds to users with MANAGER role')
+      throw new BadRequestException(
+        'Can only assign rounds to users with MANAGER role',
+      )
     }
 
     // Create RoundRoom objects with proper structure
@@ -71,10 +75,10 @@ export class RoundsService {
       where: { _id: new ObjectId(roundId) }, // Fix: Convert string to ObjectId
     })
 
-    if (!round) throw new Error('Round not found')
+    if (!round) throw new NotFoundException('Round not found')
 
     const roundRoom = round.rooms.find(rr => rr.roundRoomId === roundRoomId)
-    if (!roundRoom) throw new Error('RoundRoom not found')
+    if (!roundRoom) throw new NotFoundException('RoundRoom not found')
 
     const newItem: Checklistitem = {
       _id: new ObjectId().toString(),
@@ -102,13 +106,13 @@ export class RoundsService {
     const round = await this.roundRepository.findOne({
       where: { _id: new ObjectId(roundId) },
     })
-    if (!round) throw new Error('Round not found')
+    if (!round) throw new NotFoundException('Round not found')
 
     const room = round.rooms.find(r => r.roundRoomId === roundRoomId)
-    if (!room) throw new Error('Room not found')
+    if (!room) throw new NotFoundException('Room not found')
 
     const item = room.checklist.find(i => i.itemId === itemId)
-    if (!item) throw new Error('Item not found')
+    if (!item) throw new NotFoundException('Item not found')
 
     item.status = status
 

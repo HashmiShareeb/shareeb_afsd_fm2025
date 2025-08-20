@@ -72,12 +72,10 @@ export class BuildingService {
       throw new NotFoundException(`Building with ID ${buildingId} not found`)
     }
     // Create room with buildingId
-    console.log('Adding room to buildingId:', buildingId) // Debug
     const room = await this.roomService.create({
       ...createRoomInput,
       buildingId,
     })
-    console.log('Created room:', room) // Debug
     return room
   }
 
